@@ -1,2 +1,2 @@
 language: nix
-script: test.sh
+script: codygman/my-emacs-everywhere/test.sh
