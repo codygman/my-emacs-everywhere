@@ -3,3 +3,6 @@
 
 (ert-deftest straight-el-installed ()
   (should (fboundp 'straight-use-package)))
+
+(ert-deftest org-mode-installed ()
+  (should (string-equal "9.2.6" org-version)))
