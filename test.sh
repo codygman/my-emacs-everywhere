@@ -2,3 +2,5 @@ nix-channel --add https://github.com/rycee/home-manager/archive/master.tar.gz ho
 nix-channel --update
 export NIX_PATH=$HOME/.nix-defexpr/channels${NIX_PATH:+:}$NIX_PATH
 nix-shell '<home-manager>' -A install
+
+emacs -batch -l ert -l my-tests.el -f ert-run-tests-batch-and-exit
