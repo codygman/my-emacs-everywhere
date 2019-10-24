@@ -57,9 +57,12 @@ Inserted by installing org-mode or when a release is made."
   (use-package helm-swoop))
 
 (use-package evil
-  :config
+  :init
   (setq evil-want-integration t
 	evil-want-keybinding nil)
+  :config
+  (setq evil-symbol-word-search t)
+  (evil-mode 1)
   (use-package evil-collection
     :after evil
     :config
