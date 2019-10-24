@@ -1,2 +1,2 @@
-(ert-deftest addition-test ()
-       (should (= (+ 1 2) 4)))
+(ert-deftest version-check ()
+  (should (string-equal "27.0.50" emacs-version)))
