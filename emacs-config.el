@@ -53,7 +53,10 @@ Inserted by installing org-mode or when a release is made."
   :straight org-plus-contrib)
 
 (use-package helm
+  :init
+  (setq helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
   :config
+  (helm-mode 1)
   (use-package helm-swoop))
 
 (use-package evil
@@ -73,11 +76,11 @@ Inserted by installing org-mode or when a release is made."
   :config
   (general-evil-setup)
   (general-imap "j"
-      (general-key-dispatch 'self-insert-command
-        :timeout 0.25
-        ;; TODO make this work so jf writes the file when I enter normal mode
-        ;; "f" '(my-write-then-normal-state)
-        "f" 'evil-normal-state))
+    (general-key-dispatch 'self-insert-command
+      :timeout 0.25
+      ;; TODO make this work so jf writes the file when I enter normal mode
+      ;; "f" '(my-write-then-normal-state)
+      "f" 'evil-normal-state))
   (general-create-definer my-leader-def
     :prefix "C")
   (my-leader-def
@@ -97,7 +100,7 @@ Inserted by installing org-mode or when a release is made."
     "ff"  '(helm-find-files :which-key "find files")
     "gb" '(magit-blame :which-key "magit blame")
     "gf" '(magit-find-file :which-key "magit find-file")
-    "gg" '(helm-grep-do-grep-ag :which-key "helm ag (rg)")
+    "gg" '(helm-do-grep-ag :which-key "helm ag (rg)")
     "gl" '(magit-log-buffer-file :which-key "magit log file")
     "gs" '(magit-status :which-key "magit status")
     "gt" '(magit-log-trace-definition :which-key "magit trace definition")

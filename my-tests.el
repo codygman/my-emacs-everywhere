@@ -32,6 +32,13 @@
   (bound-and-true-p winner-mode))
 
 ;; more specific tests
+(ert-deftest searching-works-as-expected ()
+  (should (not (eq nil (executable-find "rg"))))
+  (should (string-equal "rg --color=always --smart-case --no-heading --line-number %s %s %s" helm-grep-ag-command))
+  (require 'helm-grep)
+  ;; (should (string-equal "helm-do-grep-ag"
+  ;; 			(key-binding (kbd "SPC g g"))))
+  )
 
 ;; TODO RET works in grep buffers
 ;; (with-eval-after-load 'evil-maps
