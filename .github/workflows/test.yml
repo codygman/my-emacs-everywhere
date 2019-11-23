@@ -14,6 +14,6 @@ jobs:
         signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
         # Only needed for private caches
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-- name: Run Emacs tests
+    - name: Run Emacs tests
       run: |
-        EMACSFOR="PERSONAL" emacs -Q --batch --load load-init-then-test.el
+          EMACSFOR="PERSONAL" emacs -Q --batch --load load-init-then-test.el
