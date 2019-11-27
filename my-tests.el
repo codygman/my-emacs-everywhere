@@ -58,6 +58,16 @@
 			  (candidates . ,(list "jane" "john"))
 			  (action . (lambda (candidate) (helm-marked-candidates))))))))))
 
+(defun open-lorem-ipsum-goto-end-scroll-up-return-char-position ()
+  (find-file "testdata/loremipsum.txt")
+  (goto-char (point-max))
+  (call-interactively (global-key-binding "\C-u"))
+  (point))
+
+;; START evil
+(ert-deftest evil-ctrl-u-scrolls-up ()
+  (should (eq 4599 (open-lorem-ipsum-goto-end-scroll-up-return-char-position))))
+;; END evil
 (ert-deftest haskell-mode-enabled-opening-haskell-file ()
   (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
   (should (eq 'haskell-mode (derived-mode-p 'haskell-mode))))
