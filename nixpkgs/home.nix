@@ -19,6 +19,6 @@ in
 
   packages = with pkgs; [
     ripgrep
-  ]
+  ];
 
 }
