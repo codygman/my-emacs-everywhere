@@ -56,8 +56,8 @@
 
 (defun load-simple-hs-file-and-return-ghci-evald-main ()
   (save-excursion
-   ;; (find-file "~/build/codygman/my-emacs-everywhere/testdata/simple-haskell-project/Main.hs")
-   (find-file "~/source/my-emacs-everywhere/testdata/simple-haskell-project/Main.hs")
+   (find-file "~/build/codygman/my-emacs-everywhere/testdata/simple-haskell-project/Main.hs")
+   ;; (find-file "~/source/my-emacs-everywhere/testdata/simple-haskell-project/Main.hs")
    (haskell-process-load-file)
    (switch-to-buffer "*simple-haskell-project*")
    (sit-for 2)
