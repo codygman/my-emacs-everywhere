@@ -1,5 +1,5 @@
 (defun my-emacs-everywhere-directory ()
-  (if (not (eq nil (getenv "TRAVIS_OS_NAME")))
+  (if (eq nil (getenv "TRAVIS_OS_NAME"))
       "~/source/my-emacs-everywhere"
     "~/build/codygman/my-emacs-everywhere/"))
 
