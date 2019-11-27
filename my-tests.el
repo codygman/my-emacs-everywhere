@@ -1,3 +1,8 @@
+(defun my-emacs-everywhere-directory ()
+  (if (not (eq nil (getenv "TRAVIS_OS_NAME")))
+      "~/source/my-emacs-everywhere"
+    "~/build/codygman/my-emacs-everywhere/"))
+
 (ert-deftest version-check ()
   (should (string-equal "27.0.50" emacs-version)))
 
@@ -41,8 +46,8 @@
   )
 
 (ert-deftest haskell-mode-enabled-opening-haskell-file ()
-  (find-file "~/build/codygman/my-emacs-everywhere/testdata/simple-haskell-project/Main.hs")
-  (should (eq 'haskell-mode (derived-mode-p 'haskell-mode))))
+  (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory))
+	     (should (eq 'haskell-mode (derived-mode-p 'haskell-mode))))
 
 
  (defun get-substring-from-line ()
@@ -56,9 +61,7 @@
 
 (defun load-simple-hs-file-and-return-ghci-evald-main ()
   (save-excursion
-    (find-file "~/build/codygman/my-emacs-everywhere/testdata/simple-haskell-project/Main.hs")
     (message "found file")
-    ;; (find-file "~/source/my-emacs-everywhere/testdata/simple-haskell-project/Main.hs")
     (haskell-process-load-file)
     (message "loaded file")
     (switch-to-buffer "*simple-haskell-project*")
@@ -95,4 +98,5 @@
 ;;   (define-key evil-motion-state-map (kbd "RET") nil)
 ;;   (define-key evil-motion-state-map (kbd "TAB") nil))
 ;; )
+      (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
 
