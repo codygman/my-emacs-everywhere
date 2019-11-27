@@ -17,8 +17,8 @@ in
     };
   };
 
-  packages = with pkgs; [
-    ripgrep
-  ];
+  # packages = with pkgs; [
+  #   ripgrep
+  # ];
 
 }
