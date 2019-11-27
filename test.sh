@@ -4,7 +4,7 @@ export NIX_PATH=$HOME/.nix-defexpr/channels${NIX_PATH:+:}$NIX_PATH
 nix-env -iA cachix -f https://cachix.org/api/v1/install
 
 nix-shell '<home-manager>' -A install
-cachix use codygman4
+cachix use codygman4 # did cachix work?
 
 mkdir -p ~/.config/
 cp -vR nixpkgs ~/.config
