@@ -67,7 +67,7 @@
    (haskell-interactive-mode-return)
    (sit-for 1)
    (evil-previous-line)
-   (buffer-substring-no-properties (point-min) (point-max))
+   (get-substring-from-line)
    ))
 
 (ert-deftest haskell-mode-ghci-loads-file-and-can-execute ()
