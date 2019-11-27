@@ -97,30 +97,6 @@
 	     "Hello, Haskell!"
 	     (load-simple-hs-file-and-return-ghci-evald-main))))
 
-(defun create-tab-bar-buffers-to-test ()
-  (switch-to-buffer "1.1")
-  (split-window-below)
-  (switch-to-buffer "1.2")
-  ;; TODO using with-simulated-input to switch buffers make this test more comprehensive
-  ;; (switch-to-buffer "2")
-  ;; (switch-to-buffer "3.1")
-  ;; (switch-to-buffer "3.2")
-  ;; (switch-to-buffer "3.3")
-  )
-
-(defun get-helm-tab-bar-buffer-contents ()
-  (save-excursion
-    (switch-to-buffer "*helm-mode-tab-bar-select-tab*")
-    (substring-no-properties (buffer-substring (point-min) (point-max)))))
-
-(ert-deftest my-tab-bar-use-workspace-workflow-works ()
-  (tab-bar-select-tab)
-  (let ((helm-tab-bar-buffer-contents (get-helm-tab-bar-buffer-contents)))
-    (should (string-equal helm-tab-bar-buffer-contents
-			  "tab-bar-select-tab
-1.2, 1.1
-"))))
-
   ;; TODO RET works in grep buffers
   ;; (with-eval-after-load 'evil-maps
   ;;   (define-key evil-motion-state-map (kbd "SPC") nil)
