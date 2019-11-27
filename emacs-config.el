@@ -168,6 +168,11 @@ Inserted by installing org-mode or when a release is made."
 (straight-use-package 'helpful)
 (use-package helpful)
 
+(straight-use-package 'haskell-mode)
+(use-package haskell-mode
+  :init
+  (add-hook 'haskell-mode-hook 'haskell-indentation-mode))
+
 ;; extras
 (defun spacemacs/kill-this-buffer (&optional arg)
     "Kill the current buffer.
