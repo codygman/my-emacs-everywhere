@@ -2,7 +2,7 @@ with import <nixpkgs> {};
 
 stdenv.lib.overrideDerivation (pkgs.emacs.override {
   srcRepo = true;
-  withXwidgets = true;
+  withXwidgets = if stdenv.isDarwin then false else true;
 }) (attrs: rec {
   name = "emacs-${version}${versionModifier}";
   imagemagick = pkgs.imagemagickBig;
