@@ -8,6 +8,9 @@ cachix use codygman4 # did cachix work?
 
 mkdir -p ~/.config/
 cp -vR nixpkgs ~/.config
-home-manager switch
 
-emacs -Q -batch --load load-init-then-run-ert.el
+# try pushing emacs.nix to cachix
+nix-build emacs.nix | cachix push codygman4
+# home-manager switch
+
+# emacs -Q -batch --load load-init-then-run-ert.el
