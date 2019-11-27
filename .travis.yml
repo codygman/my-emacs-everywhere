@@ -2,4 +2,7 @@ language: nix
 os:
   - linux
   - osx
+cache:
+  directories:
+  - $HOME/.emacs.d/straight
 script: bash test.sh
