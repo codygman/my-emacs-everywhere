@@ -10,7 +10,9 @@ mkdir -p ~/.config/
 cp -vR nixpkgs ~/.config
 
 # try pushing emacs.nix to cachix
+pushd ~/.config/nixpkgs
 nix-build emacs.nix | cachix push codygman4
+popd
 # home-manager switch
 
 # emacs -Q -batch --load load-init-then-run-ert.el
