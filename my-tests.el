@@ -59,10 +59,11 @@
 			  (action . (lambda (candidate) (helm-marked-candidates))))))))))
 
 (defun open-lorem-ipsum-goto-end-scroll-up-return-char-position ()
-  (find-file "testdata/loremipsum.txt")
-  (goto-char (point-max))
-  (call-interactively (general-simulate-key "\C-u"))
-  (point))
+  (save-excursion
+    (find-file "testdata/loremipsum.txt")
+    (goto-char (point-max))
+    (general--call-interactively (general-simulate-key "C-u"))
+    (point)))
 
 ;; START evil
 (ert-deftest evil-ctrl-u-scrolls-up ()
