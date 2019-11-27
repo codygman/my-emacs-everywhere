@@ -49,16 +49,20 @@ Inserted by installing org-mode or when a release is made."
 (straight-use-package 'org-plus-contrib) ; or org-plus-contrib if desired
 ;; END hacky install org mode
 
+(straight-use-package 'org)
 (use-package org
   :straight org-plus-contrib)
 
+(straight-use-package 'helm)
 (use-package helm
   :init
   (setq helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s")
   :config
   (helm-mode 1)
+  (straight-use-package 'helm-swoop)
   (use-package helm-swoop))
 
+(straight-use-package 'evil)
 (use-package evil
   :init
   (setq evil-want-integration t
@@ -66,12 +70,14 @@ Inserted by installing org-mode or when a release is made."
   :config
   (setq evil-symbol-word-search t)
   (evil-mode 1)
+  (straight-use-package 'evil-collection)
   (use-package evil-collection
     :after evil
     :config
     (evil-collection-init)
     ))
 
+(straight-use-package 'general)
 (use-package general
   :config
   (general-evil-setup)
@@ -144,10 +150,13 @@ Inserted by installing org-mode or when a release is made."
     )
   )
 
+(straight-use-package 'avy)
 (use-package avy)
 
+(straight-use-package 'magit)
 (use-package magit)
 
+(straight-use-package 'winner)
 (use-package winner
   :requires init-general
   :demand t
@@ -156,6 +165,7 @@ Inserted by installing org-mode or when a release is made."
   :config
   (winner-mode 1))
 
+(straight-use-package 'helpful)
 (use-package helpful)
 
 ;; extras
