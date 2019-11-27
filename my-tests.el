@@ -61,7 +61,7 @@
 (defun open-lorem-ipsum-goto-end-scroll-up-return-char-position ()
   (find-file "testdata/loremipsum.txt")
   (goto-char (point-max))
-  (call-interactively (global-key-binding "\C-u"))
+  (call-interactively (general-simulate-key "\C-u"))
   (point))
 
 ;; START evil
