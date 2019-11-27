@@ -67,6 +67,8 @@
       (message "loaded file")
       (switch-to-buffer "*simple-haskell-project*")
       (message "switched to buffer")
+      (sit-for 2)
+      (message "sat for 2")
       (message "START ghci repl looks like")
       (message
        (format "%s" (substring-no-properties (buffer-substring (point-min) (point-max)))))
@@ -79,6 +81,8 @@
       (message "inserted text 'main'")
       (haskell-interactive-mode-return)
       (message "haskell return")
+      (sit-for 1)
+      (message "sit for 1")
       (message "START ghci repl looks like (after execute)")
       (message
        (format "%s" (substring-no-properties (buffer-substring (point-min) (point-max)))))
