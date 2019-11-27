@@ -45,6 +45,19 @@
   ;; 			(key-binding (kbd "SPC g g"))))
   )
 
+(ert-deftest trivial-helm-example-works-as-expected ()
+  (should (string-equal
+	   "john"
+	   (with-simulated-input
+	       '("jo"
+		 (wsi-simulate-idle-time 500)
+		 (wsi-simulate-idle-time 500)
+		 "RET")
+	     (car (helm :sources
+			`((name . "Simple helm names example")
+			  (candidates . ,(list "jane" "john"))
+			  (action . (lambda (candidate) (helm-marked-candidates))))))))))
+
 (ert-deftest haskell-mode-enabled-opening-haskell-file ()
   (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
   (should (eq 'haskell-mode (derived-mode-p 'haskell-mode))))

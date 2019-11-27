@@ -168,6 +168,8 @@ Inserted by installing org-mode or when a release is made."
 (straight-use-package 'helpful)
 (use-package helpful)
 
+(straight-use-package 'with-simulated-input)
+(use-package with-simulated-input)
 (straight-use-package 'haskell-mode)
 (use-package haskell-mode
   :init
