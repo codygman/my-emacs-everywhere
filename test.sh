@@ -19,4 +19,4 @@ nix-build emacs.nix | cachix push codygman4
 popd
 home-manager switch
 
-# emacs -Q -batch --load load-init-then-run-ert.el
+emacs -Q -batch --load load-init-then-run-ert.el
