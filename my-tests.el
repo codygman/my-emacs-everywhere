@@ -40,6 +40,10 @@
   ;; 			(key-binding (kbd "SPC g g"))))
   )
 
+(ert-deftest haskell-mode-enabled-opening-haskell-file ()
+  (find-file "~/build/codygman/my-emacs-everywhere/testdata/simple-haskell-project/Main.hs")
+  (should (eq 'haskell-mode (derived-mode-p 'haskell-mode))))
+
 ;; TODO RET works in grep buffers
 ;; (with-eval-after-load 'evil-maps
 ;;   (define-key evil-motion-state-map (kbd "SPC") nil)
