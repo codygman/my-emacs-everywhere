@@ -44,6 +44,37 @@
   (find-file "~/build/codygman/my-emacs-everywhere/testdata/simple-haskell-project/Main.hs")
   (should (eq 'haskell-mode (derived-mode-p 'haskell-mode))))
 
+
+ (defun get-substring-from-line ()
+      "Copy the whole line that point is on and move to the beginning of the next line.
+    Consecutive calls to this command append each line to the
+    kill-ring."
+      (interactive)
+      (let ((beg (line-beginning-position 1))
+            (end (line-beginning-position 2)))
+          (string-trim (substring-no-properties (buffer-substring beg end)))))
+
+(defun load-simple-hs-file-and-return-ghci-evald-main ()
+  (save-excursion
+   ;; (find-file "~/build/codygman/my-emacs-everywhere/testdata/simple-haskell-project/Main.hs")
+   (find-file "~/source/my-emacs-everywhere/testdata/simple-haskell-project/Main.hs")
+   (haskell-process-load-file)
+   (switch-to-buffer "*simple-haskell-project*")
+   (sit-for 2)
+   (goto-char (point-max))
+   (evil-append-line 1)
+   (insert "main")
+   (haskell-interactive-mode-return)
+   (sit-for 1)
+   (evil-previous-line)
+   (buffer-substring-no-properties (point-min) (point-max))
+   ))
+
+(ert-deftest haskell-mode-ghci-loads-file-and-can-execute ()
+  (should (string-equal
+	   "Hello, Haskell!"
+	   (load-simple-hs-file-and-return-ghci-evald-main))))
+
 ;; TODO RET works in grep buffers
 ;; (with-eval-after-load 'evil-maps
 ;;   (define-key evil-motion-state-map (kbd "SPC") nil)
