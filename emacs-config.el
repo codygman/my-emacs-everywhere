@@ -66,7 +66,8 @@ Inserted by installing org-mode or when a release is made."
 (use-package evil
   :init
   (setq evil-want-integration t
-	evil-want-keybinding nil)
+	evil-want-keybinding nil
+	evil-want-C-u-scroll t)
   :config
   (setq evil-symbol-word-search t)
   (evil-mode 1)
