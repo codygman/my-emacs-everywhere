@@ -41,6 +41,10 @@
 
 (ert-deftest host-rg-installed ()
   (should (not (eq nil (executable-find "rg")))))
+
+(ert-deftest host-fd-installed ()
+  (should (not (eq nil (executable-find "fd")))))
+
 ;; more specific tests
 (ert-deftest searching-works-as-expected ()
   (should (not (eq nil (executable-find "rg"))))

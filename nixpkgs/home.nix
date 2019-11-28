@@ -22,6 +22,7 @@ in
       ripgrep
       ghc
       gnumake
+      fd
     ];
   };
 
