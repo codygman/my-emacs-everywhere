@@ -7,8 +7,7 @@
   (save-excursion
     (find-file "testdata/loremipsum.txt")
     (goto-char (point-max))
-    (require 'general)
-    (call-interactively (general-simulate-key "C-u"))
+    (call-interactively 'evil-scroll-up)
     (point)))
 
 ;; START evil
