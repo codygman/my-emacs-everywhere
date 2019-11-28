@@ -39,6 +39,8 @@
 (ert-deftest host-gnumake-installed ()
   (should (not (eq nil (executable-find "make")))))
 
+(ert-deftest host-rg-installed ()
+  (should (not (eq nil (executable-find "rg")))))
 ;; more specific tests
 (ert-deftest searching-works-as-expected ()
   (should (not (eq nil (executable-find "rg"))))
