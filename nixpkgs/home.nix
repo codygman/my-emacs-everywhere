@@ -21,6 +21,7 @@ in
     packages = with pkgs; [
       ripgrep
       ghc
+      gnumake
     ];
   };
 

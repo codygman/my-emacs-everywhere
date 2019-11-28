@@ -36,6 +36,9 @@
 (ert-deftest winner-mode-active ()
   (bound-and-true-p winner-mode))
 
+(ert-deftest host-gnumake-installed ()
+  (should (not (eq nil (executable-find "make")))))
+
 ;; more specific tests
 (ert-deftest searching-works-as-expected ()
   (should (not (eq nil (executable-find "rg"))))
