@@ -50,8 +50,7 @@
 	   "john"
 	   (with-simulated-input
 	       '("jo"
-		 (wsi-simulate-idle-time 500)
-		 (wsi-simulate-idle-time 500)
+		 (wsi-simulate-idle-time 0.5)
 		 "RET")
 	     (car (helm :sources
 			`((name . "Simple helm names example")
