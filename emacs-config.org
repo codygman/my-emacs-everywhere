@@ -91,6 +91,7 @@
 	 "at"  '(shell :which-key "open terminal")
 	 "bb"  '(helm-mini :which-key "buffers list")
 	 "bd"  '(spacemacs/kill-this-buffer :which-key "kill-this-buffer")
+	 "cc"  '(helm-org-capture-templates :which-key "org-capture")
 	 "cl" '(comment-line :which-key "comment line")
 	 "eb"  '(ediff-buffers :which-key "ediff buffers")
 	 "fed" '(find-dotfile :which-key "go to init.el")
@@ -197,6 +198,35 @@
 	  (kbd "I") 'org-agenda-diary-entry
 	  (kbd "O") 'delete-other-windows
 	  (kbd "X") 'org-agenda-bulk-action))
+    #+end_src
+*** helm-org for fuzzy-find capture
+    #+begin_src emacs-lisp
+      (use-package helm-org
+	  :init
+	  (setq org-capture-templates
+		'(
+		  ("t" "Todo" entry (file+headline "~/bsab/misc.org" "Misc")
+		   "* TODO %?  :refile:
+	:PROPERTIES:
+	:WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
+	:CREATED: %U
+	:END:"
+		   :prepend t
+		   :clock-in t
+		   :clock-resume t
+		   )
+		  ("T" "Todo (today)" entry (file+headline "~/bsab/misc.org" "Misc")
+		   "* TODO %<%Y-%m-%d> %?  :refile:
+	:PROPERTIES:
+	:WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
+	:CREATED: %U
+	:END:"
+		   :prepend t
+		   :clock-in t
+		   :clock-resume t
+		   )
+		  ))
+	  :after (helm org))
     #+end_src
 *** general org configuration
     #+begin_src emacs-lisp
