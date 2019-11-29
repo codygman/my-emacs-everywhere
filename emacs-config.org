@@ -147,7 +147,34 @@
 	 )
        )
    #+end_src
-** Life Management/Calendaring/Diary with org  
+** Editor Movement (not more important, but need to configure evil first)
+*** vim keybindings via evil 
+    #+begin_src emacs-lisp
+      (straight-use-package 'evil)
+      (use-package evil
+	:init
+	(setq evil-want-integration t
+	      evil-want-keybinding nil
+	      evil-want-C-u-scroll t)
+	:config
+	(setq evil-symbol-word-search t)
+	(evil-mode 1)
+	(straight-use-package 'evil-collection))
+    #+end_src
+*** but sometimes evil bindings don't yet exist for all X emacs-modes so
+*** pervasive evil bindings crowd-sourced through evil-collection
+    #+begin_src emacs-lisp
+      (use-package evil-collection
+	:after evil
+	:config
+	(evil-collection-init))
+    #+end_src
+*** Default to search, but use avy for more precise character/line hopping
+    #+begin_src emacs-lisp
+    (straight-use-package 'avy)
+    (use-package avy)
+    #+end_src
+** Life Management/Calendaring/Diary with org
 *** org has to be installed in init.el to ensure emacs config tangled with newest org-mode
 *** but the rest of the configuration can be handled here
 *** general org configuration
@@ -259,33 +286,6 @@
 	(helm-mode 1)
 	(straight-use-package 'helm-swoop)
 	(use-package helm-swoop))
-    #+end_src
-** Editor Movement
-*** vim keybindings via evil 
-    #+begin_src emacs-lisp
-      (straight-use-package 'evil)
-      (use-package evil
-	:init
-	(setq evil-want-integration t
-	      evil-want-keybinding nil
-	      evil-want-C-u-scroll t)
-	:config
-	(setq evil-symbol-word-search t)
-	(evil-mode 1)
-	(straight-use-package 'evil-collection))
-    #+end_src
-*** but sometimes evil bindings don't yet exist for all X emacs-modes so
-*** pervasive evil bindings crowd-sourced through evil-collection
-    #+begin_src emacs-lisp
-      (use-package evil-collection
-	:after evil
-	:config
-	(evil-collection-init))
-    #+end_src
-*** Default to search, but use avy for more precise character/line hopping
-    #+begin_src emacs-lisp
-    (straight-use-package 'avy)
-    (use-package avy)
     #+end_src
 ** Literate Programming
 **** test that noweb examples work
