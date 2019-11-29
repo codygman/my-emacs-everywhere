@@ -66,21 +66,9 @@
 			  (candidates . ,(list "jane" "john"))
 			  (action . (lambda (candidate) (helm-marked-candidates))))))))))
 
-(defun open-lorem-ipsum-goto-end-scroll-up-return-char-position ()
-  (save-excursion
-    (find-file "testdata/loremipsum.txt")
-    (goto-char (point-max))
-    (general--call-interactively (general-simulate-key "C-u"))
-    (point)))
-
-;; START evil
-(ert-deftest evil-ctrl-u-scrolls-up ()
-  (should (eq 4599 (open-lorem-ipsum-goto-end-scroll-up-return-char-position))))
-;; END evil
 (ert-deftest haskell-mode-enabled-opening-haskell-file ()
   (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
   (should (eq 'haskell-mode (derived-mode-p 'haskell-mode))))
-
 
   (defun get-substring-from-line ()
     "Copy the whole line that point is on and move to the beginning of the next line.
