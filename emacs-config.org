@@ -1,4 +1,9 @@
 * codygman's workflow
+** Test code
+#+begin_src emacs-lisp
+  (straight-use-package 'with-simulated-input)
+  (use-package with-simulated-input)
+#+end_src
 ** Load Work/Personal Specific Code
 *** Load Environmental Variables From .bashrc
     #+begin_src emacs-lisp
@@ -339,7 +344,6 @@
 
    #+RESULTS:
    : t
-
 ** Project Navigation: Death to filesystem trees!
 ** Automate The Boring Stuff With Snippets
 ** Layout/Workspace Managment
