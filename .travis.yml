@@ -5,4 +5,4 @@ os:
 cache:
   directories:
   - $HOME/.emacs.d/straight
-script: bash test.sh
+script: script -eqc 'bash test.sh'
