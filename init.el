@@ -37,5 +37,3 @@
 ;;;;; TBD
 ;; TODO make my-emacs-everywhere use literate test that gets tangled
 (org-babel-load-file "~/.emacs.d/emacs-config.org")
-
-
