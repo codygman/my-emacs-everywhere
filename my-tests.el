@@ -1,8 +1,8 @@
+;; duplicate in init.el
 (defun my-emacs-everywhere-directory ()
   (if (eq nil (getenv "TRAVIS_OS_NAME"))
-      "~/source/my-emacs-everywhere"
+      "~/.emacs.d/my-emacs-everywhere"
     "~/build/codygman/my-emacs-everywhere/"))
-
 (ert-deftest version-check ()
   (should (string-equal "27.0.50" emacs-version)))
 

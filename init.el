@@ -1,3 +1,7 @@
+(defun my-emacs-everywhere-directory ()
+  (if (eq nil (getenv "TRAVIS_OS_NAME"))
+      "~/.emacs.d/my-emacs-everywhere"
+    "~/build/codygman/my-emacs-everywhere/"))
 (setq straight-profiles '((nil . "~/.emacs.d/straight-versions.el")))
 (setq straight-repository-branch "develop")
 (defvar bootstrap-version)
@@ -36,4 +40,4 @@
 ;;;;; TBD
 ;;;;; TBD
 ;; TODO make my-emacs-everywhere use literate test that gets tangled
-(org-babel-load-file "~/.emacs.d/emacs-config.org")
+(org-babel-load-file (format "%s/emacs-config.org" (my-emacs-everywhere-directory)))
