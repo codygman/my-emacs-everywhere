@@ -15,7 +15,7 @@ in
       enable = true;
       package = emacsHEAD;
     };
-    ssh = mkIf stdenv.isLinux {
+    ssh = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) {
       enable = true;
       controlPath = "~/.ssh/master-%C";
     };
@@ -58,8 +58,6 @@ in
     ] else []);
   };
 
-
-
   systemd.user.startServices = if stdenv.isLinux then true else false;
 
   home.keyboard = mkIf stdenv.isLinux {
@@ -84,10 +82,10 @@ in
   };
 
   services = {
-    syncthing = mkIf stdenv.isLinux {
+    syncthing = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) {
       enable = true;
     };
-    gpg-agent = {
+    gpg-agent = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {
       enable = true;
       defaultCacheTtl = 600;
       enableSshSupport = true;
