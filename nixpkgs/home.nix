@@ -23,6 +23,7 @@ in
       ghc
       gnumake
       fd
+      source-code-pro
     ];
   };
 

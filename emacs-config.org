@@ -266,6 +266,14 @@
 	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
     #+end_src
 *** font
+    #+begin_src emacs-lisp
+      (set-face-attribute 'default nil :family "Source Code Pro" :height 160 :width 'normal)
+      (set-face-attribute 'fixed-pitch nil :family "Source Code Pro" :height 140 :width 'normal)
+      (set-face-attribute 'variable-pitch nil :family "Source Sans Pro" :height 160 :weight 'medium)
+      (set-face-attribute 'org-table nil :inherit 'fixed-pitch) ;; here or org?
+      ;; all org blocks should be fixed-width NOTE: For source-blocks ‘org-src-block-faces’ takes precedence.
+      (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+    #+end_src
 *** readability
 **** word wrapping 
      #+begin_src emacs-lisp
