@@ -1,6 +1,6 @@
 (defun my-emacs-everywhere-directory ()
   (if (eq nil (getenv "TRAVIS_OS_NAME"))
-      "~/.emacs.d/my-emacs-everywhere"
+      "~/.emacs.d/"
     "~/build/codygman/my-emacs-everywhere/"))
 (setq straight-profiles '((nil . "~/.emacs.d/straight-versions.el")))
 (setq straight-repository-branch "develop")
