@@ -63,6 +63,7 @@
     #+end_src
 *** Moving around windows
     #+begin_src emacs-lisp
+      (straight-use-package 'winum)
       (use-package winum
 	:defer t
 	:init (winum-mode))
@@ -160,12 +161,12 @@
 	      evil-want-C-u-scroll t)
 	:config
 	(setq evil-symbol-word-search t)
-	(evil-mode 1)
-	(straight-use-package 'evil-collection))
+	(evil-mode 1))
     #+end_src
 *** but sometimes evil bindings don't yet exist for all X emacs-modes so
 *** pervasive evil bindings crowd-sourced through evil-collection
     #+begin_src emacs-lisp
+      (straight-use-package 'evil-collection)
       (use-package evil-collection
 	:after evil
 	:config
@@ -183,6 +184,7 @@
 *** Capturing
 **** helm-org for fuzzy-find capture
      #+begin_src emacs-lisp
+       (straight-use-package 'helm-org)
        (use-package helm-org
 	   :init
 	   (setq org-capture-templates
@@ -218,6 +220,7 @@
 **** general
 ***** Org Most Recently Clocked Items 
       #+begin_src emacs-lisp
+	(straight-use-package 'org-mru-clock)
 	(use-package org-mru-clock
 	  :general
 	  :after org
@@ -286,6 +289,7 @@
 *** External
 **** Archival of external items with org-download
      #+begin_src emacs-lisp
+       (straight-use-package 'org-download)
        (use-package org-download
 	 :after cl
 	 :config
@@ -301,11 +305,13 @@
      #+end_src
 ** Version Control With Magit
    #+begin_src emacs-lisp
+     (straight-use-package 'evil-magit)
      (use-package evil-magit :after (evil magit))
      (defmacro after-evil (&rest body)
        `(eval-after-load "evil"
 	  (lambda ()
 	    ,@body)))
+     (straight-use-package 'magit)
      (use-package magit
        :defer t
        :commands (magit-toplevel magit-status magit-blame magit-log)
@@ -358,6 +364,7 @@
 ** Visuals
 *** theme
 #+begin_src emacs-lisp
+    (straight-use-package 'solarized-theme)
     (use-package solarized-theme ;; doom-themes
       :if window-system
       :init
@@ -369,6 +376,7 @@
 #+end_src
 *** Org mode
     #+begin_src emacs-lisp
+      (straight-use-package 'org-bullets)
       (use-package org-bullets
 	:init
 	;; (setq org-bullets-bullet-list '("◉" "◎" "✸" "○" "►" "◇"))

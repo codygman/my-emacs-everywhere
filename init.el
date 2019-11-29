@@ -40,4 +40,5 @@
 ;;;;; TBD
 ;;;;; TBD
 ;; TODO make my-emacs-everywhere use literate test that gets tangled
+(straight-use-package 'use-package)
 (org-babel-load-file (format "%s/emacs-config.org" (my-emacs-everywhere-directory)))
