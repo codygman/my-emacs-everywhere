@@ -19,3 +19,4 @@ popd
 home-manager switch
 
 emacs -Q -nw -l load-init-then-run-ert.el --eval "(run-tests-simulating-batch)"
+
