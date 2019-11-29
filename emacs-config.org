@@ -177,6 +177,27 @@
 ** Life Management/Calendaring/Diary with org
 *** org has to be installed in init.el to ensure emacs config tangled with newest org-mode
 *** but the rest of the configuration can be handled here
+*** evil org bindings
+    #+begin_src emacs-lisp
+      (straight-use-package 'evil-org)
+      (use-package evil-org
+	:after org
+	:config
+	(add-hook 'org-mode-hook 'evil-org-mode)
+	(add-hook 'evil-org-mode-hook
+		  (lambda ()
+		    (evil-org-set-key-theme)))
+	(require 'evil-org-agenda)
+	(evil-org-agenda-set-keys)
+	;; not working, see https://github.com/Somelauw/evil-org-mode/issues/61
+	(evil-define-key 'motion evil-org-mode-map
+	  (kbd "i") 'org-agenda-clock-in
+	  (kbd "o") 'org-agenda-clock-out
+	  (kbd "x") 'org-agenda-clock-cancel
+	  (kbd "I") 'org-agenda-diary-entry
+	  (kbd "O") 'delete-other-windows
+	  (kbd "X") 'org-agenda-bulk-action))
+    #+end_src
 *** general org configuration
     #+begin_src emacs-lisp
       (straight-use-package 'org)
