@@ -42,7 +42,7 @@ in
       gnumake
       fd
       ghc
-    ] ++ (if builtins.getEnv "TRAVIS_OS_NAME" != "" then [
+    ] ++ (if builtins.getEnv "TRAVIS_OS_NAME" == "" then [
       feh
       dmenu
       haskellPackages.lens
