@@ -50,6 +50,22 @@
 	      (kill-buffer-and-window)
 	    (kill-buffer))))
     #+end_src
+*** Toggle maximize window
+    #+begin_src emacs-lisp
+      (defun toggle-maximize-buffer () "Maximize buffer"
+	     (interactive)
+	     (if (= 1 (length (window-list)))
+		 (jump-to-register '_)
+	       (progn
+		 (window-configuration-to-register '_)
+		 (delete-other-windows))))
+    #+end_src
+*** Moving around windows
+    #+begin_src emacs-lisp
+      (use-package winum
+	:defer t
+	:init (winum-mode))
+    #+end_src
 ** Bind Keys With General.el
    #+begin_src emacs-lisp
      (straight-use-package 'general)
@@ -111,6 +127,12 @@
 	 "tl" '(toggle-truncate-lines :which-key "truncate lines")
 	 "tw" '(whitespace-mode :which-key "show whitespace")
 	 "u"   '(universal-argument :which-key "universal-argument")
+	 "1" '(winum-select-window-1 :which-key "window 1")
+	 "2" '(winum-select-window-2 :which-key "window 2")
+	 "3" '(winum-select-window-3 :which-key "window 3")
+	 "4" '(winum-select-window-4 :which-key "window 4")
+	 "5" '(winum-select-window-5 :which-key "window 5")
+	 "6" '(winum-select-window-6 :which-key "window 6")
 	 "w-"  '(split-window-below :which-key "split bottom")
 	 "w/"  '(split-window-right :which-key "split right")
 	 "wd"  '(delete-window :which-key "delete window")
