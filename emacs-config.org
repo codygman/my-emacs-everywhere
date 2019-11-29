@@ -176,117 +176,128 @@
     (use-package avy)
     #+end_src
 ** Life Management/Calendaring/Diary with org
-*** org has to be installed in init.el to ensure emacs config tangled with newest org-mode
-*** but the rest of the configuration can be handled here
-*** evil org bindings
-    #+begin_src emacs-lisp
-      (straight-use-package 'evil-org)
-      (use-package evil-org
-	:after org
-	:config
-	(add-hook 'org-mode-hook 'evil-org-mode)
-	(add-hook 'evil-org-mode-hook
-		  (lambda ()
-		    (evil-org-set-key-theme)))
-	(require 'evil-org-agenda)
-	(evil-org-agenda-set-keys)
-	;; not working, see https://github.com/Somelauw/evil-org-mode/issues/61
-	(evil-define-key 'motion evil-org-mode-map
-	  (kbd "i") 'org-agenda-clock-in
-	  (kbd "o") 'org-agenda-clock-out
-	  (kbd "x") 'org-agenda-clock-cancel
-	  (kbd "I") 'org-agenda-diary-entry
-	  (kbd "O") 'delete-other-windows
-	  (kbd "X") 'org-agenda-bulk-action))
-    #+end_src
-*** helm-org for fuzzy-find capture
-    #+begin_src emacs-lisp
-      (use-package helm-org
-	  :init
-	  (setq org-capture-templates
-		'(
-		  ("t" "Todo" entry (file+headline "~/bsab/misc.org" "Misc")
-		   "* TODO %?  :refile:
-	:PROPERTIES:
-	:WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
-	:CREATED: %U
-	:END:"
-		   :prepend t
-		   :clock-in t
-		   :clock-resume t
-		   )
-		  ("T" "Todo (today)" entry (file+headline "~/bsab/misc.org" "Misc")
-		   "* TODO %<%Y-%m-%d> %?  :refile:
-	:PROPERTIES:
-	:WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
-	:CREATED: %U
-	:END:"
-		   :prepend t
-		   :clock-in t
-		   :clock-resume t
-		   )
-		  ))
-	  :after (helm org))
-    #+end_src
-*** general org configuration
-    #+begin_src emacs-lisp
-      (straight-use-package 'org)
-      (use-package org
-	:straight org-plus-contrib
-	:config
-	;; org-agenda-files are set in ~/personal.el
-	)
-    #+end_src
-*** Navigation Between Org Headings
-**** Org Most Recently Clocked Items 
+*** Install details
+**** org has to be installed in init.el to ensure emacs config tangled with newest org-mode
+**** but the rest of the configuration can be handled below
+*** Capturing
+**** helm-org for fuzzy-find capture
      #+begin_src emacs-lisp
-       (use-package org-mru-clock
-	 :general
+       (use-package helm-org
+	   :init
+	   (setq org-capture-templates
+		 '(
+		   ("t" "Todo" entry (file+headline "~/bsab/misc.org" "Misc")
+		    "* TODO %?  :refile:
+	 :PROPERTIES:
+	 :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
+	 :CREATED: %U
+	 :END:"
+		    :prepend t
+		    :clock-in t
+		    :clock-resume t
+		    )
+		   ("T" "Todo (today)" entry (file+headline "~/bsab/misc.org" "Misc")
+		    "* TODO %<%Y-%m-%d> %?  :refile:
+	 :PROPERTIES:
+	 :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
+	 :CREATED: %U
+	 :END:"
+		    :prepend t
+		    :clock-in t
+		    :clock-resume t
+		    )
+		   ))
+	   :after (helm org))
+     #+end_src
+**** Initial insert state when capturing
+     #+begin_src emacs-lisp
+       (add-hook 'org-capture-mode-hook 'evil-insert-state)
+     #+end_src
+*** Navigation In Org
+**** general
+***** Org Most Recently Clocked Items 
+      #+begin_src emacs-lisp
+	(use-package org-mru-clock
+	  :general
+	  :after org
+	  :config
+	  (setq org-mru-clock-how-many 100
+		org-mru-clock-keep-formatting t
+		org-mru-clock-completing-read #'helm-comp-read))
+      #+end_src
+**** evil org bindings
+     #+begin_src emacs-lisp
+       (straight-use-package 'evil-org)
+       (use-package evil-org
 	 :after org
 	 :config
-	 (setq org-mru-clock-how-many 100
-	       org-mru-clock-keep-formatting t
-	       org-mru-clock-completing-read #'helm-comp-read))
+	 (add-hook 'org-mode-hook 'evil-org-mode)
+	 (add-hook 'evil-org-mode-hook
+		   (lambda ()
+		     (evil-org-set-key-theme)))
+	 (require 'evil-org-agenda)
+	 (evil-org-agenda-set-keys)
+	 ;; not working, see https://github.com/Somelauw/evil-org-mode/issues/61
+	 (evil-define-key 'motion evil-org-mode-map
+	   (kbd "i") 'org-agenda-clock-in
+	   (kbd "o") 'org-agenda-clock-out
+	   (kbd "x") 'org-agenda-clock-cancel
+	   (kbd "I") 'org-agenda-diary-entry
+	   (kbd "O") 'delete-other-windows
+	   (kbd "X") 'org-agenda-bulk-action))
      #+end_src
-*** Archival of external items with org-download
-    #+begin_src emacs-lisp
-      (use-package org-download
-	:after cl
-	:config
-	(setq org-image-actual-width nil) ;; think necessary for 500 to take effect
-	(setq org-download-image-org-width 400)
-	(setq org-download-annotate-function 'ignore)
-	(setq org-download-annotate-function (lambda (_link) ""))
+**** org agenda
+*** Misc
+**** Org agenda
+***** org agenda configuration
+      #+begin_src emacs-lisp
+	(use-package org-agenda
+	  :after general
+	  :straight org-plus-contrib
+	  :init
+	  (defun my-day-org-agenda ()
+	    (interactive)
+	    (let ((org-agenda-span 'day))
+	      (org-agenda nil "a")
+	      (progn (switch-to-buffer "*Org Agenda*") (delete-other-windows))
+	      ))
+	  :general
+	  (my-leader-def
+	    :states '(normal)
+	    :prefix "SPC"
+	    :keymaps 'override
+	    :non-normal-prefix "M-SPC"
+	    "od" '(my-day-org-agenda :which-key "Todays Agenda"))
+	  :config
+	  (setq org-agenda-bulk-custom-functions
+		`((?D (lambda () (call-interactively 'org-agenda-date-later)))
+		  ,@org-agenda-bulk-custom-functions)))
+      #+end_src
+**** general org configuration
+     #+begin_src emacs-lisp
+       (straight-use-package 'org)
+       (use-package org
+	 :straight org-plus-contrib
+	 :config
+	 ;; org-agenda-files are set in ~/personal.el
+	 )
+     #+end_src
+*** External
+**** Archival of external items with org-download
+     #+begin_src emacs-lisp
+       (use-package org-download
+	 :after cl
+	 :config
+	 (setq org-image-actual-width nil) ;; think necessary for 500 to take effect
+	 (setq org-download-image-org-width 400)
+	 (setq org-download-annotate-function 'ignore)
+	 (setq org-download-annotate-function (lambda (_link) ""))
 
-	(setq org-download-screenshot-method
-	      (case system-type (gnu/linux "import %s") (darwin "screencapture -i %s")))
-	(setq-default org-download-image-dir "~/org/images/screenshots/")
-	(add-hook 'dired-mode-hook 'org-download-enable))
-    #+end_src
-*** org agenda configuration
-    #+begin_src emacs-lisp
-      (use-package org-agenda
-	:after general
-	:straight org-plus-contrib
-	:init
-	(defun my-day-org-agenda ()
-	  (interactive)
-	  (let ((org-agenda-span 'day))
-	    (org-agenda nil "a")
-	    (progn (switch-to-buffer "*Org Agenda*") (delete-other-windows))
-	    ))
-	:general
-	(my-leader-def
-	  :states '(normal)
-	  :prefix "SPC"
-	  :keymaps 'override
-	  :non-normal-prefix "M-SPC"
-	  "od" '(my-day-org-agenda :which-key "Todays Agenda"))
-	:config
-	(setq org-agenda-bulk-custom-functions
-	      `((?D (lambda () (call-interactively 'org-agenda-date-later)))
-		,@org-agenda-bulk-custom-functions)))
-    #+end_src
+	 (setq org-download-screenshot-method
+	       (case system-type (gnu/linux "import %s") (darwin "screencapture -i %s")))
+	 (setq-default org-download-image-dir "~/org/images/screenshots/")
+	 (add-hook 'dired-mode-hook 'org-download-enable))
+     #+end_src
 ** Version Control With Magit
    #+begin_src emacs-lisp
      (use-package evil-magit :after (evil magit))
