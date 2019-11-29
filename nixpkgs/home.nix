@@ -38,23 +38,24 @@ in
 
   home = {
     packages = with pkgs; [
-      dmenu
-      feh
       ripgrep
       gnumake
       fd
       ghc
+    ] ++ (if builtins.getEnv "TRAVIS_OS_NAME" != "" then [
+      feh
+      dmenu
       haskellPackages.lens
       haskellPackages.pandoc
       haskellPackages.ghcid
       haskellPackages.hlint
-      stack
-      cabal2nix
       haskellPackages.brittany
       haskellPackages.hpack
       haskellPackages.cabal-install
+      stack
       source-code-pro
-    ];
+      cabal2nix
+    ] else []);
   };
 
 
