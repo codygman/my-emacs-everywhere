@@ -2,6 +2,7 @@
 ** Load Work/Personal Specific Code
 *** Load Environmental Variables From .bashrc
     #+begin_src emacs-lisp
+      (straight-use-package 'exec-path-from-shell)
       (use-package exec-path-from-shell
 	:init (setq exec-path-from-shell-variables '("PATH" "MANPATH" "EMACSFOR"))
 	:config
