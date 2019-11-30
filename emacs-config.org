@@ -339,7 +339,11 @@
 
    #+RESULTS:
    : t
-
+** test stuff
+#+begin_src emacs-lisp
+  (straight-use-package 'with-simulated-input)
+  (use-package with-simulated-input)
+#+end_src
 ** Project Navigation: Death to filesystem trees!
 ** Automate The Boring Stuff With Snippets
 ** Layout/Workspace Managment
