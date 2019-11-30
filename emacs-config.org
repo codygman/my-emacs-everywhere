@@ -608,7 +608,8 @@
 :END:
 #+begin_src emacs-lisp
     (use-package dashboard
-      :config
+      :defer t
+          :config
       (setq dashboard-startup-banner nil)
       (defun dashboard-insert-custom (list-size)
         (insert "Custom text"))
@@ -626,7 +627,8 @@
    '(fast-scroll :type git :host github :repo "ahungry/fast-scroll"))
 (use-package fast-scroll
     :ensure nil
-    :config
+    :defer t
+          :config
     (fast-scroll-mode)
     )
 #+end_src
@@ -687,7 +689,8 @@
 *** org-evil
 #+begin_src emacs-lisp
   (use-package org-evil :after (evil org)
-    :config
+    :defer t
+          :config
     (progn
       (add-hook 'org-mode-hook 'org-evil-mode))
 (with-eval-after-load 'evil-maps
@@ -706,7 +709,8 @@
     :after evil
     :init
     (setq evil-collection-outline-bind-tab-p nil)
-    :config
+    :defer t
+          :config
     (evil-collection-init))
 #+end_src
 ** gnuplot
@@ -995,7 +999,8 @@
 
   (use-package org-agenda
       :straight org-plus-contrib
-      :config
+      :defer t
+          :config
       (setq org-agenda-bulk-custom-functions
 	    `((?D (lambda () (call-interactively 'org-agenda-date-later)))
 	      ,@org-agenda-bulk-custom-functions)))
@@ -1754,7 +1759,8 @@
     (use-package orgit
       ;; Automatically copy orgit link to last commit after commit
       :hook (git-commit-post-finish . orgit-store-after-commit)
-      :config
+      :defer t
+          :config
       (defun orgit-store-after-commit ()
         "Store orgit-link for latest commit after commit message editor is finished."
         (let* ((repo (abbreviate-file-name default-directory))
@@ -1775,21 +1781,24 @@
    '(org-wild-notifier :type git :host github :repo "akhramov/org-wild-notifier.el" :branch "fix/25-emacs-lags"))
 
   (use-package async
-    :config
+    :defer t
+          :config
     (autoload 'dired-async-mode "dired-async.el" nil t)
     (dired-async-mode 1)
     )
 
   (use-package org-wild-notifier
     :ensure nil
-    :config
+    :defer t
+          :config
     (org-wild-notifier-mode)
     )
 #+end_src
 *** unsorted org packages
 #+begin_src emacs-lisp
   (use-package org-web-tools
-    :config
+    :defer t
+          :config
     (defun my/org-web-tools-insert-link-for-url (url)
       ;; uses evil-paste-after instead of insert
       (interactive (list (org-web-tools--get-first-url)))
@@ -1801,12 +1810,14 @@
     )
   (use-package org-edna
     :after org
-    :config
+    :defer t
+          :config
     (org-edna-load))
   (use-package org-mru-clock
     :general
     :after org
-    :config
+    :defer t
+          :config
     (setq org-mru-clock-how-many 100
           org-mru-clock-keep-formatting t
           org-mru-clock-completing-read #'helm-comp-read))
@@ -1817,7 +1828,8 @@
     ;; (setq org-bullets-bullet-list '("◉" "◎" "✸" "○" "►" "◇"))
     ;; (setq org-bullets-bullet-list '("◉" "○" "✸" "✿"))
     (setq org-bullets-bullet-list '("◉" "◎" "○" "►" "◇"))
-    :config
+    :defer t
+          :config
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+end_src
 ** helm
@@ -1851,7 +1863,8 @@
     (setq helm-display-function 'helm-display-buffer-in-own-frame
           helm-display-buffer-reuse-frame nil
           helm-use-undecorated-frame-option t)
-    :config
+    :defer t
+          :config
     (use-package helm-flx)
     (use-package helm-fuzzier)
     (use-package helm-rg)
@@ -1951,7 +1964,8 @@
     :defer t
     :init
     (setq projectile-require-project-root nil)
-    :config
+    :defer t
+          :config
     (projectile-mode 1))
 #+end_src
 *** helm-projectile
@@ -1960,7 +1974,8 @@
     :defer t
     :init
     (setq helm-projectile-fuzzy-match t)
-    :config
+    :defer t
+          :config
     (helm-projectile-on))
 #+end_src
 ** tramp
@@ -1983,7 +1998,8 @@
 
 #+begin_src emacs-lisp
   (use-package avy
-    :config
+    :defer t
+          :config
     (avy-setup-default))
 #+end_src
 ** flycheck
@@ -2045,7 +2061,8 @@
   (use-package elisp-demos
     :defer t
     :after helpful
-    :config
+    :defer t
+          :config
     (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
 ** winum
@@ -2069,7 +2086,8 @@
   (use-package magit
     :defer t
     :commands (magit-toplevel magit-status magit-blame magit-log)
-    :config
+    :defer t
+          :config
     (setq magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1)
     (after-evil
      (evil-define-key 'normal magit-log-mode-map
@@ -2155,13 +2173,15 @@ Automatically save your all your files at regular intervals.
 #+begin_src emacs-lisp
   (use-package golden-ratio
     :defer t
-    :config
+    :defer t
+          :config
     (golden-ratio-mode 1))
 #+end_src
 ** helpful
 #+begin_src emacs-lisp
   (use-package helpful
-    :config
+    :defer t
+          :config
     (global-set-key (kbd "C-h f") #'helpful-callable)
     (global-set-key (kbd "C-h v") #'helpful-variable)
     (global-set-key (kbd "C-h k") #'helpful-key)
@@ -2177,7 +2197,8 @@ Automatically save your all your files at regular intervals.
 ** yasnippet
 #+begin_src emacs-lisp
   (use-package yasnippet
-    :config
+    :defer t
+          :config
     (yas-global-mode t)
     (yas-reload-all))
 #+end_src
@@ -2204,7 +2225,8 @@ Automatically save your all your files at regular intervals.
 #+begin_src emacs-lisp
   (use-package sx
     :defer t
-    :config
+    :defer t
+          :config
     (bind-keys :prefix "C-c s"
                :prefix-map my-sx-map
                :prefix-docstring "Global keymap for SX."
