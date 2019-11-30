@@ -297,3 +297,13 @@
     :config
     (exec-path-from-shell-initialize))
 #+end_src
+** Ensure work.el exists and we can load it
+*** why?
+**** lots of work specific snippets, authinfo, etc needs to be loaded for emacs for work tot be loaded as we expect it
+*** try loading it
+#+begin_src emacs-lisp
+  (pcase (getenv "EMACSFOR")
+    ("WORK" (load (expand-file-name "work.el" "~")))
+    ("PERSONAL" (load (expand-file-name "personal.el" "~")))
+    (_ (error "Please set the EMACSFOR variable to WORK or PERSONAL")))
+#+end_src
