@@ -5,4 +5,7 @@ os:
 cache:
   directories:
   - $HOME/.emacs.d/straight
-script: bash test.sh
+script:
+  - sh install.sh
+  - sh test.sh
+  - cat test-results.txt
