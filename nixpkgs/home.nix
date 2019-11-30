@@ -25,7 +25,7 @@ in
       enable = true;
     };
     jq.enable = true;
-    vim.enable = true;
+    vim = (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true};
     git = {
       enable = true;
       userName = "codygman";
