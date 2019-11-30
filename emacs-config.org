@@ -289,3 +289,22 @@
                (setq org-mode-line-string nil)
                (force-mode-line-update)))
 #+end_src
+* Ensure critical environment specific files exist
+** load bash profile (most for env vars)
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :init (setq exec-path-from-shell-variables '("PATH" "MANPATH" "EMACSFOR"))
+    :config
+    (exec-path-from-shell-initialize))
+#+end_src
+** Ensure work.el exists and we can load it
+*** why?
+**** lots of work specific snippets, authinfo, etc needs to be loaded for emacs for work tot be loaded as we expect it
+*** try loading it
+#+begin_src emacs-lisp
+  (pcase (getenv "EMACSFOR")
+    ("WORK" (load (expand-file-name "work.el" "~")))
+    ("PERSONAL" (load (expand-file-name "personal.el" "~")))
+    (_ (error "Please set the EMACSFOR variable to WORK or PERSONAL")))
+#+end_src
+** ensure personal.el and personal org files are added above
