@@ -308,3 +308,2197 @@
     (_ (error "Please set the EMACSFOR variable to WORK or PERSONAL")))
 #+end_src
 ** ensure personal.el and personal org files are added above
+* Setup keybindings with general
+#+begin_src emacs-lisp
+  (use-package general
+    :init
+    (defun my-day-org-agenda ()
+      (interactive)
+      (let ((org-agenda-span 'day))
+        (org-agenda nil "a")
+        (progn (switch-to-buffer "*Org Agenda*") (delete-other-windows))
+        ))
+    :config
+    (general-evil-setup)
+    (general-imap "j"
+      (general-key-dispatch 'self-insert-command
+        :timeout 0.25
+        ;; TODO make this work so jf writes the file when I enter normal mode
+        ;; "j" '(my-write-then-normal-state)
+        "f" 'evil-normal-state))
+
+    ;; TODO review if this is good or not
+    (general-nmap "/" 'evil-search-forward) ;; TODO can we modify this so that the search is done by rg?
+    ;; TODO upgrade to helm-rg-this-file
+
+    ;; TODO do we just want to use alphappas https://github.com/alphapapa/helm-swish/blob/master/helm-swish.el ???
+    ;; https://github.com/cosmicexplorer/helm-rg/issues/12
+    ;; (general-nmap "/" 'helm-ag-this-file) ;; doesn't have swoop like functionality
+
+    (general-unbind 'org-agenda-mode-map
+      "SPC")
+
+    ;; (general-create-definer my-leader-def2
+    ;;     :prefix "SPC")
+
+    (general-create-definer my-leader-def
+      :prefix "C")
+
+    ;; (my-leader-def
+    ;;   :states '(normal visual emacs motion)
+    ;;   :prefix "SPC"
+    ;;   :keymaps 'override
+    ;;   "u"   '(evil-scroll-up :which-key "evil scroll up"))
+
+
+    (my-leader-def
+      :states '(normal visual emacs motion)
+      :prefix "SPC"
+      :keymaps 'override
+      :non-normal-prefix "M-SPC"
+      "u"   '(universal-argument :which-key "universal-argument")
+      "pg"   '(helm-projectile-ag :which-key "ag project")
+      "<tab>" '(switch-to-prev-buffer :which-key "previous buffer")
+      "SPC" '(helm-M-x :which-key "M-x")
+      "tf" '(spacemacs/toggle-frame-fullscreen-non-native :which-key "Full Screen")
+      "pf"  '(helm-projectile-find-dwim :which-key "find files")
+      "jc"  '(avy-goto-char :which-key "Jump To Char")
+      "jj"  '(avy-goto-char-timer :which-key "Jump To Char")
+      "ji"  '(avy-goto-char-in-line :which-key "Jump To Char In Line")
+      "jl"  '(avy-goto-line :which-key "Jump To line")
+      "pp"  '(helm-projectile-switch-project :which-key "switch project")
+      "pb"  '(helm-projectile-switch-to-buffer :which-key "switch buffer")
+      "pr"  '(helm-show-kill-ring :which-key "show kill ring")
+      ;; applications (TODO maybe consider making =ao= variants of org again here)
+      "ad"  '(dired :which-key "open dired")
+      "iu" '(my/org-web-tools-insert-link-for-url :which-key "insert link for url in clipboard")
+      "oo"  '(org-agenda :which-key "open org agenda") ;; previously aoo
+      "od"  '(my-day-org-agenda :which-key "open todays org agenda")
+      "oa"  '(org-agenda-list :which-key "open org agenda list") ;; previously aoa
+      "ol"  '(org-store-link :which-key "store org link") ;; previously aol
+      "os"  '(org-mru-clock-in :which-key "clock into recently clocked task") ;; previously aorr
+      "or"  '(helm-org-rifle :which-key "helm org rifle") ;; previously aorr
+      ;; "oh"  '(org-recent-headings :which-key "org recent headings")
+      ;; rifle current buffer
+      ;; rifle directories
+      ;; rifle files
+
+      ;; c
+      "cc"  '(helm-org-capture-templates :which-key "org-capture")
+
+      ;; E (ediff)
+      "Eb"  '(ediff-buffers :which-key "ediff buffers")
+      ;; magit
+      "gb" '(magit-blame :which-key "magit blame")
+      "gf" '(magit-find-file :which-key "magit find-file")
+      "gg" '(helm-do-grep-ag :which-key "helm ag (rg)")
+      "gl" '(magit-log-buffer-file :which-key "magit log file")
+      "gs" '(magit-status :which-key "magit status")
+      "gt" '(magit-log-trace-definition :which-key "magit trace definition")
+      "hg" '(helm-mark-ring :which-mode "helm mark ring (where was I?)")
+      "hr" '(helm-resume :which-mode "helm resume")
+      ;; help
+      "hdm" '(describe-mode :which-mode "describe mode")
+      ;; TODO might need to move these into helpful use-package :config
+      "hdk" '(helpful-key :which-key "describe key")
+      "hdv" '(helpful-variable :which-key "describe variable")
+      "hdf" '(helpful-callable :which-key "describe function")
+      "hdd" '(helm-apropos :which-key "apropos at point")
+      ;; Buffers
+      "bb"  '(helm-mini :which-key "buffers list")
+      ;; "bs"  '(my-switch-to-scratch-buffer :which-key "scratch buffer")
+      ;; "bs"  '((switch-to-buffer "*scratch*") :which-key "scratch buffer")
+      "bd"  '(spacemacs/kill-this-buffer :which-key "kill-this-buffer")
+      ;; Search
+      "sS"  '(helm-swoop :which-key "helm-swoop")
+      "ss"  '(spacemacs/helm-swoop-region-or-symbol :which-key "helm-swoop-region-or-symbol")
+      ;; Window
+      ;; TODO install winum (https://github.com/deb0ch/emacs-winum) and use emacs keybindings
+      ;; so I can navigate with SPC N
+
+      ;; TODO whats difference between windmove and evil-windowmove????
+      ;; "wl"  '(windmove-right :which-key "move right")
+      ;; "wm"  '(toggle-maximize-buffer :which-key "maximize buffer")
+      ;; "wd"  '(delete-window :which-key "delete window")
+      ;; "wh"  '(windmove-left :which-key "move left")
+      ;; "wk"  '(windmove-up :which-key "move up")
+      ;; "wj"  '(windmove-down :which-key "move bottom")
+      "wl"  '(evil-window-move-far-right :which-key "move right")
+      "wm"  '(toggle-maximize-buffer :which-key "maximize buffer")
+      "wu"  '(winner-undo :which-key "winner undo")
+      "wr"  '(winner-redo :which-key "winner redo")
+      "wd"  '(delete-window :which-key "delete window")
+      "wh"  '(evil-window-move-far-left :which-key "move left")
+      "wk"  '(evil-window-move-very-top :which-key "move up")
+      "wj"  '(evil-window-move-very-bottom :which-key "move bottom")
+
+      "w/"  '(split-window-right :which-key "split right")
+      "0" '(winum-select-window-0 :which-key "window 0")
+      "1" '(winum-select-window-1 :which-key "window 1")
+      "2" '(winum-select-window-2 :which-key "window 2")
+      "3" '(winum-select-window-3 :which-key "window 3")
+      "4" '(winum-select-window-4 :which-key "window 4")
+      "5" '(winum-select-window-5 :which-key "window 5")
+      "6" '(winum-select-window-6 :which-key "window 6")
+      "7" '(winum-select-window-7 :which-key "window 7")
+      "8" '(winum-select-window-8 :which-key "window 8")
+      "9" '(winum-select-window-8 :which-key "window 9")
+      "w-"  '(split-window-below :which-key "split bottom")
+      "wx"  '(delete-window :which-key "delete window")
+      "l"  '(tab-bar-select-tab :which-key "switch perspective")
+      "qz"  '(delete-frame :which-key "delete frame")
+      "qq"  '(save-buffers-kill-emacs :which-key "quit")
+      ;; NeoTree
+      "ft"  '(neotree-toggle :which-key "toggle neotree")
+      ;; find files
+      "ff"  '(helm-find-files :which-key "find files")
+      ;; Others
+      "at"  '(shell :which-key "open terminal")
+      "ae"  '(eshell :which-key "open eshell")
+      "cl" '(comment-line :which-key "comment line")
+      "fed" '(find-dotfile :which-key "go to init.el")
+      "tl" '(toggle-truncate-lines :which-key "truncate lines")
+      ;; ehh not sure about this but okay
+      "tw" '(whitespace-mode :which-key "show whitespace")
+      ;; global org
+      "ocj"  '(org-clock-goto :which-key "jump to current clock")
+      "ocl"  '(org-clock-in-last :which-key "clock in last task")
+      "o$"   '(my/org-refile-to-archive-datetree :which-key "archive to done.org datetree")
+
+      ;; org refiling (takes top-level because i'll use it lots I think)
+      "r"  '(org-refile :which-key "refile an org task")
+      )
+    (general-define-key
+     "M-x" 'helm-M-x)
+    ;; TODO are these the right modes???
+    (general-evil-define-key '(normal visual) emacs-lisp-mode-map
+      :prefix ","
+      "ef" 'eval-defun :which-key "eval defun"
+      "eb" 'eval-buffer :which-key "eval buffer"
+      "er" 'eval-region :which-key "eval region")
+
+    ;; TODO are these the right modes???
+    (general-evil-define-key '(normal motion override visual) org-babel-map
+      :prefix ","
+      "x" 'emacs-version
+      ;; "bt" 'org-babel-tangle :which-key "bable tangle" ;; that doesn't work
+      "," 'org-ctrl-c-ctrl-c :which-key "execute babel block")
+
+
+    (general-evil-define-key '(normal motion override) org-src-mode-map
+      :prefix ","
+      "," 'org-edit-special ;; doesn't work
+      )
+
+      (general-evil-define-key 'normal org-mode-map
+        "RET" 'org-open-at-point :which-key "org open at point")
+
+      (defun codygman/org-ctrl-c-and-go-to-result ()
+        (org-ctrl-c-ctrl-c)
+        (goto-char (org-babel-where-is-src-block-result)))
+
+      (defun codygman/pad-then-insert-link ()
+        ;; TODO this is too naieve and messes up modifying links (see heading I think I made)
+        (interactive)
+        (evil-insert 1)
+        (insert "  ")
+        (evil-normal-state)
+        (call-interactively 'org-insert-link))
+
+      (use-package org-download
+        :after cl
+        :config
+        (setq org-image-actual-width nil) ;; think necessary for 500 to take effect
+        (setq org-download-image-org-width 400)
+        (setq org-download-annotate-function 'ignore)
+        (setq org-download-annotate-function (lambda (_link) ""))
+
+        (setq org-download-screenshot-method
+              (case system-type (gnu/linux "import %s") (darwin "screencapture -i %s")))
+        (setq-default org-download-image-dir "~/org/images/screenshots/")
+        (add-hook 'dired-mode-hook 'org-download-enable))
+
+      (general-evil-define-key 'normal org-mode-map
+        :prefix ","
+        "ds" 'org-schedule :which-key "schedule"
+        "dd" 'org-deadline :which-key "schedule"
+
+        "ci" 'org-clock-in :which-key "clock in"
+        "co" 'org-clock-out :which-key "clock out"
+        "cc" 'org-clock-cancel :which-key "clock cancel"
+        "tt" 'org-todo :which-key "org todo"
+        ;; "C-c C-c" 'codygman/org-ctrl-c-and-go-to-result :which-key "execute code block and go to result"
+
+        "ts" 'org-download-screenshot :which-key "org download screenshot"
+
+        ;; insert
+        "iB" 'org-insert-structure-template :which-key "insert org block"
+        "ib" 'insert-previous-src-block-below :which-key "insert previous org src block"
+        "tc" 'org-table-create :which-key "org table create"
+        "it" 'air-org-set-tags :which-key "org set tags"
+        "is" 'my-org-insert-subheading :which-key "org insert subheading"
+        "ic" 'yas-insert-snippet :which-key "insert yasnippet code"
+        "iS" 'my-org-insert-subheading-then-normal :which-key "org insert subhead then normal"
+        "il" 'codygman/pad-then-insert-link :which-key "org insert link"
+        "ip" 'org-set-property :which-key "org set property"
+        "ie" 'org-set-effort :which-key "org set effort"
+
+        "sh" 'org-promote-subtree :which-key "promote subtree-left"
+        "sj" 'org-move-subtree-down :which-key "subtree-down"
+        "sk" 'org-move-subtree-up :which-key "subtree-up"
+        "sl" 'org-demote-subtree :which-key "demote subtree-right"
+        "sn" 'org-narrow-to-subtree :which-key "org narrow"
+        "sN" 'widen :which-key "org widen"
+        "sa" '(org-archive-subtree :which-key "org archive")
+        "se" '(org-babel-execute-subtree :which-key "org babel execute subtree ")
+        "sb" 'org-tree-to-indirect-buffer :which-key "org tree to indirect buffer"
+        "sr"  '(org-refile :which-key "org refile")
+        "#" 'org-update-statistics-cookies :which-key "org-update-statistics-cookies")
+
+      (general-evil-define-key '(normal override motion) org-agenda-mode-map
+        "D" 'org-agenda-day-view :which-key "day view"
+        "L" 'org-agenda-log-mode :which-key "org agenda log mode"))
+#+end_src
+* Theme
+:PROPERTIES:
+:ID:       d8dd34aa-e42b-4269-a087-83348b380b26
+:END:
+#+begin_src emacs-lisp
+  ;; (use-package doom-themes
+  ;; :if (not window-system)
+  ;; :config
+  ;; (setq frame-background-mode 'dark)
+  ;; (load-theme 'doom-one t)
+  ;; )
+
+  (use-package solarized-theme ;; doom-themes
+    :defer t
+    :if window-system
+    :init
+    (defun codygman/solarized-theme-modifications (&rest args)
+      (set-cursor-color "#b58900")
+      )
+    (advice-add 'load-theme :after 'codygman/solarized-theme-modifications)
+    ;; variable pitch prettier fonts for org mode, see: https://zzamboni.org/post/beautifying-org-mode-in-emacs/
+    (set-face-attribute 'default nil :family "Source Code Pro" :height 160 :width 'normal)
+    (set-face-attribute 'fixed-pitch nil :family "Source Code Pro" :height 140 :width 'normal)
+    (set-face-attribute 'variable-pitch nil :family "Source Sans Pro" :height 160 :weight 'medium)
+    (set-face-attribute 'org-table nil :inherit 'fixed-pitch) ;; here or org?
+    ;; all org blocks should be fixed-width NOTE: For source-blocks ‘org-src-block-faces’ takes precedence.
+    (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
+    (load-theme 'solarized-dark t)
+    :config
+    (defun set-buffer-variable-pitch()
+      (interactive)
+      (variable-pitch-mode t)
+      (setq line-spacing 3)
+      )
+    :hook ((eww-mode . set-buffer-variable-pitch) ;; not sure this one works
+           (org-mode . set-buffer-variable-pitch)
+           (Info-mode . set-buffer-variable-pitch)
+           (markdown-mode . set-buffer-variable-pitch)
+           )
+    )
+#+end_src
+* Package install and configuration
+** dashboard
+:PROPERTIES:
+:ID:       e6559479-4ac3-4ac0-87d5-ffbf9e826bc0
+:END:
+#+begin_src emacs-lisp
+    (use-package dashboard
+      :config
+      (setq dashboard-startup-banner nil)
+      (defun dashboard-insert-custom (list-size)
+        (insert "Custom text"))
+      (setq dashboard-items '())
+      (add-to-list 'dashboard-item-generators  '(custom . dashboard-insert-custom))
+      (add-to-list 'dashboard-items '(custom) t)
+      (dashboard-setup-startup-hook)
+      ;; elisp is sadly not performant enough for this
+      (remove-hook 'window-size-change-functions 'dashboard-resize-on-hook)
+  )
+#+end_src
+** fast-scroll
+#+begin_src emacs-lisp
+(straight-use-package
+   '(fast-scroll :type git :host github :repo "ahungry/fast-scroll"))
+(use-package fast-scroll
+    :ensure nil
+    :config
+    (fast-scroll-mode)
+    )
+#+end_src
+** dired
+#+begin_src emacs-lisp
+  ;; (use-package dired
+  ;;   :ensure nil
+  ;;   :defer t
+  ;;   :config
+  (eval-after-load 'dired
+    (setq
+     dired-listing-switches "-lath"
+     dired-dwim-target t
+     )
+    )
+#+end_src
+#+begin_src emacs-lisp
+    (defun ora-ediff-files ()
+      (interactive)
+      (let ((files (dired-get-marked-files))
+            (wnd (current-window-configuration)))
+        (if (<= (length files) 2)
+            (let ((file1 (car files))
+                  (file2 (if (cdr files)
+                             (cadr files)
+                           (read-file-name
+                            "file: "
+                            (dired-dwim-target-directory)))))
+              (if (file-newer-than-file-p file1 file2)
+                  (ediff-files file2 file1)
+                (ediff-files file1 file2))
+              (add-hook 'ediff-after-quit-hook-internal
+                        (lambda ()
+                          (setq ediff-after-quit-hook-internal nil)
+                          (set-window-configuration wnd))))
+          (error "no more than 2 files should be marked"))))
+
+    ;; (define-key dired-mode-map "e" 'ora-ediff-files) ;; TODO this doesn't work in evil-collection!
+    ;; TODO should rebind = to make it evil way
+#+end_src
+** evil
+*** install and configure
+#+begin_src emacs-lisp
+  (use-package evil
+    :init
+    (setq evil-want-keybinding nil)
+(when (file-exists-p "/data/data/com.termux/files/usr/bin/termux-info")
+    (message "**NOTE** detected termux... disabling evil C-i jump")
+    (setq evil-want-C-i-jump nil)
+    )
+    (setq evil-want-C-u-scroll t)
+    ;; make * over a symbol look for other instances
+    (setq evil-symbol-word-search t)
+    :config
+    (evil-set-initial-state 'org-agenda-mode 'normal)
+    (evil-mode 1))
+#+end_src
+*** org-evil
+#+begin_src emacs-lisp
+  (use-package org-evil :after (evil org)
+    :config
+    (progn
+      (add-hook 'org-mode-hook 'org-evil-mode))
+(with-eval-after-load 'evil-maps
+  (define-key evil-motion-state-map (kbd "SPC") nil)
+  (define-key evil-motion-state-map (kbd "RET") nil)
+  (define-key evil-motion-state-map (kbd "TAB") nil))
+)
+#+end_src
+*** evil magit
+#+begin_src emacs-lisp
+(use-package evil-magit :after (evil magit))
+#+end_src
+*** evil-collection
+#+begin_src emacs-lisp
+  (use-package evil-collection
+    :after evil
+    :init
+    (setq evil-collection-outline-bind-tab-p nil)
+    :config
+    (evil-collection-init))
+#+end_src
+** gnuplot
+#+begin_src emacs-lisp
+  (use-package gnuplot)
+#+end_src
+** org
+*** org is installed in [[file:init.el::(straight-use-package%20'org-plus-contrib)%20;%20or%20org-plus-contrib%20if%20desired][init.el]]
+**** so that we can use newest org version to tangle config
+**** that will hopefully be faster ;)
+*** install and configure org
+:PROPERTIES:
+:ID:       2b9462d8-1dc7-4bda-a2b3-4bbd4757f437
+:END:
+#+begin_src emacs-lisp
+  (use-package org
+     :straight org-plus-contrib
+    :after 'ob-restclient
+    :init
+    (error "success error!")
+    (setq org-modules '(org-habit org-id org-protocol org-timer)
+	  org-id-link-to-org-use-id 'create-if-interactive)
+    ;; org font setup
+    (custom-set-faces
+     ;; custom-set-faces was added by Custom.
+     ;; If you edit it by hand, you could mess it up, so be careful.
+     ;; Your init file should contain only one such instance.
+     ;; If there is more than one, they won't work right.
+     '(org-level-1 ((t (:inherit variable-pitch :foreground "violet" :height 1.3))))
+     '(org-tag ((t (:weight thin :foreground "#586e75"))))
+     '(org-special-keyword ((t (:weight thin :foreground "#586e75"))))
+     )
+
+    ;; end org font setup
+    (setq org-startup-with-inline-images t)
+    (setq org-hide-emphasis-markers t)
+    ;; not sure any of this works :(
+    (setq org-file-apps '((auto-mode . emacs)
+			  ("\\.ogg\\'" . default)
+			  ("\\.mm\\'" . default)
+			  ("\\.x?html?\\'" . firefox) ;; doesn't work?
+			  ("pdf" . mupdf)
+			  ))
+    ;; makes org tags searches indicate heading hierarchy by indenting with dots
+    (setq org-tags-match-list-sublevels 'indented)
+    (setq org-modules (add-to-list 'org-modules 'org-habit))
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '(
+       (haskell . t)
+       (ledger . t)
+       (gnuplot . t)
+       ;; (dot . t)
+       (js . t)
+       (shell . t)
+       ;; (mongo . t) ;; TODO put mongo back
+       ;; (restclient . t)
+       (sqlite . t)
+       (sql . t)))
+
+    (with-eval-after-load 'evil
+      (defun my-org-insert-subheading (arg)
+	"Insert a new subheading and demote it.
+			  Works for outline headings and for plain lists alike."
+	(interactive "P")
+	(evil-end-of-line) ;; go to end of line first
+	(evil-append-line 1)
+	(insert " ")
+	(org-insert-subheading 1))
+      )
+    (defun my/org-capture-place-entry ()
+      "Place the template as a new Org entry."
+      (let ((template (org-capture-get :template))
+	    (reversed? (org-capture-get :prepend))
+	    (exact-position (org-capture-get :exact-position))
+	    (insert-here? (org-capture-get :insert-here))
+	    (level 1))
+	(org-capture-verify-tree template)
+	(when exact-position (goto-char exact-position))
+	(cond
+	 ;; Force insertion at point.
+	 ((org-capture-get :insert-here) nil)
+	 ;; Insert as a child of the current entry.
+	 ((org-capture-get :target-entry-p)
+	  (setq level (org-get-valid-level
+		       (if (org-at-heading-p) (org-outline-level) 1)
+		       1))
+	  (if reversed? (outline-next-heading) (org-end-of-subtree t t)))
+	 ;; Insert as a top-level entry at the beginning of the file.
+	 (reversed?
+	  (goto-char (point-min))
+	  (unless (org-at-heading-p) (outline-next-heading)))
+	 ;; Otherwise, insert as a top-level entry at the end of the file.
+	 (t (goto-char (point-max))))
+	(let ((origin (point)))
+	  (unless (bolp) (insert "\n"))
+	  (org-capture-empty-lines-before)
+	  (let ((beg (point)))
+	    (save-restriction
+	      (when insert-here? (narrow-to-region beg beg))
+	      (org-paste-subtree level template 'for-yank))
+	    (org-capture-position-for-last-stored beg)
+	    (let ((end (point)))
+	      (org-capture-empty-lines-after)
+	      (unless (org-at-heading-p) (outline-next-heading))
+	      (org-capture-mark-kill-region origin (point))
+	      (if (org-capture-get :clock-in) (insert "\n"))
+	      (org-capture-narrow beg end)
+	      (when (or (search-backward "%?" beg t)
+			(search-forward "%?" end t))
+		(replace-match "")))))))
+    ;; remove trailing whitespace after clocking in
+    (defun my/org-capture (&optional goto keys)
+      "Capture something.
+  \\<org-capture-mode-map>
+  This will let you select a template from `org-capture-templates', and
+  then file the newly captured information.  The text is immediately
+  inserted at the target location, and an indirect buffer is shown where
+  you can edit it.  Pressing `\\[org-capture-finalize]' brings you back to the \
+  previous
+  state of Emacs, so that you can continue your work.
+
+  When called interactively with a `\\[universal-argument]' prefix argument \
+  GOTO, don't
+  capture anything, just go to the file/headline where the selected
+  template stores its notes.
+
+  With a `\\[universal-argument] \\[universal-argument]' prefix argument, go to \
+  the last note stored.
+
+  When called with a `C-0' (zero) prefix, insert a template at point.
+
+  When called with a `C-1' (one) prefix, force prompting for a date when
+  a datetree entry is made.
+
+  ELisp programs can set KEYS to a string associated with a template
+  in `org-capture-templates'.  In this case, interactive selection
+  will be bypassed.
+
+  If `org-capture-use-agenda-date' is non-nil, capturing from the
+  agenda will use the date at point as the default date.  Then, a
+  `C-1' prefix will tell the capture process to use the HH:MM time
+  of the day at point (if any) or the current HH:MM time."
+      (interactive "P")
+      (when (and org-capture-use-agenda-date
+		 (eq major-mode 'org-agenda-mode))
+	(setq org-overriding-default-time
+	      (org-get-cursor-date (equal goto 1))))
+      (cond
+       ((equal goto '(4)) (org-capture-goto-target))
+       ((equal goto '(16)) (org-capture-goto-last-stored))
+       (t
+	(let* ((orig-buf (current-buffer))
+	       (annotation (if (and (boundp 'org-capture-link-is-already-stored)
+				    org-capture-link-is-already-stored)
+			       (plist-get org-store-link-plist :annotation)
+			     (ignore-errors (org-store-link nil))))
+	       (entry (or org-capture-entry (org-capture-select-template keys)))
+	       initial)
+	  (setq initial (or org-capture-initial
+			    (and (org-region-active-p)
+				 (buffer-substring (point) (mark)))))
+	  (when (stringp initial)
+	    (remove-text-properties 0 (length initial) '(read-only t) initial))
+	  (when (stringp annotation)
+	    (remove-text-properties 0 (length annotation)
+				    '(read-only t) annotation))
+	  (cond
+	   ((equal entry "C")
+	    (customize-variable 'org-capture-templates))
+	   ((equal entry "q")
+	    (user-error "Abort"))
+	   (t
+	    (org-capture-set-plist entry)
+	    (org-capture-get-template)
+	    (org-capture-put :original-buffer orig-buf
+			     :original-file (or (buffer-file-name orig-buf)
+						(and (featurep 'dired)
+						     (car (rassq orig-buf
+								 dired-buffers))))
+			     :original-file-nondirectory
+			     (and (buffer-file-name orig-buf)
+				  (file-name-nondirectory
+				   (buffer-file-name orig-buf)))
+			     :annotation annotation
+			     :initial initial
+			     :return-to-wconf (current-window-configuration)
+			     :default-time (or org-overriding-default-time
+					       (org-current-time)))
+	    (org-capture-set-target-location (and (equal goto 0) 'here))
+	    (condition-case error
+		(org-capture-put :template (org-capture-fill-template))
+	      ((error quit)
+	       (if (get-buffer "*Capture*") (kill-buffer "*Capture*"))
+	       (error "Capture abort: %s" (error-message-string error))))
+
+	    (setq org-capture-clock-keep (org-capture-get :clock-keep))
+	    (condition-case error
+		(org-capture-place-template
+		 (eq (car (org-capture-get :target)) 'function))
+	      ((error quit)
+	       (when (and (buffer-base-buffer (current-buffer))
+			  (string-prefix-p "CAPTURE-" (buffer-name)))
+		 (kill-buffer (current-buffer)))
+	       (set-window-configuration (org-capture-get :return-to-wconf))
+	       (error "Capture template `%s': %s"
+		      (org-capture-get :key)
+		      (error-message-string error))))
+	    (when (and (derived-mode-p 'org-mode) (org-capture-get :clock-in))
+	      (condition-case nil
+		  (progn
+		    (when (org-clock-is-active)
+		      (org-capture-put :interrupted-clock
+				       (copy-marker org-clock-marker)))
+		    (org-clock-in)
+		    (save-excursion (if (org-capture-get :clock-in)
+					(progn (goto-char (point-max)) (join-line))))
+		    (setq-local org-capture-clock-was-started t))
+		(error "Could not start the clock in this capture buffer")))
+	    (when (org-capture-get :immediate-finish)
+	      (org-capture-finalize))))))))
+
+    (advice-add 'org-capture-place-entry :override #'my/org-capture-place-entry)
+    (advice-add 'org-capture :override #'my/org-capture)
+
+    (defun my/clock-in-when-status-in-progress ()
+      (when (and (string= org-state "IN-PROGRESS")
+		 (not (string= org-last-state "IN-PROGRESS"))) (org-clock-in)))
+
+    (add-hook 'org-after-todo-state-change-hook
+	      'my/clock-in-when-status-in-progress)
+
+    (defun codygman/org-heading-clocked-in-p ()
+      (if (org-clocking-p)
+	  (save-excursion
+	    (org-back-to-heading t)
+	    (and (or (equal (marker-buffer org-clock-hd-marker)
+			    (current-buffer))
+		     ;; TODO what about indirect buffers?
+		     (string-match-p (format "%s" (marker-buffer org-clock-hd-marker))
+				     (format "CAPTURE-%s" (current-buffer))))
+		 (= (marker-position org-clock-hd-marker)
+		    (point))
+		 (equal (substring-no-properties org-clock-current-task) (nth 4 (org-heading-components)))))))
+
+    (defconst clock-out-states '("TODO" "DELEGATED" "SOMEDAY" "WAITING" "DONE" "CANCELLED"))
+    (defun my/maybe-clock-out-when-status-moved ()
+      (when  (and (and (member org-state clock-out-states)
+		       (not (member org-last-state clock-out-states)))
+		  (codygman/org-heading-clocked-in-p)) (org-clock-out)))
+
+    (add-hook 'org-after-todo-state-change-hook
+	      'my/maybe-clock-out-when-status-moved)
+
+    (defun my/maybe-change-status-in-progress-when-clocking-in ()
+      (let ((todo-state
+	     (save-excursion
+	       (org-back-to-heading t)
+	       (org-entry-get nil "TODO")
+	       )))
+	(when (not (string= todo-state "IN-PROGRESS"))
+	  (org-todo "IN-PROGRESS"))))
+
+    (add-hook 'org-clock-in-hook
+	      'my/maybe-change-status-in-progress-when-clocking-in)
+
+    (defun maybe-move-past-in-progress-status (&rest args)
+      (ignore-errors (when (bound-and-true-p org-capture-mode)
+		       (re-search-forward "PROGRESS")
+		       (re-search-forward " "))))
+
+    (advice-add 'org-clock-in :after #'maybe-move-past-in-progress-status)
+
+    (defun my/maybe-change-status-todo-clocking-out ()
+      (let ((todo-state
+	     (save-excursion
+	       (org-back-to-heading t)
+	       (org-entry-get nil "TODO")
+	       )))
+	(when (not (member todo-state clock-out-states))
+	  (org-todo "TODO"))))
+
+    (add-hook 'org-clock-out-hook
+	      'my/maybe-change-status-todo-clocking-out)
+    )
+
+  (use-package org-agenda
+      :straight org-plus-contrib
+      :config
+      (setq org-agenda-bulk-custom-functions
+	    `((?D (lambda () (call-interactively 'org-agenda-date-later)))
+	      ,@org-agenda-bulk-custom-functions)))
+#+end_src
+*** my custom org functions
+#+begin_src emacs-lisp
+  (defun my/org-agenda-mark-habits ()
+    "Mark all habits in current agenda for graph display.
+
+         This function enforces `my/org-habit-show-graphs-everywhere' by
+         marking all habits in the current agenda as such.  When run just
+         before `org-agenda-finalize' (such as by advice; unfortunately,
+         `org-agenda-finalize-hook' is run too late), this has the effect
+         of displaying consistency graphs for these habits.
+
+         When `my/org-habit-show-graphs-everywhere' is nil, this function
+         has no effect.
+
+  https://emacs.stackexchange.com/a/17328/16972
+  "
+    (when (and my/org-habit-show-graphs-everywhere
+               (not (get-text-property (point) 'org-series)))
+      (let ((cursor (point))
+            item data)
+        (while (setq cursor (next-single-property-change cursor 'org-marker))
+          (setq item (get-text-property cursor 'org-marker))
+          (when (and item (org-is-habit-p item))
+            (with-current-buffer (marker-buffer item)
+              (setq data (org-habit-parse-todo item)))
+            (put-text-property cursor
+                               (next-single-property-change cursor 'org-marker)
+                               'org-habit-p data))))))
+
+  (setq my/org-habit-show-graphs-everywhere t)
+  (setq org-habit-show-habits-only-for-today t)
+#+end_src
+*** my org overrides
+#+begin_src emacs-lisp
+    (with-eval-after-load "ob-shell"
+
+      (defun my-pass-it-on-filter (filePath proc str)
+        "Process each line produced by PROC in STR."
+        (interactive)
+        (when (buffer-live-p (process-buffer proc))
+          (with-current-buffer (process-buffer proc)
+            (insert str)
+            (goto-char (point-min))
+            (while (progn (skip-chars-forward "^\n")
+                          (not (eobp)))
+              (ignore-errors
+                (let ((result (delete-and-extract-region (point-min) (point))))
+                  (delete-char 1)
+                  ;; (message (format "writing result '%s' w/newline to %s" result filePath))
+                  (when (not (file-exists-p filePath))
+                    (write-region "" nil filePath))
+                  (write-region (concat result "\n") nil filePath 'append)
+                  result))))))
+
+      (defun get-parent-heading-title ()
+        (ignore-errors
+          (save-excursion
+            (org-evil-motion-up-heading)
+            (org-element-property :title (org-element-at-point)))))
+
+      (defun get-grandparent-heading-title ()
+        (ignore-errors
+          (save-excursion
+            (org-evil-motion-up-heading)
+            (org-evil-motion-up-heading)
+            (org-element-property :title (org-element-at-point)))))
+
+      (defun get-great-grandparent-heading-title ()
+        (ignore-errors
+          (save-excursion
+            (org-evil-motion-up-heading)
+            (org-evil-motion-up-heading)
+            (org-evil-motion-up-heading)
+            (org-element-property :title (org-element-at-point)))))
+
+      (defun cleanup-dir-name (dir)
+        (replace-regexp-in-string " " "-" dir))
+
+      (defun my-create-non-existent-directory ()
+        (let ((parent-directory (file-name-directory buffer-file-name)))
+          (when (not (file-exists-p parent-directory))
+            (make-directory parent-directory t))))
+
+      (defun generate-automatic-log-name ()
+        ;; TODO make this take the parent org element and use its heading text in this log name
+        (let* ((time-with-millis (format-time-string "%H.%M.%S.%3N"))
+               (year-month-day (format-time-string "%Y-%m-%d"))
+               (parent-element-title (get-parent-heading-title))
+               (grandparent-element-title (get-grandparent-heading-title))
+               (great-grandparent-element-title (get-great-grandparent-heading-title))
+               (descriptive-string (if (> 20 (length parent-element-title)) (format "%s_%s" grandparent-element-title parent-element-title) parent-element-title))
+               (descriptive-string-2 (if (> 20 (length descriptive-string)) (format "%s_%s" great-grandparent-element-title descriptive-string) descriptive-string))
+               (descriptive-string-safe (cleanup-dir-name descriptive-string-2))
+               (file-path (format "/Users/codygman/console/%s/%s.%s.%s.log" year-month-day descriptive-string-safe year-month-day time-with-millis))
+               (directory-path (file-name-directory file-path)))
+          ;; create directory if it doesn't exist
+          (when (not (file-exists-p directory-path))
+            (make-directory directory-path t))
+          ;; use log extension since I know those links will open in emacs
+          file-path))
+
+  (defun org-babel-kill-session ()
+        "Kill session for current code block."
+        (interactive)
+        (unless (org-in-src-block-p)
+          (error "You must be in a src-block to run this command"))
+        (save-window-excursion
+          (org-babel-switch-to-session)
+          (kill-buffer)))
+  )
+
+      (defun directory-to-write-progress (params)
+        ;; if params has :log then autogenerate based on date, time, and immediate parent heading text
+        (cond
+         ((assq :autolog params)
+          (message "autolog present, generating automatic log path and populating :file")
+          (generate-automatic-log-name))
+         ((cdr (assq :file params))
+          (message "no autolog just returning :file specified")
+          (cdr (assq :file params)))
+         (t
+          (message "no :file or :autolog returning nil")
+          nil)))
+
+      (defun src-block-in-session-p (&optional name)
+        "Return if src-block is in a session of NAME.
+          NAME may be nil for unnamed sessions."
+        (let* ((info (org-babel-get-src-block-info))
+               (lang (nth 0 info))
+               (body (nth 1 info))
+               (params (nth 2 info))
+               (session (cdr (assoc :session params))))
+
+          (cond
+           ;; unnamed session, both name and session are nil
+           ((and (null session)
+                 (null name))
+            t)
+           ;; Matching name and session
+           ((and
+             (stringp name)
+             (stringp session)
+             (string= name session))
+            t)
+           ;; no match
+           (t nil))))
+
+      (defun org-babel-kill-session ()
+        "Kill session for current code block."
+        (interactive)
+        (unless (org-in-src-block-p)
+          (error "You must be in a src-block to run this command"))
+        (save-window-excursion
+          (org-babel-switch-to-session)
+          (kill-buffer)))
+
+
+      (defun org-babel-restart-session-to-point (&optional arg)
+        "Restart session up to the src-block in the current point.
+          Goes to beginning of buffer and executes each code block with
+          `org-babel-execute-src-block' that has the same language and
+          session as the current block. ARG has same meaning as in
+          `org-babel-execute-src-block'."
+        (interactive "P")
+        (unless (org-in-src-block-p)
+          (error "You must be in a src-block to run this command"))
+        (let* ((current-point (point-marker))
+               (info (org-babel-get-src-block-info))
+               (lang (nth 0 info))
+               (params (nth 2 info))
+               (session (cdr (assoc :session params))))
+          (save-excursion
+            (goto-char (point-min))
+            (while (re-search-forward org-babel-src-block-regexp nil t)
+              ;; goto start of block
+              (goto-char (match-beginning 0))
+              (let* ((this-info (org-babel-get-src-block-info))
+                     (this-lang (nth 0 this-info))
+                     (this-params (nth 2 this-info))
+                     (this-session (cdr (assoc :session this-params))))
+                (when
+                    (and
+                     (< (point) (marker-position current-point))
+                     (string= lang this-lang)
+                     (src-block-in-session-p session))
+                  (org-babel-execute-src-block arg)))
+              ;; move forward so we can find the next block
+              (forward-line)))))
+
+      (defun org-babel-sh-evaluate (session body &optional params stdin cmdline)
+        "Pass BODY to the Shell process in BUFFER.
+          If RESULT-TYPE equals `output' then return a list of the outputs
+          of the statements in BODY, if RESULT-TYPE equals `value' then
+          return the value of the last statement in BODY."
+        (let* ((shebang (cdr (assq :shebang params)))
+               (results
+                (cond
+                 ((or stdin cmdline)	       ; external shell script w/STDIN
+                  ;; (map-put params :file file-to-write-progress) ;; TODO htis should happen in one place
+                  (let ((script-file (org-babel-temp-file "sh-script-"))
+                        (stdin-file (org-babel-temp-file "sh-stdin-"))
+                        (padline (not (string= "no" (cdr (assq :padline params))))))
+                    (with-temp-file script-file
+                      (when shebang (insert shebang "\n"))
+                      (when padline (insert "\n"))
+                      (insert body))
+                    (set-file-modes script-file #o755)
+                    (with-temp-file stdin-file (insert (or stdin "")))
+                    (with-temp-buffer
+                      (call-process-shell-command
+                       (concat (if shebang script-file
+                                 (format "%s %s" shell-file-name script-file))
+                               (and cmdline (concat " " cmdline)))
+                       stdin-file
+                       (current-buffer))
+                      (buffer-string))))
+                 (session			; session evaluation
+                  ;; (map-put params :file file-to-write-progress) ;; TODO htis should happen in one place
+                  (mapconcat
+                   #'org-babel-sh-strip-weird-long-prompt
+                   (mapcar
+                    #'org-trim
+                    (butlast
+                     (org-babel-comint-with-output
+                         (session org-babel-sh-eoe-output t body)
+                       (dolist (line (append (split-string (org-trim body) "\n")
+                                             (list org-babel-sh-eoe-indicator)))
+                         (insert line)
+                         (comint-send-input nil t)
+                         (while (save-excursion
+                                  (goto-char comint-last-input-end)
+                                  (not (re-search-forward
+                                        comint-prompt-regexp nil t)))
+                           (accept-process-output
+                            (get-buffer-process (current-buffer))))))
+                     2))
+                   "\n"))
+                 ;; External shell script, with or without a predefined
+                 ;; shebang.
+                 ((org-string-nw-p shebang)
+                  ;; (map-put params :file file-to-write-progress) ;; TODO htis should happen in one place
+
+                  (let ((script-file (org-babel-temp-file "sh-script-"))
+                        (padline (not (equal "no" (cdr (assq :padline params))))))
+                    (with-temp-file script-file
+                      (insert shebang "\n")
+                      (when padline (insert "\n"))
+                      (insert body))
+                    (set-file-modes script-file #o755)
+                    (org-babel-eval script-file "")))
+                 (t
+                  (when (cdr (assq :file params))
+                    (message "file was found making process")
+                    (make-process :name (format "proc-%s-%s" (file-name-nondirectory (cdr (assq :file params))) (md5 body))
+                                  :buffer (format "buf-%s-%s" (file-name-nondirectory (cdr (assq :file params))) (md5 body))
+                                  :command (list "sh" "-c" (org-trim body))
+                                  :connection-type 'pipe
+                                  :filter (apply-partially 'my-pass-it-on-filter (cdr (assq :file params)))))
+                  (unless (cdr (assq :file params))
+                    (org-babel-eval shell-file-name (org-trim body)))))))
+          (unless (cdr (assq :file params)) ;; don't do this if :file exists
+            (when results
+              (let ((result-params (cdr (assq :result-params params))))
+                (org-babel-result-cond result-params
+                  results
+                  (let ((tmp-file (org-babel-temp-file "sh-")))
+                    (with-temp-file tmp-file (insert results))
+                    (org-babel-import-elisp-from-file tmp-file))))))))
+
+      (defun org-babel-execute:shell (body params)
+        "Execute a block of Shell commands with Babel.
+          This function is called by `org-babel-execute-src-block'."
+        (when (assq :autolog params)
+          (map-put params :file (generate-automatic-log-name)))
+        (let* ((session (org-babel-sh-initiate-session
+                         (cdr (assq :session params))))
+               (stdin (let ((stdin (cdr (assq :stdin params))))
+                        (when stdin (org-babel-sh-var-to-string
+                                     (org-babel-ref-resolve stdin)))))
+               (cmdline (cdr (assq :cmdline params)))
+               (full-body (org-babel-expand-body:generic
+                           body params (org-babel-variable-assignments:shell params))))
+          (org-babel-reassemble-table
+           (org-babel-sh-evaluate session full-body params stdin cmdline)
+           (org-babel-pick-name
+            (cdr (assq :colname-names params)) (cdr (assq :colnames params)))
+           (org-babel-pick-name
+            (cdr (assq :rowname-names params)) (cdr (assq :rownames params))))))
+
+
+    (with-eval-after-load 'org
+
+      ;; (setq org-clock-persist-file "~/org/org-clock-save.el")
+      (setq org-clock-history-length 25)
+      (setq org-image-actual-width '(500))
+      (setq org-cycle-separator-lines 1)
+      (setq org-reverse-note-order t)
+
+      (setq org-use-fast-tag-selection nil)
+      (setq org-startup-align-all-tables t)
+      (setq org-startup-indented t)
+      ;; org-agenda-files are set in ~/personal.el
+      ;; (setq org-modules (add-to-list 'org-modules 'org-habit))
+      (add-to-list 'org-modules 'org-habit)
+      (add-to-list 'org-modules 'org-tempo)
+
+      (setq org-log-done t)
+      (setq org-habit-graph-column 100)
+      (setq org-html-validation-link nil)
+
+      ;; (setq org-use-fast-todo-selection t)
+      ;; use *all tags* in *all agenda files* instead of just that buffers
+      (setq org-complete-tags-always-offer-all-agenda-tags t)
+      (setq org-todo-keywords
+            '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i)" "WAITING(w@/!)" "SOMEDAY(s)" "DELEGATED(x@!)" "|" "DONE(d)" "CANCELLED(c@/!)")))
+
+      (setq org-archive-location "~/org/archive/%s::datetree/* Finished Tasks")
+
+          ;;;;;; Fix Helm org tag completion
+      ;; From Anders Johansson <https://groups.google.com/d/msg/emacs-helm/tA6cn6TUdRY/G1S3TIdzBwAJ>
+
+      ;; This works great!  He posted it on 3 Mar 2016, on a thread that was
+      ;; started in Oct 2013.  He also posted this message on 2 Apr 2014,
+      ;; maybe an earlier attempt at a solution:
+      ;; <http://article.gmane.org/gmane.emacs.orgmode/84495> I've just
+      ;; tidied it up a bit and adjusted the prompt.
+
+
+      (with-eval-after-load 'helm
+        ;; (add-to-list 'helm-completing-read-handlers-alist '(org-capture . aj/org-completing-read-tags))
+        ;; (add-to-list 'helm-completing-read-handlers-alist '(org-set-tags . aj/org-completing-read-tags)))
+
+        (defun aj/org-completing-read-tags (prompt coll pred req initial hist def inh)
+          (if (not (string= "Tags: " prompt))
+              ;; Not a tags prompt.  Use normal completion by calling
+              ;; `org-icompleting-read' again without this function in
+              ;; `helm-completing-read-handlers-alist'
+              (let ((helm-completing-read-handlers-alist (rassq-delete-all
+                                                          'aj/org-completing-read-tags
+                                                          helm-completing-read-handlers-alist)))
+                (org-icompleting-read prompt coll pred req initial hist def inh))
+            ;; Tags prompt
+            (let* ((initial (and (stringp initial)
+                                 (not (string= initial ""))
+                                 initial))
+                   (curr (when initial
+                           (org-split-string initial ":")))
+                   (table (org-uniquify
+                           (mapcar 'car org-last-tags-completion-table)))
+                   (table (if curr
+                              ;; Remove current tags from list
+                              (cl-delete-if (lambda (x)
+                                              (member x curr))
+                                            table)
+                            table))
+                   (prompt (if initial
+                               (concat "Tags " initial)
+                             prompt)))
+              (concat initial (mapconcat 'identity
+                                         (nreverse (aj/helm-completing-read-multiple
+                                                    prompt table pred nil nil hist def
+                                                    t "Org tags" "*Helm org tags*" ":"))
+                                         ":")))))
+
+        (defun aj/helm-completing-read-multiple (prompt choices
+                                                        &optional predicate require-match initial-input hist def
+                                                        inherit-input-method name buffer sentinel)
+          "Read multiple items with `helm-completing-read-default-1'. Reading stops
+          when the user enters SENTINEL. By default, SENTINEL is
+          \"*done*\". SENTINEL is disambiguated with clashing completions
+          by appending _ to SENTINEL until it becomes unique. So if there
+          are multiple values that look like SENTINEL, the one with the
+          most _ at the end is the actual sentinel value. See
+          documentation for `ido-completing-read' for details on the
+          other parameters."
+          (let ((sentinel (or sentinel "*done*"))
+                this-choice res done-reading)
+            ;; Uniquify the SENTINEL value
+            (while (cl-find sentinel choices)
+              (setq sentinel (concat sentinel "_")))
+            (setq choices (cons sentinel choices))
+            ;; Read choices
+            (while (not done-reading)
+              (setq this-choice (helm-completing-read-default-1 prompt choices
+                                                                predicate require-match initial-input hist def
+                                                                inherit-input-method name buffer nil t))
+              (if (equal this-choice sentinel)
+                  (setq done-reading t)
+                (setq res (cons this-choice res))
+                (setq prompt (concat prompt this-choice ":"))))
+            res))
+
+        (setq org-confirm-babel-evaluate nil)
+        (setq org-babel-default-header-args:sh
+              '((:prologue . "exec 2>&1") (:epilogue . ":"))) ;; TODO is there a way to add default header args here?)
+            (setq org-babel-default-header-args:shell
+                  '((:prologue . "exec 2>&1") (:epilogue . ":")))
+            (setq org-babel-default-header-args '((:session . "none")
+                                                  (:results . "replace")
+                                                  (:exports . "both")
+                                                  (:cache . "no")
+                                                  (:noweb . "no")
+                                                  (:hlines . "no")
+                                                  (:tangle . "no")))
+
+
+            (setq org-tags-column -50)
+            (add-hook 'org-capture-mode-hook 'evil-insert-state)
+            ;; todo set these back to ~/ after I vet the new vanilla emacs install
+
+
+            ;; resume clocks after closing emacs
+            (setq org-clock-persist t)
+            ;; (org-clock-persistence-insinuate)
+            (setq org-log-into-drawer t)
+            ;; updated to use a depth of 3 in combination with showing the full outlinepath
+            (setq org-refile-targets
+                  '((org-agenda-files . (:maxlevel . 2))))
+            (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+            (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+
+            ;; refile to archive datetree done.org
+            (defun my/org-read-datetree-date (d) "Parse a time string D and return a date to pass to the datetree functions." (let ((dtmp (nthcdr 3 (parse-time-string d)))) (list (cadr dtmp) (car dtmp) (caddr dtmp))))
+
+            (defun my/org-refile-to-archive-datetree (&optional bfn)
+              "Refile an entry to a datetree under an archive."
+              (interactive)
+              (require 'org-datetree)
+              (let* ((bfn (or bfn (find-file-noselect (expand-file-name "~/org/done.org"))))
+                     (datetree-date (my/org-read-datetree-date (org-read-date t nil)))
+                     (tags-to-preserve-on-refile (seq-filter (lambda (tag) (not (string= "refile" tag))) (org-get-tags))))
+                  (message (format "%s" tags-to-preserve-on-refile))
+                  (org-set-tags-to tags-to-preserve-on-refile)
+
+                  (org-refile nil nil (list nil (buffer-file-name bfn) nil
+                                          (with-current-buffer bfn
+                                            (save-excursion
+                                              (org-datetree-find-date-create datetree-date)
+                                              (point))))))
+              (setq this-command 'my/org-refile-to-journal))
+
+            ;; fix helm org tag completionsj
+            (defun air--org-swap-tags (tags)
+              "Replace any tags on the current headline with TAGS.
+
+          The assumption is that TAGS will be a string conforming to Org Mode's
+          tag format specifications, or nil to remove all tags."
+              (let ((old-tags (org-get-tags-string))
+                    (tags (if tags
+                              (concat " " tags)
+                            "")))
+                  (save-excursion
+                  (beginning-of-line)
+                  (re-search-forward
+                   (concat "[ \t]*" (regexp-quote old-tags) "[ \t]*$")
+                   (line-end-position) t)
+                  (replace-match tags)
+                  (org-set-tags tags))))
+
+            (defun air-org-set-tags (tag)
+              "Add TAG if it is not in the list of tags, remove it otherwise.
+
+          TAG is chosen interactively from the global tags completion table."
+              (interactive
+               (list (let ((org-last-tags-completion-table
+                            (if (derived-mode-p 'org-mode)
+                                  (org-uniquify
+                                   (delq nil (append (org-get-buffer-tags)
+                                                   (org-global-tags-completion-table))))
+                              (org-global-tags-completion-table))))
+                       (org-icompleting-read
+                          "Tag: " 'org-tags-completion-function nil nil nil
+                          'org-tags-history))))
+              (let* ((cur-list (org-get-tags nil t))
+                     (new-tags (mapconcat 'identity
+                                          (if (member tag cur-list)
+                                              (delete tag cur-list)
+                                            (append cur-list (list tag)))
+                                          ":"))
+                     (new (if (> (length new-tags) 1) (concat " :" new-tags ":")
+                            nil)))
+                  (air--org-swap-tags new)))
+
+            (setq org-structure-template-alist '(("e" . "src elisp")
+                                                   ("E" . "example")
+                                                   ("h" . "src haskell")
+                                                   ("s" . "src shell :file (generate-automatic-log-name) :results verbatim")
+                                                   ("S" . "src")))
+
+            ;; setup org EasyTemplates
+
+            ;; TODO update EasyTemplates
+            ;; (add-to-list 'org-structure-template-alist
+            ;; 	       '("s" . "shell"))
+            ;; (add-to-list 'org-structure-template-alist
+            ;; 	       '("E" "#+BEGIN_SRC elisp\n ?\n#+END_SRC "))
+            ;; (add-to-list 'org-structure-template-alist
+            ;; 	       '("s" "#+BEGIN_SRC shell :results verbatim\n ?\n#+END_SRC "))
+            ;; (add-to-list 'org-structure-template-alist
+            ;; 	       '("S" "#+BEGIN_SRC ?\n\n#+END_SRC "))
+            ;; (add-to-list 'org-structure-template-alist
+            ;; 	       '("m" "#+BEGIN_SRC mongo\n ?\n#+END_SRC "))
+            ;; (add-to-list 'org-structure-template-alist
+            ;; 	       '("j" "#+BEGIN_SRC json\n ?\n#+END_SRC "))
+            ;; (add-to-list 'org-structure-template-alist
+            ;; 	       '("h" "#+BEGIN_SRC haskell\n ?\n#+END_SRC "))
+            ;; ;; org archiving advise to preserve structure
+            (defadvice org-archive-subtree (around fix-hierarchy activate)
+              (let* ((fix-archive-p (and (not current-prefix-arg)
+                                           (not (use-region-p))))
+                     (afile (org-extract-archive-file (org-get-local-archive-location)))
+                     (buffer (or (find-buffer-visiting afile) (find-file-noselect afile))))
+                  ad-do-it
+                  (when fix-archive-p
+                  (with-current-buffer buffer
+                    (goto-char (point-max))
+                    (while (org-up-heading-safe))
+                    (let* ((olpath (org-entry-get (point) "ARCHIVE_OLPATH"))
+                           (path (and olpath (split-string olpath "/")))
+                           (level 1)
+                           tree-text)
+                      (when olpath
+                          (org-mark-subtree)
+                          (setq tree-text (buffer-substring (region-beginning) (region-end)))
+                          (let (this-command) (org-cut-subtree))
+                          (goto-char (point-min))
+                          (save-restriction
+                          (widen)
+                          (-each path
+                            (lambda (heading)
+                              (if (re-search-forward
+                                   (rx-to-string
+                                    `(: bol (repeat ,level "*") (1+ " ") ,heading)) nil t)
+                                  (org-narrow-to-subtree)
+                                  (goto-char (point-max))
+                                  (unless (looking-at "^")
+                                  (insert "\n"))
+                                  (insert (make-string level ?*)
+                                          " "
+                                          heading
+                                          "\n"))
+                              (cl-incf level)))
+                          (widen)
+                          (org-end-of-subtree t t)
+                          (org-paste-subtree level tree-text))))))))
+
+            ;; org columns
+            ;; %10Time_Spent{:}
+            ;; (setq org-columns-default-format "%25ITEM %TODO %3PRIORITY %10Time_Estimate{:} %CLOCKSUM %CLOCKSUM_T %TAGS")
+            (setq org-columns-default-format "%75ITEM %10Effort{:} %CLOCKSUM %TODO %TAGS")
+
+            ;; org reveal settings
+            (setq Org-Reveal-root "/Users/codygman/Downloads/reveal.js-3.6.0/js/reveal.js")
+            (setq Org-Reveal-title-slide nil)
+
+
+
+            ;; end org stuff)
+
+            (with-eval-after-load 'org-habit
+              (advice-add #'org-agenda-finalize :before #'my/org-agenda-mark-habits))
+
+            (defun air-org-skip-subtree-if-priority (priority)
+              "Skip an agenda subtree if it has a priority of PRIORITY.
+
+              PRIORITY may be one of the characters ?A, ?B, or ?C."
+              (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+                    (pri-value (* 1000 (- org-lowest-priority priority)))
+                    (pri-current (org-get-priority (thing-at-point 'line t))))
+                (if (= pri-value pri-current)
+                    subtree-end
+                  nil)))
+
+            (eval-after-load 'org
+              (setq org-hide-leading-stars t))
+            ;; (with-eval-after-load "ob-restclient"
+            ;;   (defun restclient-http-parse-current-and-do (func &rest args) ;
+            ;;     (save-excursion
+            ;;       (goto-char (restclient-current-min))
+            ;;       (when (re-search-forward restclient-method-url-regexp (point-max) t)
+            ;; 	(let ((method (match-string-no-properties 1))
+            ;; 	      (url (match-string-no-properties 2))
+            ;; 	      (vars (restclient-find-vars-before-point))
+            ;; 	      (headers '()))
+            ;; 	  (forward-line)
+            ;; 	  (while (cond
+            ;; 		  ((and (looking-at restclient-header-regexp) (not (looking-at restclient-empty-line-regexp)))
+            ;; 		   (setq headers (cons (restclient-replace-all-in-header vars (restclient-make-header)) headers)))
+            ;; 		  ((looking-at restclient-use-var-regexp)
+            ;; 		   (setq headers (append headers (restclient-parse-headers (restclient-replace-all-in-string vars (match-string 1)))))))
+            ;; 	    (forward-line))
+            ;; 	  (when (looking-at restclient-empty-line-regexp)
+            ;; 	    (forward-line))
+            ;; 	  (let* ((cmax (restclient-current-max))
+            ;; 		 (entity (restclient-parse-body (buffer-substring (min (point) cmax) cmax) vars))
+            ;; 		 (url (restclient-replace-all-in-string vars (string-trim url))))
+            ;; 	    (apply func method url headers entity args))))))
+            ;;   )
+
+            ;; put creation date in todos
+            ;; (defun my/log-todo-creation-date (&rest ignore)
+            ;;   ;; TODO make this create inactive timestamps
+            ;;   "Log TODO creation time in the property drawer under the key 'CREATED'."
+            ;;   (when (and (org-get-todo-state)
+            ;;              (not (org-entry-get nil "CREATED")))
+            ;;     (org-entry-put nil "CREATED" (format-time-string (cdr org-time-stamp-formats)))))
+
+            ;; (advice-add 'org-insert-todo-heading-respect-content :after #'my/log-todo-creation-date)
+            ;; (advice-add 'org-insert-todo-subheading :after #'my/log-todo-creation-date)
+            ;; (add-hook 'org-evil-heading-
+            ;;          #'(lambda()
+            ;;                (save-excursion
+            ;;                     (org-back-to-heading)
+            ;;                     (my/log-todo-creation-date))))
+            ;; (add-hook 'org-insert-heading-hook ;; not sure if this one works
+            ;;          #'(lambda()
+            ;;                (save-excursion
+            ;;                     (org-back-to-heading)
+            ;;                     (my/log-todo-creation-date))))
+
+            ;; (add-hook 'org-capture-before-finalize-hook
+            ;;          #'(lambda()
+            ;;                (save-excursion
+            ;;                     (org-back-to-heading)
+            ;;                     (my/log-todo-creation-date))))
+
+            (defvar my/org-habit-show-graphs-everywhere nil
+              "If non-nil, show habit graphs in all types of agenda buffers.
+
+             Normally, habits display consistency graphs only in
+             \"agenda\"-type agenda buffers, not in other types of agenda
+             buffers.  Set this variable to any non-nil variable to show
+             consistency graphs in all Org mode agendas.
+      https://emacs.stackexchange.com/a/17328/16972
+      ")
+
+            ;; found these custom org-agenda with general from https://gist.github.com/amirrajan/301e74dc844a4c9ffc3830dc4268f177
+            (eval-after-load 'org-agenda
+              ;; (add-function :before 'org-agenda-refile '(lambda () (org-toggle-tag 'refile)))
+
+              ;; (advice-add 'org-agenda-refile :after '(lambda () (org-toggle-tag 'refile)))
+              ;; (advice-add #'org-read-property-value :before #'des/org-property-store-previous-val)
+              ;; (advice-add #'org-agenda-refile :after '(lambda () (org-toggle-tag 'refile)))
+              (general-evil-define-key 'normal org-agenda-mode-map
+                (kbd "<RET>") 'org-agenda-switch-to
+                (kbd "\t") 'org-agenda-goto
+
+                "q" 'org-agenda-quit
+                "$" 'org-agenda-archive
+                "r" 'org-agenda-redo
+                "gr" 'org-agenda-refile ;; not allowed in tags type agenda buffers? wutt
+                "S" 'org-save-all-org-buffers
+                "gj" 'org-agenda-goto-date
+                "gJ" 'org-agenda-clock-goto
+                "m" 'org-agenda-bulk-mark
+                "B" 'org-agenda-bulk-action
+                "go" 'org-agenda-open-link
+                "s" 'org-agenda-schedule
+                "d" 'org-agenda-deadline
+                "+" 'org-agenda-priority-up
+                "," 'org-agenda-priority
+                "-" 'org-agenda-priority-down
+                "y" 'org-agenda-todo-yesterday
+                "n" 'org-agenda-add-note
+                "t" 'org-agenda-todo
+                ":" 'org-agenda-set-tags
+                ";" 'org-timer-set-timer
+                "I" 'helm-org-task-file-headings ;; broken... what is it even ;; artifact of https://gist.github.com/amirrajan/301e74dc844a4c9ffc3830dc4268f177
+                "i" 'org-agenda-clock-in
+                "o" 'org-agenda-clock-out
+                "u" 'org-agenda-bulk-unmark
+                "X" 'org-agenda-exit
+                "j"  'org-agenda-next-line
+                "k"  'org-agenda-previous-line
+                "vt" 'org-agenda-toggle-time-grid
+                "va" 'org-agenda-archives-mode
+                "vw" 'org-agenda-week-view
+                "vl" 'org-agenda-log-mode
+                "vd" 'org-agenda-day-view
+                "vc" 'org-agenda-show-clocking-issues
+                "g/" 'org-agenda-filter-by-tag
+                "O" 'delete-other-windows
+                "gh" 'org-agenda-holiday
+                "gv" 'org-agenda-view-mode-dispatch
+                "f" 'org-agenda-later
+                "b" 'org-agenda-earlier
+                "c" 'helm-org-capture-templates
+                "e" 'org-agenda-set-effort
+                "n" nil  ; evil-search-next
+                "{" 'org-agenda-manipulate-query-add-re
+                "}" 'org-agenda-manipulate-query-subtract-re
+                "A" 'org-agenda-toggle-archive-tag
+                "." 'org-agenda-goto-today
+                "0" 'evil-digit-argument-or-evil-beginning-of-line
+                "<" 'org-agenda-filter-by-category
+                ">" 'org-agenda-date-prompt
+                "F" 'org-agenda-follow-mode
+                "H" 'org-agenda-holidays
+                "J" 'org-agenda-next-date-line
+                "K" 'org-agenda-previous-date-line
+                "L" 'org-agenda-recenter
+                "P" 'org-agenda-show-priority
+                "R" 'org-agenda-clockreport-mode
+                "Z" 'org-agenda-sunrise-sunset
+                "T" 'org-agenda-show-tags
+                "x" 'org-agenda-clock-cancel
+                "[" 'org-agenda-manipulate-query-add
+                "g\\" 'org-agenda-filter-by-tag-refine
+                "]" 'org-agenda-manipulate-query-subtract))))
+#+end_src
+
+#+results:
+: 1
+*** my custom org functions
+#+begin_src emacs-lisp
+  (defun my/org-agenda-mark-habits ()
+    "Mark all habits in current agenda for graph display.
+
+         This function enforces `my/org-habit-show-graphs-everywhere' by
+         marking all habits in the current agenda as such.  When run just
+         before `org-agenda-finalize' (such as by advice; unfortunately,
+         `org-agenda-finalize-hook' is run too late), this has the effect
+         of displaying consistency graphs for these habits.
+
+         When `my/org-habit-show-graphs-everywhere' is nil, this function
+         has no effect.
+
+  https://emacs.stackexchange.com/a/17328/16972
+  "
+    (when (and my/org-habit-show-graphs-everywhere
+               (not (get-text-property (point) 'org-series)))
+      (let ((cursor (point))
+            item data)
+        (while (setq cursor (next-single-property-change cursor 'org-marker))
+          (setq item (get-text-property cursor 'org-marker))
+          (when (and item (org-is-habit-p item))
+            (with-current-buffer (marker-buffer item)
+              (setq data (org-habit-parse-todo item)))
+            (put-text-property cursor
+                               (next-single-property-change cursor 'org-marker)
+                               'org-habit-p data))))))
+
+  (setq my/org-habit-show-graphs-everywhere t)
+  (setq org-habit-show-habits-only-for-today t)
+#+end_src
+*** sorted org packages
+**** orgit
+***** use: org links to magit buffers
+***** install
+#+begin_src emacs-lisp
+  (straight-use-package 'orgit)
+    (use-package orgit
+      ;; Automatically copy orgit link to last commit after commit
+      :hook (git-commit-post-finish . orgit-store-after-commit)
+      :config
+      (defun orgit-store-after-commit ()
+        "Store orgit-link for latest commit after commit message editor is finished."
+        (let* ((repo (abbreviate-file-name default-directory))
+               (rev (magit-git-string "rev-parse" "HEAD"))
+               (link (format "orgit-rev:%s::%s" repo rev))
+               (summary (substring-no-properties (magit-format-rev-summary rev)))
+               (desc (format "%s (%s)" summary repo)))
+          (push (list link desc) org-stored-links))))
+#+end_src
+**** org wild notifier
+***** why?
+****** notifications that popup and remind me when calendar items come up
+***** code
+#+begin_src emacs-lisp
+  (use-package alert
+    )
+  (straight-use-package
+   '(org-wild-notifier :type git :host github :repo "akhramov/org-wild-notifier.el" :branch "fix/25-emacs-lags"))
+
+  (use-package async
+    :config
+    (autoload 'dired-async-mode "dired-async.el" nil t)
+    (dired-async-mode 1)
+    )
+
+  (use-package org-wild-notifier
+    :ensure nil
+    :config
+    (org-wild-notifier-mode)
+    )
+#+end_src
+*** unsorted org packages
+#+begin_src emacs-lisp
+  (use-package org-web-tools
+    :config
+    (defun my/org-web-tools-insert-link-for-url (url)
+      ;; uses evil-paste-after instead of insert
+      (interactive (list (org-web-tools--get-first-url)))
+      (evil-append-line 0)
+      (insert " ")
+      (insert (org-web-tools--org-link-for-url url))
+      (evil-normal-state)
+      )
+    )
+  (use-package org-edna
+    :after org
+    :config
+    (org-edna-load))
+  (use-package org-mru-clock
+    :general
+    :after org
+    :config
+    (setq org-mru-clock-how-many 100
+          org-mru-clock-keep-formatting t
+          org-mru-clock-completing-read #'helm-comp-read))
+  (use-package ob-mongo
+    :defer t)
+  (use-package org-bullets
+    :init
+    ;; (setq org-bullets-bullet-list '("◉" "◎" "✸" "○" "►" "◇"))
+    ;; (setq org-bullets-bullet-list '("◉" "○" "✸" "✿"))
+    (setq org-bullets-bullet-list '("◉" "◎" "○" "►" "◇"))
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+end_src
+** helm
+*** install and configure
+#+begin_src emacs-lisp
+  ;; Helm
+  (use-package helm
+    :init
+    (setq helm-M-x-fuzzy-match t
+          helm-mode-fuzzy-match t
+          helm-buffers-fuzzy-matching t
+          ;; NOTE just leaving at default of 60 so that helm works same even when not fullscreen
+          ;; you can just press C-[ in a helm buffer to show full filenames
+          ;; helm-buffer-max-length 100
+          helm-recentf-fuzzy-match t
+          helm-locate-fuzzy-match t
+          helm-semantic-fuzzy-match t
+          helm-imenu-fuzzy-match t
+          helm-completion-in-region-fuzzy-match t
+          helm-candidate-number-list 80
+          helm-split-window-in-side-p t
+          helm-move-to-line-cycle-in-source t
+          helm-echo-input-in-header-line t
+          helm-autoresize-max-height 0
+          helm-autoresize-min-height 20
+          helm-grep-ag-command "rg --color=always --smart-case --no-heading --line-number %s %s %s"
+          helm-always-two-windows t)
+    (when (file-exists-p "/data/data/com.termux/files/usr/bin/termux-info")
+      (setq helm-split-window-default-side 'right))
+    ;; helm pretty frame
+    (setq helm-display-function 'helm-display-buffer-in-own-frame
+          helm-display-buffer-reuse-frame nil
+          helm-use-undecorated-frame-option t)
+    :config
+    (use-package helm-flx)
+    (use-package helm-fuzzier)
+    (use-package helm-rg)
+    (helm-mode 1)
+    (helm-flx-mode 1)
+    (helm-fuzzier-mode 1)
+    :bind (:map helm-map
+                ("<tab>" . helm-execute-persistent-action)
+                ("C-h" . helm-find-files-up-one-level)
+                ("<backtab>" . helm-find-files-up-one-level)
+                ("C-z" . helm-select-action)))
+#+end_src
+*** helm-org
+**** code
+#+begin_src emacs-lisp
+  (use-package helm-org
+    :init
+    (setq org-capture-templates
+          '(
+            ("t" "Todo" entry (file+headline "~/bsab/misc.org" "Misc")
+             "* TODO %?  :refile:
+  :PROPERTIES:
+  :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
+  :CREATED: %U
+  :END:"
+             :prepend t
+             :clock-in t
+             :clock-resume t
+             )
+            ("T" "Todo (today)" entry (file+headline "~/bsab/misc.org" "Misc")
+             "* TODO %<%Y-%m-%d> %?  :refile:
+  :PROPERTIES:
+  :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
+  :CREATED: %U
+  :END:"
+             :prepend t
+             :clock-in t
+             :clock-resume t
+             )
+            ))
+    :after (helm org))
+#+end_src
+**** why?
+***** helm-org-capture-templates
+*** helm-org-rifle
+#+begin_src emacs-lisp
+  (use-package helm-org-rifle
+    :after (helm org))
+#+end_src
+*** org-recent-headings
+#+begin_src emacs-lisp
+;;(use-package org-recent-headings
+;;  :config (org-recent-headings-mode))
+#+end_src
+*** helm company
+#+begin_src emacs-lisp
+  ;; (use-package helm-company
+#+end_src
+*** helm ag
+#+begin_src emacs-lisp
+  (use-package helm-ag :defer t)
+#+end_src
+*** helm swoop
+#+begin_src emacs-lisp
+  (defun spacemacs/helm-swoop-region-or-symbol ()
+    "Call `helm-swoop' with default input."
+    (interactive)
+    (let ((helm-swoop-pre-input-function
+           (lambda ()
+             (if (region-active-p)
+                 (buffer-substring-no-properties (region-beginning)
+                                                 (region-end))
+               (let ((thing (thing-at-point 'symbol t)))
+                 (if thing thing ""))))))
+      (call-interactively 'helm-swoop)))
+  (use-package helm-swoop
+    :init
+    (setq helm-swoop-split-with-multiple-windows t
+          helm-swoop-split-direction 'split-window-vertically
+          helm-swoop-speed-or-color t
+          helm-swoop-split-window-function 'helm-default-display-buffer
+          helm-swoop-pre-input-function (lambda () "")))
+#+end_src
+*** helm google
+#+begin_src emacs-lisp
+  (straight-use-package
+   '(helm-google :type git :repo "https://framagit.org/steckerhalter/helm-google.git"))
+#+end_src
+** wgrep
+#+begin_src emacs-lisp
+(use-package wgrep)
+#+end_src
+** projectile
+*** install and configure
+#+begin_src emacs-lisp
+  (use-package projectile
+    :defer t
+    :init
+    (setq projectile-require-project-root nil)
+    :config
+    (projectile-mode 1))
+#+end_src
+*** helm-projectile
+#+begin_src emacs-lisp
+  (use-package helm-projectile
+    :defer t
+    :init
+    (setq helm-projectile-fuzzy-match t)
+    :config
+    (helm-projectile-on))
+#+end_src
+** tramp
+*** add support for ssh into docker containers
+#+begin_src emacs-lisp
+  (use-package docker-tramp
+    :defer t)
+#+end_src
+** which key
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :init
+    (setq which-key-separator " ")
+    (setq which-key-prefix-prefix "+")
+    :config
+    (which-key-mode))
+#+end_src
+** avy
+
+#+begin_src emacs-lisp
+  (use-package avy
+    :config
+    (avy-setup-default))
+#+end_src
+** flycheck
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :defer t)
+#+end_src
+** company autocomplete
+#+begin_src emacs-lisp
+  ;; (use-package company
+  ;;   :init
+  ;;   (setq company-minimum-prefix-length 3)
+  ;;   (setq company-auto-complete nil)
+  ;;   (setq company-idle-delay 0)
+  ;;   (setq company-require-match 'never)
+  ;;   (setq company-frontends
+  ;;         '(company-pseudo-tooltip-unless-just-one-frontend
+  ;;           company-preview-frontend
+  ;;           company-echo-metadata-frontend))
+  ;;   (setq tab-always-indent 'complete)
+  ;;   (defvar completion-at-point-functions-saved nil)
+  ;;   :config
+  ;;   (global-company-mode 1)
+  ;;   (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
+  ;;   (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+  ;;   (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
+  ;;   (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
+  ;;   (define-key company-mode-map [remap indent-for-tab-command] 'company-indent-for-tab-command)
+
+  ;;   (defun company-indent-for-tab-command (&optional arg)
+  ;;     (interactive "P")
+  ;;     (let ((completion-at-point-functions-saved completion-at-point-functions)
+  ;;           (completion-at-point-functions '(company-complete-common-wrapper)))
+  ;;       (indent-for-tab-command arg)))
+
+  ;;   (defun company-complete-common-wrapper ()
+  ;;     (let ((completion-at-point-functions completion-at-point-functions-saved))
+  ;;       (company-complete-common))))
+  ;; (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+  ;; )
+#+end_src
+** powerline
+#+begin_src emacs-lisp
+  ;; Powerline
+  ;; (use-package spaceline
+  ;;   :init
+  ;;   (setq powerline-default-separator 'slant)
+  ;;   :config
+  ;;   (spaceline-emacs-theme)
+  ;;   (spaceline-toggle-minor-modes-off)
+  ;;   (spaceline-toggle-buffer-size-off)
+  ;;   (spaceline-toggle-evil-state-on))
+#+end_src
+** elisp demos
+#+begin_src emacs-lisp
+
+  (straight-use-package
+   '(elisp-demos :type git :host github :repo "xuchunyang/elisp-demos" :files ("elisp-demos.org" :defaults)))
+  (use-package elisp-demos
+    :defer t
+    :after helpful
+    :config
+    (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+#+end_src
+** winum
+#+begin_src emacs-lisp
+  ;; Winum
+  (use-package winum
+    :defer t
+    :init (winum-mode))
+#+end_src
+** install all the icons
+#+begin_src emacs-lisp
+  (use-package all-the-icons)
+#+end_src
+** magit
+#+begin_src emacs-lisp
+  (defmacro after-evil (&rest body)
+    `(eval-after-load "evil"
+       (lambda ()
+         ,@body)))
+
+  (use-package magit
+    :defer t
+    :commands (magit-toplevel magit-status magit-blame magit-log)
+    :config
+    (setq magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1)
+    (after-evil
+     (evil-define-key 'normal magit-log-mode-map
+       (kbd "`") 'magit-process-buffer
+       (kbd "~") 'magit-diff-default-context
+       (kbd "0") 'evil-digit-argument-or-evil-beginning-of-line
+       (kbd "$") 'evil-end-of-line)
+     (evil-define-key 'normal magit-status-mode-map
+       (kbd "q") 'quit-window
+       (kbd "`") 'magit-process-buffer
+       (kbd "~") 'magit-diff-default-context
+       (kbd "0") 'evil-digit-argument-or-evil-beginning-of-line
+       (kbd "$") 'evil-end-of-line
+       (kbd "Q") 'delete-window)
+     (evil-define-key 'normal magit-repolist-mode-map
+       (kbd "q") 'quit-window
+       (kbd "Q") 'delete-window
+       (kbd "RET") 'magit-repolist-status
+       (kbd "gr") 'magit-list-repositories)))
+#+end_src
+** magit-popup
+#+begin_src emacs-lisp
+  ;; (use-package magit-popup
+  ;;   :demand t ; make sure it is loaded
+  ;;   )
+#+end_src
+** magithub (disabled)
+#+begin_src emacs-lisp
+  ;; (straight-use-package 'ghub)
+  ;; (use-package magithub
+  ;;   :straight t
+  ;;   :after magit magit-popup
+  ;;   :config
+  ;;   (magithub-feature-autoinject t)
+  ;;   (setq magithub-clone-default-directory "~/github"))
+#+end_src
+** lsp
+*** lsp mode
+#+begin_src emacs-lisp
+    ;; LSP -- bookmark for 2018-11-20
+    (use-package lsp-mode
+      :init
+      (add-hook 'prog-major-mode #'lsp-prog-major-mode-enable)
+      ;; (add-hook 'haskell-mode-hook #'lsp-haskell-enable)
+  )
+
+      (use-package lsp-ui
+        :init
+        (add-hook 'lsp-mode-hook 'lsp-ui-mode))
+
+      ;; (use-package lsp-haskell
+      ;;   :init
+      ;;   (setq lsp-haskell-process-path-hie "/Users/codygman/.local/bin/hie-wrapper")
+      ;;   )
+#+end_src
+*** lsp ui
+*** lsp haskell
+** real-auto-save mode
+*** description
+Automatically save your all your files at regular intervals.
+*** I tried using this for everything before, but for haskell files brittany can take a second and make things laggy or there is a jarring disconnect.
+*** Also this messes up the undo buffer IIRC
+*** It's utility is higher with org files where I want to avoid sync conflicts esp on mobile
+*** install
+#+begin_src emacs-lisp
+  (use-package real-auto-save :hook (org-mode . real-auto-save-mode))
+#+end_src
+** restclient
+#+begin_src emacs-lisp
+  (straight-use-package 'restclient)
+  (use-package restclient)
+#+end_src
+** ob-restclient
+#+begin_src emacs-lisp
+  (straight-use-package 'ob-restclient)
+  (use-package ob-restclient :after 'restclient)
+#+end_src
+** ob-async
+#+begin_src emacs-lisp
+  (use-package ob-async :after org)
+#+end_src
+** golden ratio mode
+#+begin_src emacs-lisp
+  (use-package golden-ratio
+    :defer t
+    :config
+    (golden-ratio-mode 1))
+#+end_src
+** helpful
+#+begin_src emacs-lisp
+  (use-package helpful
+    :config
+    (global-set-key (kbd "C-h f") #'helpful-callable)
+    (global-set-key (kbd "C-h v") #'helpful-variable)
+    (global-set-key (kbd "C-h k") #'helpful-key)
+    (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+#+end_src
+** eacl
+#+begin_src emacs-lisp
+  (straight-use-package
+   '(eacl :type git :host github :repo "redguardtoo/eacl" :files ("*.el" :defaults)))
+
+  (use-package eacl)
+#+end_src
+** yasnippet
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :config
+    (yas-global-mode t)
+    (yas-reload-all))
+#+end_src
+** alert
+#+begin_src emacs-lisp
+  (use-package alert
+    :defer t
+    :init
+    (case system-type (gnu/linux
+                         (progn (message "setting alert style to libnotify") (setq alert-default-style 'libnotify)))
+            (darwin (progn (message "setting alert style to osx-notifier") (setq alert-default-style 'osx-notifier)))))
+#+end_src
+** markdown mode
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :defer t
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    :init (setq markdown-command "multimarkdown"))
+#+end_src
+** sx (stack exchange)
+#+begin_src emacs-lisp
+  (use-package sx
+    :defer t
+    :config
+    (bind-keys :prefix "C-c s"
+               :prefix-map my-sx-map
+               :prefix-docstring "Global keymap for SX."
+               ("q" . sx-tab-all-questions)
+               ("i" . sx-inbox)
+               ("o" . sx-open-link)
+               ("u" . sx-tab-unanswered-my-tags)
+               ("a" . sx-ask)
+               ("s" . sx-search)))
+#+end_src
+* Programming language modes
+** Work Haskell
+*** haskell-mode
+#+begin_src emacs-lisp
+    (use-package haskell-mode
+      :if (string-equal (getenv "EMACSFOR") "WORK")
+      :defer t
+      :mode "\\.hs\\'"
+      :commands haskell-mode
+      :init
+      (message "work haskell-mode loading")
+      (setq haskell-stylish-on-save nil)
+      (setq haskell-mode-stylish-haskell-path "brittany")
+      (setq haskell-mode-stylish-haskell-arguments "--config-file /Users/codygman/ITProTV/smurf/nucleus/brittany.yaml")
+      ;; (add-hook 'haskell-mode-hook '(lambda () (ghc-init) (hare-init)))
+      (add-hook 'haskell-mode-hook 'display-line-numbers-mode)
+      (add-hook 'haskell-mode-hook 'haskell-indentation-mode)
+      :config
+      (defun haskell-indentation-indent-region (_start _end)
+        "This function does nothing.
+
+  It is better to do nothing to indent region in Haskell than to
+  break the semantics of indentation.  This function is used for
+  `indent-region-function' because the default is to call
+  `indent-line-function' on every line from START to END and that
+  also produces catastrophic results.
+
+  Someday we will have indent region that preserves semantics and
+  fixes up only indentation."
+        (haskell-indentation-indent-rigidly (region-beginning) (region-end) haskell-indentation-layout-offset))
+      (defun haskell-evil-open-above ()
+        (interactive)
+        (evil-digit-argument-or-evil-beginning-of-line)
+        (haskell-indentation-newline-and-indent)
+        (evil-previous-line)
+        (haskell-indentation-indent-line)
+        (evil-append-line nil))
+
+      (defun haskell-evil-open-below ()
+        (interactive)
+        (evil-append-line nil)
+        (haskell-indentation-newline-and-indent))
+
+      (evil-define-key 'normal haskell-mode-map "o" 'haskell-evil-open-below)
+      )
+
+    (with-eval-after-load "haskell-mode"
+      (defun haskell-mode-stylish-buffer ()
+        "Apply stylish-haskell to the current buffer.
+
+        Use `haskell-mode-stylish-haskell-path' to know where to find
+        stylish-haskell executable. This function tries to preserve
+        cursor position and markers by using
+        `haskell-mode-buffer-apply-command'."
+        (interactive)
+        (haskell-mode-buffer-apply-command haskell-mode-stylish-haskell-path haskell-mode-stylish-haskell-arguments))
+
+      (defun haskell-mode-buffer-apply-command (cmd args)
+        "Execute shell command CMD with current buffer as input and output.
+        Use buffer as input and replace the whole buffer with the
+        output.  If CMD fails the buffer remains unchanged."
+        (set-buffer-modified-p t)
+        (let* ((out-file (make-temp-file "stylish-output"))
+               (err-file (make-temp-file "stylish-error")))
+          (unwind-protect
+              (let* ((_errcode
+                      (call-process-region (point-min) (point-max) cmd haskell-mode-stylish-haskell-arguments
+                                           `((:file ,out-file) ,err-file)
+                                           nil))
+                     (err-file-empty-p
+                      (equal 0 (nth 7 (file-attributes err-file))))
+                     (out-file-empty-p
+                      (equal 0 (nth 7 (file-attributes out-file)))))
+                (if err-file-empty-p
+                    (if out-file-empty-p
+                        (message "Error: %s produced no output and no error information, leaving buffer alone" cmd)
+                      ;; Command successful, insert file with replacement to preserve
+                      ;; markers.
+                      (insert-file-contents out-file nil nil nil t))
+                  (progn
+                    ;; non-null stderr, command must have failed
+                    (with-current-buffer
+                        (get-buffer-create "*haskell-mode*")
+                      (insert-file-contents err-file)
+                      (buffer-string))
+                    (message "Error: %s ended with errors, leaving buffer alone, see *haskell-mode* buffer for stderr" cmd)
+                    (with-temp-buffer
+                      (insert-file-contents err-file)
+                      ;; use (warning-minimum-level :debug) to see this
+                      (display-warning cmd
+                                       (buffer-substring-no-properties (point-min) (point-max))
+                                       :debug)))))
+            (ignore-errors
+              (delete-file err-file))
+            (ignore-errors
+              (delete-file out-file)))))
+  )
+#+end_src
+*** lsp-haskell
+#+begin_src emacs-lisp
+  (when (string-equal (getenv "EMACSFOR") "WORK")
+  (use-package lsp-haskell
+    :init
+    (setq lsp-haskell-process-path-hie "/Users/codygman/.local/bin/hie-wrapper"))
+  )
+#+end_src
+*** flycheck haskell
+#+begin_src emacs-lisp
+  (when (string-equal (getenv "EMACSFOR") "WORK")
+    (straight-use-package 'use-package)
+
+    (straight-use-package
+     '(flycheck-haskell
+       :type git
+       :files (:defaults "*.hs")
+       :host github
+       :repo "flycheck/flycheck-haskell"
+       ;; :init (add-hook 'haskell-mode-hook #'flycheck-haskell-setup)
+  )
+  )
+    )
+#+end_src
+*** haskell-mode eval after config
+#+begin_src emacs-lisp :eval no
+  (when (string-equal (getenv "EMACSFOR") "WORK")
+
+    (setq haskell-process-args-stack-ghci '("--ghci-options=-ferror-spans -w"))
+    ;; (setq haskell-stylish-on-save t)
+    (setq haskell-mode-stylish-haskell-path "brittany")
+    (setq haskell-mode-stylish-haskell-arguments "--config-file /Users/codygman/ITProTV/smurf/nucleus/brittany.yaml")
+
+    (with-eval-after-load "haskell-mode"
+      (defun haskell-mode-stylish-buffer ()
+        "Apply stylish-haskell to the current buffer.
+
+    Use `haskell-mode-stylish-haskell-path' to know where to find
+    stylish-haskell executable. This function tries to preserve
+    cursor position and markers by using
+    `haskell-mode-buffer-apply-command'."
+        (interactive)
+        (haskell-mode-buffer-apply-command haskell-mode-stylish-haskell-path haskell-mode-stylish-haskell-arguments))
+
+      (defun haskell-mode-buffer-apply-command (cmd args)
+        "Execute shell command CMD with current buffer as input and output.
+    Use buffer as input and replace the whole buffer with the
+    output.  If CMD fails the buffer remains unchanged."
+        (set-buffer-modified-p t)
+        (let* ((out-file (make-temp-file "stylish-output"))
+               (err-file (make-temp-file "stylish-error")))
+          (unwind-protect
+              (let* ((_errcode
+                      (call-process-region (point-min) (point-max) cmd haskell-mode-stylish-haskell-arguments
+                                           `((:file ,out-file) ,err-file)
+                                           nil))
+                     (err-file-empty-p
+                      (equal 0 (nth 7 (file-attributes err-file))))
+                     (out-file-empty-p
+                      (equal 0 (nth 7 (file-attributes out-file)))))
+                (if err-file-empty-p
+                    (if out-file-empty-p
+                        (message "Error: %s produced no output and no error information, leaving buffer alone" cmd)
+                      ;; Command successful, insert file with replacement to preserve
+                      ;; markers.
+                      (insert-file-contents out-file nil nil nil t))
+                  (progn
+                    ;; non-null stderr, command must have failed
+                    (with-current-buffer
+                        (get-buffer-create "*haskell-mode*")
+                      (insert-file-contents err-file)
+                      (buffer-string))
+                    (message "Error: %s ended with errors, leaving buffer alone, see *haskell-mode* buffer for stderr" cmd)
+                    (with-temp-buffer
+                      (insert-file-contents err-file)
+                      ;; use (warning-minimum-level :debug) to see this
+                      (display-warning cmd
+                                       (buffer-substring-no-properties (point-min) (point-max))
+                                       :debug)))))
+            (ignore-errors
+              (delete-file err-file))
+            (ignore-errors
+              (delete-file out-file))))))
+  )
+#+end_src
+** Personal Haskell
+#+begin_src emacs-lisp
+  (use-package direnv
+    :if (string-equal (getenv "EMACSFOR") "PERSONAL")
+    :config
+    (direnv-mode))
+  (use-package haskell-mode
+    :mode ("\\.hs" . haskell-mode)
+    :if (string-equal (getenv "EMACSFOR") "PERSONAL")
+    :after (direnv)
+    :init
+    (message "personal haskell-mode loading")
+    (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
+    (add-hook 'haskell-mode-hook 'haskell-indentation-mode)
+    (add-hook 'haskell-mode-hook (lambda () (direnv-update-environment) (dante-mode)))
+    (use-package dante
+      :after (haskell-mode)
+      :commands 'dante-mode
+      :if (string-equal (getenv "EMACSFOR") "PERSONAL")
+      :config
+      (make-variable-buffer-local 'dante-target)
+      (setq dante-methods '(new-build stack bare-cabal bare-ghci))
+      (setq dante-load-flags
+            '("+c" "-fno-diagnostics-show-caret" "-Wwarn=missing-home-modules" "-ferror-spans" "-fdiagnostics-color=never")))
+    )
+#+end_src
+** other languages
+#+begin_src emacs-lisp
+  (use-package elm-mode
+    :defer t)
+
+  (use-package web-mode
+    :defer t
+    :mode (("\\.js\\'" . web-mode)
+           ("\\.jsx\\'" . web-mode)
+           ("\\.ts\\'" . web-mode)
+           ("\\.tsx\\'" . web-mode)
+           ("\\.html\\'" . web-mode)
+           ("\\.vue\\'" . web-mode)
+           ("\\.json\\'" . web-mode))
+    :interpreter ("node" . web-mode)
+    :commands web-mode
+    :config
+    (setq-default web-mode-code-indent-offset 2)
+    (setq-default web-mode-markup-indent-offset 2)
+    (setq-default web-mode-enable-auto-pairing nil)
+    (setq-default web-mode-enable-auto-indentation nil)
+    (setq-default web-mode-enable-auto-quoting nil)
+
+    (add-hook 'web-mode-hook
+              (lambda ()
+                (setq indent-tabs-mode nil)
+                (when
+                    (or
+                     (string-equal "jsx" (file-name-extension buffer-file-name))
+                     (string-equal "js" (file-name-extension buffer-file-name)))
+                  (if (flycheck-may-use-checker 'javascript-eslint)
+                      (progn
+                        (my/use-eslint-from-node-modules)
+                        (flycheck-select-checker 'javascript-eslint)
+                        (flycheck-mode))))))
+    (add-hook 'web-mode-hook
+              (lambda ()
+                (when
+                    (string-equal "json" (file-name-extension buffer-file-name))
+                  (progn
+                    (flycheck-select-checker 'web-mode-python-json)
+                    (flycheck-mode)))))
+    (add-hook 'web-mode-hook
+              (lambda ()
+                (when
+                    (or
+                     (string-equal "tsx" (file-name-extension buffer-file-name))
+                     (string-equal "ts" (file-name-extension buffer-file-name)))
+                  (setup-tide-mode)))))
+
+  ;; JavaScript
+  ;;(use-package js2-mode
+  ;;  :init
+  ;;  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
+  ;;(use-package tern)
+
+    ;;;; Rust
+  ;;(use-package rust-mode
+  ;;  :init
+  ;;  (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode)))
+  ;;
+  ;;(use-package lsp-rust
+  ;;  :init
+  ;;  (setq lsp-rust-rls-command '("rustup" "run" "nightly" "rls"))
+  ;;  (add-hook 'rust-mode-hook #'lsp-rust-enable)
+  ;;  (add-hook 'rust-mode-hook #'flycheck-mode))
+  ;;
+  ;; ;; Typescript
+  ;;(use-package typescript-mode
+  ;;  :init
+  ;;  (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-mode)))
+  ;;
+  ;;(use-package tide
+  ;;  :after (typescript-mode company flycheck)
+  ;;  :hook ((typescript-mode . tide-setup)
+  ;;         (typescript-mode . tide-hl-identifier-mode)))
+  ;;
+#+end_src
+
