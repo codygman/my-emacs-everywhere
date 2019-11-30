@@ -275,17 +275,3 @@
                    ;;  (propertize minor-mode-list 'face 'font-lock-string-face)
                    ))
 #+end_src
-*** some hooks to keep info accurate
-#+begin_src emacs-lisp
-  (add-hook 'org-clock-in-hook
-            '(lambda ()
-               (force-mode-line-update)))
-  (add-hook 'org-clock-cancel-hook
-            '(lambda ()
-               (setq org-mode-line-string nil)
-               (force-mode-line-update)))
-  (add-hook 'org-clock-out-hook
-            '(lambda ()
-               (setq org-mode-line-string nil)
-               (force-mode-line-update)))
-#+end_src
