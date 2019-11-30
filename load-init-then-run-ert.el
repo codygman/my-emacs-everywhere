@@ -1,6 +1,6 @@
 (require 'ert)
-;; (load (expand-file-name "init.el"))
-;; (load (expand-file-name "my-tests.el"))
+(load (expand-file-name "init.el"))
+(load (expand-file-name "my-tests.el"))
 
 ;; credit to https://github.com/emacs-evil/evil/blob/5a7f02c3d5bf3a3feb0db5f0f8175cd5f8136388/evil-tests.el#L119
 (defun tests-run (&optional tests interactive)
