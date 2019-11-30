@@ -2725,3 +2725,20 @@ Automatically save your all your files at regular intervals.
       (quote
        ("f8067b7d0dbffb29a79e0843797efabdf5e1cf326639874d8b407e9b034136a4" "97965ccdac20cae22c5658c282544892959dc541af3e9ef8857dbf22eb70e82b" "9129c2759b8ba8e8396fe92535449de3e7ba61fd34569a488dd64e80f5041c9f" default))))
 #+end_src
+* load up org mode daily agenda by default
+#+begin_src emacs-lisp
+  ;; fullscreen, org-agenda-list, and delete other windows
+   ;; (spacemacs/toggle-frame-fullscreen-non-native)
+   ;; (my-day-org-agenda)
+   ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized)) ;; only maximized... but only reliable way I could get it to do it ;; this is not necessary in xmonad... maybe it was in windows?
+#+end_src
+* sanity checks that emacs will probably work right
+** make sure user has set org-agenda-files either in work or personal
+#+begin_src emacs-lisp
+  (if (and (eq nil org-agenda-files) (string-equal nil (getenv "TRAVIS_OS_NAME")))
+      (pcase (getenv "EMACSFOR")
+        ("WORK" (error (format "Make sure to set org-agenda-files in: %s" (expand-file-name "work.el" "~"))))
+        ("PERSONAL" (error (format "Make sure to set org-agenda-files in: %s" (expand-file-name "personal.el" "~"))))
+        (_ (error "Please set the EMACSFOR variable to WORK or PERSONAL")))
+    )
+#+end_src
