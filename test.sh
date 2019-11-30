@@ -18,5 +18,5 @@ nix-build emacs.nix | cachix push codygman4
 popd
 home-manager switch
 
-emacs -Q -nw -l load-init-then-run-ert.el --eval "(run-tests-simulating-batch)"
+emacs -nw -Q -l init.el -l my-tests.el --eval "(tests-run)"
 
