@@ -25,6 +25,9 @@
 (when (file-exists-p "/data/data/com.termux/files/usr/bin/termux-info")
   (setq straight-use-symlinks nil))
 
+(straight-use-package 'with-simulated-input)
+(use-package with-simulated-input)
+
 ;; make my-emacs-everywhere use literate config
 ;;;; make my-emacs-everywhere literate config be workflow driven
 ;;;;; project navigation
@@ -40,5 +43,5 @@
 ;;;;; TBD
 ;;;;; TBD
 ;; TODO make my-emacs-everywhere use literate test that gets tangled
-(straight-use-package 'use-package)
-(org-babel-load-file (format "%s/emacs-config.org" (my-emacs-everywhere-directory)))
+;; (straight-use-package 'use-package)
+;; (org-babel-load-file (format "%s/emacs-config.org" (my-emacs-everywhere-directory)))
