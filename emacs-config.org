@@ -309,3 +309,254 @@
       (_ (error "Please set the EMACSFOR variable to WORK or PERSONAL"))))
 #+end_src
 ** ensure personal.el and personal org files are added above
+* Setup keybindings with general
+#+begin_src emacs-lisp
+  (use-package general
+    :init
+    (defun my-day-org-agenda ()
+      (interactive)
+      (let ((org-agenda-span 'day))
+        (org-agenda nil "a")
+        (progn (switch-to-buffer "*Org Agenda*") (delete-other-windows))
+        ))
+    :config
+    (general-evil-setup)
+    (general-imap "j"
+      (general-key-dispatch 'self-insert-command
+        :timeout 0.25
+        ;; TODO make this work so jf writes the file when I enter normal mode
+        ;; "j" '(my-write-then-normal-state)
+        "f" 'evil-normal-state))
+
+    ;; TODO review if this is good or not
+    (general-nmap "/" 'evil-search-forward) ;; TODO can we modify this so that the search is done by rg?
+    ;; TODO upgrade to helm-rg-this-file
+
+    ;; TODO do we just want to use alphappas https://github.com/alphapapa/helm-swish/blob/master/helm-swish.el ???
+    ;; https://github.com/cosmicexplorer/helm-rg/issues/12
+    ;; (general-nmap "/" 'helm-ag-this-file) ;; doesn't have swoop like functionality
+
+    (general-unbind 'org-agenda-mode-map
+      "SPC")
+
+    ;; (general-create-definer my-leader-def2
+    ;;     :prefix "SPC")
+
+    (general-create-definer my-leader-def
+      :prefix "C")
+
+    ;; (my-leader-def
+    ;;   :states '(normal visual emacs motion)
+    ;;   :prefix "SPC"
+    ;;   :keymaps 'override
+    ;;   "u"   '(evil-scroll-up :which-key "evil scroll up"))
+
+
+    (my-leader-def
+      :states '(normal visual emacs motion)
+      :prefix "SPC"
+      :keymaps 'override
+      :non-normal-prefix "M-SPC"
+      "u"   '(universal-argument :which-key "universal-argument")
+      "pg"   '(helm-projectile-ag :which-key "ag project")
+      "<tab>" '(switch-to-prev-buffer :which-key "previous buffer")
+      "SPC" '(helm-M-x :which-key "M-x")
+      "tf" '(spacemacs/toggle-frame-fullscreen-non-native :which-key "Full Screen")
+      "pf"  '(helm-projectile-find-dwim :which-key "find files")
+      "jc"  '(avy-goto-char :which-key "Jump To Char")
+      "jj"  '(avy-goto-char-timer :which-key "Jump To Char")
+      "ji"  '(avy-goto-char-in-line :which-key "Jump To Char In Line")
+      "jl"  '(avy-goto-line :which-key "Jump To line")
+      "pp"  '(helm-projectile-switch-project :which-key "switch project")
+      "pb"  '(helm-projectile-switch-to-buffer :which-key "switch buffer")
+      "pr"  '(helm-show-kill-ring :which-key "show kill ring")
+      ;; applications (TODO maybe consider making =ao= variants of org again here)
+      "ad"  '(dired :which-key "open dired")
+      "iu" '(my/org-web-tools-insert-link-for-url :which-key "insert link for url in clipboard")
+      "oo"  '(org-agenda :which-key "open org agenda") ;; previously aoo
+      "od"  '(my-day-org-agenda :which-key "open todays org agenda")
+      "oa"  '(org-agenda-list :which-key "open org agenda list") ;; previously aoa
+      "ol"  '(org-store-link :which-key "store org link") ;; previously aol
+      "os"  '(org-mru-clock-in :which-key "clock into recently clocked task") ;; previously aorr
+      "or"  '(helm-org-rifle :which-key "helm org rifle") ;; previously aorr
+      ;; "oh"  '(org-recent-headings :which-key "org recent headings")
+      ;; rifle current buffer
+      ;; rifle directories
+      ;; rifle files
+
+      ;; c
+      "cc"  '(helm-org-capture-templates :which-key "org-capture")
+
+      ;; E (ediff)
+      "Eb"  '(ediff-buffers :which-key "ediff buffers")
+      ;; magit
+      "gb" '(magit-blame :which-key "magit blame")
+      "gf" '(magit-find-file :which-key "magit find-file")
+      "gg" '(helm-do-grep-ag :which-key "helm ag (rg)")
+      "gl" '(magit-log-buffer-file :which-key "magit log file")
+      "gs" '(magit-status :which-key "magit status")
+      "gt" '(magit-log-trace-definition :which-key "magit trace definition")
+      "hg" '(helm-mark-ring :which-mode "helm mark ring (where was I?)")
+      "hr" '(helm-resume :which-mode "helm resume")
+      ;; help
+      "hdm" '(describe-mode :which-mode "describe mode")
+      ;; TODO might need to move these into helpful use-package :config
+      "hdk" '(helpful-key :which-key "describe key")
+      "hdv" '(helpful-variable :which-key "describe variable")
+      "hdf" '(helpful-callable :which-key "describe function")
+      "hdd" '(helm-apropos :which-key "apropos at point")
+      ;; Buffers
+      "bb"  '(helm-mini :which-key "buffers list")
+      ;; "bs"  '(my-switch-to-scratch-buffer :which-key "scratch buffer")
+      ;; "bs"  '((switch-to-buffer "*scratch*") :which-key "scratch buffer")
+      "bd"  '(spacemacs/kill-this-buffer :which-key "kill-this-buffer")
+      ;; Search
+      "sS"  '(helm-swoop :which-key "helm-swoop")
+      "ss"  '(spacemacs/helm-swoop-region-or-symbol :which-key "helm-swoop-region-or-symbol")
+      ;; Window
+      ;; TODO install winum (https://github.com/deb0ch/emacs-winum) and use emacs keybindings
+      ;; so I can navigate with SPC N
+
+      ;; TODO whats difference between windmove and evil-windowmove????
+      ;; "wl"  '(windmove-right :which-key "move right")
+      ;; "wm"  '(toggle-maximize-buffer :which-key "maximize buffer")
+      ;; "wd"  '(delete-window :which-key "delete window")
+      ;; "wh"  '(windmove-left :which-key "move left")
+      ;; "wk"  '(windmove-up :which-key "move up")
+      ;; "wj"  '(windmove-down :which-key "move bottom")
+      "wl"  '(evil-window-move-far-right :which-key "move right")
+      "wm"  '(toggle-maximize-buffer :which-key "maximize buffer")
+      "wu"  '(winner-undo :which-key "winner undo")
+      "wr"  '(winner-redo :which-key "winner redo")
+      "wd"  '(delete-window :which-key "delete window")
+      "wh"  '(evil-window-move-far-left :which-key "move left")
+      "wk"  '(evil-window-move-very-top :which-key "move up")
+      "wj"  '(evil-window-move-very-bottom :which-key "move bottom")
+
+      "w/"  '(split-window-right :which-key "split right")
+      "0" '(winum-select-window-0 :which-key "window 0")
+      "1" '(winum-select-window-1 :which-key "window 1")
+      "2" '(winum-select-window-2 :which-key "window 2")
+      "3" '(winum-select-window-3 :which-key "window 3")
+      "4" '(winum-select-window-4 :which-key "window 4")
+      "5" '(winum-select-window-5 :which-key "window 5")
+      "6" '(winum-select-window-6 :which-key "window 6")
+      "7" '(winum-select-window-7 :which-key "window 7")
+      "8" '(winum-select-window-8 :which-key "window 8")
+      "9" '(winum-select-window-8 :which-key "window 9")
+      "w-"  '(split-window-below :which-key "split bottom")
+      "wx"  '(delete-window :which-key "delete window")
+      "l"  '(tab-bar-select-tab :which-key "switch perspective")
+      "qz"  '(delete-frame :which-key "delete frame")
+      "qq"  '(save-buffers-kill-emacs :which-key "quit")
+      ;; NeoTree
+      "ft"  '(neotree-toggle :which-key "toggle neotree")
+      ;; find files
+      "ff"  '(helm-find-files :which-key "find files")
+      ;; Others
+      "at"  '(shell :which-key "open terminal")
+      "ae"  '(eshell :which-key "open eshell")
+      "cl" '(comment-line :which-key "comment line")
+      "fed" '(find-dotfile :which-key "go to init.el")
+      "tl" '(toggle-truncate-lines :which-key "truncate lines")
+      ;; ehh not sure about this but okay
+      "tw" '(whitespace-mode :which-key "show whitespace")
+      ;; global org
+      "ocj"  '(org-clock-goto :which-key "jump to current clock")
+      "ocl"  '(org-clock-in-last :which-key "clock in last task")
+      "o$"   '(my/org-refile-to-archive-datetree :which-key "archive to done.org datetree")
+
+      ;; org refiling (takes top-level because i'll use it lots I think)
+      "r"  '(org-refile :which-key "refile an org task")
+      )
+    (general-define-key
+     "M-x" 'helm-M-x)
+    ;; TODO are these the right modes???
+    (general-evil-define-key '(normal visual) emacs-lisp-mode-map
+      :prefix ","
+      "ef" 'eval-defun :which-key "eval defun"
+      "eb" 'eval-buffer :which-key "eval buffer"
+      "er" 'eval-region :which-key "eval region")
+
+    ;; TODO are these the right modes???
+    (general-evil-define-key '(normal motion override visual) org-babel-map
+      :prefix ","
+      "x" 'emacs-version
+      ;; "bt" 'org-babel-tangle :which-key "bable tangle" ;; that doesn't work
+      "," 'org-ctrl-c-ctrl-c :which-key "execute babel block")
+
+
+    (general-evil-define-key '(normal motion override) org-src-mode-map
+      :prefix ","
+      "," 'org-edit-special ;; doesn't work
+      )
+
+      (general-evil-define-key 'normal org-mode-map
+        "RET" 'org-open-at-point :which-key "org open at point")
+
+      (defun codygman/org-ctrl-c-and-go-to-result ()
+        (org-ctrl-c-ctrl-c)
+        (goto-char (org-babel-where-is-src-block-result)))
+
+      (defun codygman/pad-then-insert-link ()
+        ;; TODO this is too naieve and messes up modifying links (see heading I think I made)
+        (interactive)
+        (evil-insert 1)
+        (insert "  ")
+        (evil-normal-state)
+        (call-interactively 'org-insert-link))
+
+      (use-package org-download
+        :after cl
+        :config
+        (setq org-image-actual-width nil) ;; think necessary for 500 to take effect
+        (setq org-download-image-org-width 400)
+        (setq org-download-annotate-function 'ignore)
+        (setq org-download-annotate-function (lambda (_link) ""))
+
+        (setq org-download-screenshot-method
+              (case system-type (gnu/linux "import %s") (darwin "screencapture -i %s")))
+        (setq-default org-download-image-dir "~/org/images/screenshots/")
+        (add-hook 'dired-mode-hook 'org-download-enable))
+
+      (general-evil-define-key 'normal org-mode-map
+        :prefix ","
+        "ds" 'org-schedule :which-key "schedule"
+        "dd" 'org-deadline :which-key "schedule"
+
+        "ci" 'org-clock-in :which-key "clock in"
+        "co" 'org-clock-out :which-key "clock out"
+        "cc" 'org-clock-cancel :which-key "clock cancel"
+        "tt" 'org-todo :which-key "org todo"
+        ;; "C-c C-c" 'codygman/org-ctrl-c-and-go-to-result :which-key "execute code block and go to result"
+
+        "ts" 'org-download-screenshot :which-key "org download screenshot"
+
+        ;; insert
+        "iB" 'org-insert-structure-template :which-key "insert org block"
+        "ib" 'insert-previous-src-block-below :which-key "insert previous org src block"
+        "tc" 'org-table-create :which-key "org table create"
+        "it" 'air-org-set-tags :which-key "org set tags"
+        "is" 'my-org-insert-subheading :which-key "org insert subheading"
+        "ic" 'yas-insert-snippet :which-key "insert yasnippet code"
+        "iS" 'my-org-insert-subheading-then-normal :which-key "org insert subhead then normal"
+        "il" 'codygman/pad-then-insert-link :which-key "org insert link"
+        "ip" 'org-set-property :which-key "org set property"
+        "ie" 'org-set-effort :which-key "org set effort"
+
+        "sh" 'org-promote-subtree :which-key "promote subtree-left"
+        "sj" 'org-move-subtree-down :which-key "subtree-down"
+        "sk" 'org-move-subtree-up :which-key "subtree-up"
+        "sl" 'org-demote-subtree :which-key "demote subtree-right"
+        "sn" 'org-narrow-to-subtree :which-key "org narrow"
+        "sN" 'widen :which-key "org widen"
+        "sa" '(org-archive-subtree :which-key "org archive")
+        "se" '(org-babel-execute-subtree :which-key "org babel execute subtree ")
+        "sb" 'org-tree-to-indirect-buffer :which-key "org tree to indirect buffer"
+        "sr"  '(org-refile :which-key "org refile")
+        "#" 'org-update-statistics-cookies :which-key "org-update-statistics-cookies")
+
+      (general-evil-define-key '(normal override motion) org-agenda-mode-map
+        "D" 'org-agenda-day-view :which-key "day view"
+        "L" 'org-agenda-log-mode :which-key "org agenda log mode"))
+#+end_src
