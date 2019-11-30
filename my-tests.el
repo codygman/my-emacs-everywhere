@@ -1,5 +1,4 @@
-;; credit to https://github.com/emacs-evil/evil/blob/5a7f02c3d5bf3a3feb0db5f0f8175cd5f8136388/evil-tests.el#L119
-(defun tests-run (&optional tests interactive)
+(defun tests-run ()
   "Run Evil tests."
   (interactive '(nil t))
   ;; We would like to use `ert-run-tests-batch-and-exit'
@@ -11,7 +10,7 @@
         attempt-orderly-shutdown-on-fatal-signal nil)
   (unwind-protect
       (progn
-        (ert-run-tests-interactively tests)
+        (ert-run-tests-interactively t)
         (with-current-buffer "*ert*"
           (append-to-file (point-min) (point-max) "test-results.txt")
           (kill-emacs (if (zerop (ert-stats-completed-unexpected ert--results-stats)) 0 1))))
