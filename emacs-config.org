@@ -2506,3 +2506,222 @@ Automatically save your all your files at regular intervals.
 #+begin_src emacs-lisp
   (load "~/.emacs.d/private/custom.el" t 'noerror)
 #+end_src
+* Misc rest of config
+:PROPERTIES:
+:ID:       90b463e7-8d7b-458b-93fb-ea6806f0e5bb
+:END:
+#+begin_src emacs-lisp
+  (use-package nix-mode)
+
+  (use-package org-edna
+    :after org
+    :config
+    (org-edna-load))
+
+  (defun find-dotfile ()
+    "Edit the `dotfile', in the current window."
+    (interactive)
+    (find-file-existing (concat user-emacs-directory "emacs-config.org")))
+
+  ;; Some term enhancement
+  (defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
+    (if (memq (process-status proc) '(signal exit))
+        (let ((buffer (process-buffer proc)))
+          ad-do-it
+          (kill-buffer buffer))
+      ad-do-it))
+  (ad-activate 'term-sentinel)
+
+  (defadvice ansi-term (before force-bash)
+    (interactive (list "/bin/zsh")))
+  (ad-activate 'ansi-term)
+
+
+
+  ;; ediff
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+  (setq ediff-split-window-function 'split-window-horizontally)
+
+  ;; Keybinding for term mode
+  (add-hook 'term-mode
+            (lambda () (global-set-key (kbd "s-v") 'term-paste)))
+
+
+
+  ;; (use-package real-auto-save
+  ;;   :diminish (real-auto-save-mode)
+  ;;   :config
+  ;;   (setq real-auto-save-interval 10) ;; in seconds
+  ;;   (add-hook 'org-mode-hook 'real-auto-save-mode)
+  ;;   (add-hook 'prog-mode-hook 'real-auto-save-mode))
+
+  (defun shk-yas/helm-prompt (prompt choices &optional display-fn)
+    "Use helm to select a snippet. Put this into `yas-prompt-functions.'"
+    (interactive)
+    (setq display-fn (or display-fn 'identity))
+    (if (require 'helm-config)
+        (let (tmpsource cands result rmap)
+          (setq cands (mapcar (lambda (x) (funcall display-fn x)) choices))
+          (setq rmap (mapcar (lambda (x) (cons (funcall display-fn x) x)) choices))
+          (setq tmpsource
+                (list
+                 (cons 'name prompt)
+                 (cons 'candidates cands)
+                 '(action . (("Expand" . (lambda (selection) selection))))))
+          (setq result (helm-other-buffer '(tmpsource) "*helm-select-yasnippet"))
+          (if (null result)
+              (signal 'quit "user quit!")
+            (cdr (assoc result rmap))))
+      nil))
+
+  (straight-use-package 'origami)
+  (use-package origami
+      :general (:keymaps 'org-super-agenda-header-map
+                         "TAB" #'origami-toggle-node)
+      :config
+
+
+      (defvar ap/org-super-agenda-auto-show-groups
+        '("3 Things I'm Doing Today No Matter What" "Schedule" "Today"))
+      (defvar ap/org-super-agenda-auto-show-groups
+        '("Schedule" ))
+
+      (defun ap/org-super-agenda-origami-fold-default ()
+        "Fold certain groups by default in Org Super Agenda buffer."
+        (forward-line 3)
+        (cl-loop do (origami-forward-toggle-node (current-buffer) (point))
+                 while (origami-forward-fold-same-level (current-buffer) (point)))
+        (--each ap/org-super-agenda-auto-show-groups
+          (goto-char (point-min))
+          (when (re-search-forward (rx-to-string `(seq bol " " ,it)) nil t)
+            (origami-show-node (current-buffer) (point)))))
+
+      :hook ((org-agenda-mode . origami-mode)
+             (org-agenda-finalize . ap/org-super-agenda-origami-fold-default)))
+
+  (use-package org-super-agenda
+    :after '(org)
+    :init
+    (require 'org-habit)
+    (setq org-super-agenda-groups
+          '((:log t)  ; Automatically named "Log"
+            (:name "3 Things I'm Doing Today No Matter What"
+                     :and (
+                           :tag ("3ThingsToday")
+                           ;; :pred (lambda (item) (string-equal (get-text-property 0 'level item) "  "))
+                           :scheduled today))
+
+            (:name "Keystone Habits"
+             :tag ("keystone"))
+
+            (:name "Schedule"
+             :discard (:tag ("habit"))
+             :time-grid t)
+
+            (:name "Next to do"
+                   :todo "NEXT"
+                   :order 1)
+
+            (:name "Today"
+                   :scheduled today)
+
+            (:name "Due today"
+                   :deadline today)
+
+            (:name "Overdue"
+                   :deadline past)
+
+            (:name "Due soon"
+                   :deadline future)
+
+            (:name "All Habits"
+                   :habit)
+
+            (:name "Unimportant"
+                   :todo ("SOMEDAY" "MAYBE" "CHECK" "TO-READ" "TO-WATCH")
+                   :order 100)
+
+            (:name "Waiting..."
+                   :todo "WAITING"
+                   :order 98)
+
+            (:name "Scheduled earlier"
+                   :scheduled past)))
+
+    :hook ((org-agenda-mode . org-super-agenda-mode) (org-agenda-mode . origami-mode))
+    :config
+    (setq org-super-agenda-header-map (make-sparse-keymap))
+    (general-define-key :keymaps 'org-super-agenda-header-map
+                         "<tab>" #'origami-toggle-node
+                        "q" 'org-agenda-quit))
+
+  (use-package org-ql
+    :after '(org)
+    :straight
+    (org-ql
+     :type git
+     :host github
+     :repo "alphapapa/org-ql"))
+  ;; allow copying both to buffer in ediff
+  (defun ediff-copy-both-to-C ()
+    (interactive)
+    (ediff-copy-diff ediff-current-difference nil 'C nil
+                     (concat
+                      (ediff-get-region-contents ediff-current-difference 'A ediff-control-buffer)
+                      (ediff-get-region-contents ediff-current-difference 'B ediff-control-buffer))))
+  (defun add-d-to-ediff-mode-map () (define-key ediff-mode-map "d" 'ediff-copy-both-to-C))
+  (add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
+
+  ;; TODO this might be a little faster? - spacemacs/toggle-fullscreen ()
+  (defun spacemacs/toggle-frame-fullscreen-non-native ()
+    "Toggle full screen non-natively. Uses the `fullboth' frame paramerter
+               rather than `fullscreen'. Useful to fullscreen on OSX w/o animations."
+    (interactive)
+    (modify-frame-parameters
+     nil
+     `((maximized
+        . ,(unless (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
+             (frame-parameter nil 'fullscreen)))
+       (fullscreen
+        . ,(if (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth))
+               (if (eq (frame-parameter nil 'maximized) 'maximized)
+                   'maximized)
+             'fullboth)))))
+
+
+  (use-package ledger-mode :defer t)
+
+  ;; our own implementation of kill-this-buffer from menu-bar.el
+  (defun spacemacs/kill-this-buffer (&optional arg)
+    "Kill the current buffer.
+            If the universal prefix argument is used then kill also the window."
+    (interactive "P")
+    (if (window-minibuffer-p)
+        (abort-recursive-edit)
+      (if (equal '(4) arg)
+          (kill-buffer-and-window)
+        (kill-buffer))))
+
+  (defun my-switch-to-scratch-buffer ()
+    (switch-to-buffer (get-buffer-create "*scratch*")))
+
+  (defun toggle-maximize-buffer () "Maximize buffer"
+         (interactive)
+         (if (= 1 (length (window-list)))
+             (jump-to-register '_)
+           (progn
+             (window-configuration-to-register '_)
+             (delete-other-windows))))
+
+  (defun my-write-then-normal-state ()
+    (evil-normal-state))
+
+   (custom-set-variables
+    ;; custom-set-variables was added by Custom.
+    ;; If you edit it by hand, you could mess it up, so be careful.
+    ;; Your init file should contain only one such instance.
+    ;; If there is more than one, they won't work right.
+    '(custom-safe-themes
+      (quote
+       ("f8067b7d0dbffb29a79e0843797efabdf5e1cf326639874d8b407e9b034136a4" "97965ccdac20cae22c5658c282544892959dc541af3e9ef8857dbf22eb70e82b" "9129c2759b8ba8e8396fe92535449de3e7ba61fd34569a488dd64e80f5041c9f" default))))
+#+end_src
