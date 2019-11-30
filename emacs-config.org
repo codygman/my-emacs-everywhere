@@ -6,3 +6,286 @@
  (straight-use-package 'helm)
  (use-package helm)
 #+end_src
+* Core-ish things that need to happen first
+** init file to write to ~/.emacs.d/init.el before bootstrap
+#+begin_src elisp :tangle ~/.emacs.d/init.el :eval no
+    ;; add MELPA package server
+    (require 'package)
+  (setq package-enable-at-startup nil)
+    (setq package-archives '(("org"   . "http://orgmode.org/elpa/")
+                             ("gnu"   . "http://elpa.gnu.org/packages/")
+                             ("melpa" . "https://melpa.org/packages/")))
+    (unless package-archive-contents
+      (package-refresh-contents))
+
+    (package-initialize)
+  (message "package initialize finished")
+
+    ;; straight.el setup
+    (defvar bootstrap-version)
+    (let ((bootstrap-file
+           (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+          (bootstrap-version 5))
+      (unless (file-exists-p bootstrap-file)
+        (with-current-buffer
+            (url-retrieve-synchronously
+             "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+             'silent 'inhibit-cookies)
+          (goto-char (point-max))
+          (eval-print-last-sexp)))
+      (load bootstrap-file nil 'nomessage))
+
+
+
+    ;; if not yet installed, install package use-package
+    ;; (unless (package-installed-p 'use-package)
+    ;;   (package-install 'use-package))
+
+    ;; load org package and our emacs-config.org file
+    ;; BEGIN hacky install org mode
+    (require 'subr-x)
+    (straight-use-package 'git)
+
+    (defun org-git-version ()
+      "The Git version of org-mode.
+    Inserted by installing org-mode or when a release is made."
+      (require 'git)
+      (let ((git-repo (expand-file-name
+                       "straight/repos/org/" user-emacs-directory)))
+        (string-trim
+         (git-run "describe"
+                  "--match=release\*"
+                  "--abbrev=6"
+                  "HEAD"))))
+
+    (defun org-release ()
+      "The release version of org-mode.
+    Inserted by installing org-mode or when a release is made."
+      (require 'git)
+      (let ((git-repo (expand-file-name
+                       "straight/repos/org/" user-emacs-directory)))
+        (string-trim
+         (string-remove-prefix
+          "release_"
+          (git-run "describe"
+                   "--match=release\*"
+                   "--abbrev=0"
+                   "HEAD")))))
+
+    (provide 'org-version)
+
+    (straight-use-package 'org-plus-contrib) ; or org-plus-contrib if desired
+    ;; END hacky install org mode
+    (org-babel-load-file "~/.emacs.d/emacs-config.org")
+#+end_src
+** changes to vanilla emacs
+#+begin_src emacs-lisp
+    ;; Package configs
+    ;; (require 'package)
+    (require 'cl)
+    ;; (package-initialize)
+
+    (display-time)
+    (blink-cursor-mode 0)
+    (fset 'yes-or-no-p 'y-or-n-p)
+    (setq ring-bell-function 'ignore)
+    ;; don't stop in instrumented forms unless there is a breakpoint
+    ;; enables things working normally even after instrumenting but allowing you to stop somewhere specific w/ a breakpoint
+    ;; eh need to revisit this and see if it's what I actually want
+    (setq edebug-initial-mode 'go)
+
+    ;; org mode large files super slow without doing this
+    (setq-default bidi-paragraph-direction nil)
+    ;; make things I copy in my OS be pushed into the emacs kill-ring searchable by helm-show-kill-ring
+    (setq save-interprogram-paste-before-kill t)
+
+    ;; fix term mode stuff
+    (eval-after-load "term"
+      '(progn
+         ;; Fix forward/backward word when (term-in-char-mode).
+         (define-key term-raw-map (kbd "<M-left>")
+           (lambda () (interactive) (term-send-raw-string "\eb")))
+         (define-key term-raw-map (kbd "<M-left>")
+           (lambda () (interactive) (term-send-raw-string "\eb")))
+         (define-key term-raw-map (kbd "<C-right>")
+           (lambda () (interactive) (term-send-raw-string "\ef")))
+         (define-key term-raw-map (kbd "<M-right>")
+           (lambda () (interactive) (term-send-raw-string "\ef")))
+         ;; Disable killing and yanking in char mode (term-raw-map).
+         (mapc
+          (lambda (func)
+            (eval `(define-key term-raw-map [remap ,func]
+                     (lambda () (interactive) (ding)))))
+          '(backward-kill-paragraph
+            backward-kill-sentence backward-kill-sexp backward-kill-word
+            bookmark-kill-line kill-backward-chars kill-backward-up-list
+            kill-forward-chars kill-line kill-paragraph kill-rectangle
+            kill-region kill-sentence kill-sexp kill-visual-line
+            kill-whole-line kill-word subword-backward-kill subword-kill
+            yank yank-pop yank-rectangle))))
+
+    (if (display-graphic-p)
+        (progn
+          (scroll-bar-mode -1)
+          (tool-bar-mode   -1)
+          (tooltip-mode    -1)
+          (menu-bar-mode   -1))
+      (message "in terminal"))
+
+    ;; used with helm-mark-ring
+    (setq mark-ring-max 1000)
+
+    ;; gpg stuff
+    (setq epg-gpg-program "gpg2")
+    (setf epa-pinentry-mode 'loopback) ;; necessary for this to work with osx/emacs
+
+    ;; enable winner-mode
+    (when (fboundp 'winner-mode)
+      (winner-mode 1))
+
+    (global-auto-revert-mode)
+    ;; Also auto refresh dired, but be quiet about it
+    (setq global-auto-revert-non-file-buffers t)
+    (setq auto-revert-verbose nil)
+
+    (add-to-list 'default-frame-alist '(width . 80))
+    ;; always follow symlinks and DONT PROMPT ME
+    (setq vc-follow-symlinks t)
+
+    ;; Other configs
+  (setq backup-by-copying t      ; don't clobber symlinks
+        backup-directory-alist '(("." . "~/.emacs-saves/"))    ; don't litter my fs tree
+        delete-old-versions t
+        kept-new-versions 6
+        kept-old-versions 2
+        version-control t)       ; use versioned backups
+  (setq auto-save-file-name-transforms
+        `((".*" "~/.emacs-saves/" t)))
+
+    ;; Splash Screen
+    (setq inhibit-startup-screen t)
+    (setq initial-scratch-message nil)
+
+    ;; Show matching parens
+    (setq show-paren-delay 0)
+    (show-paren-mode  1)
+
+    ;; make sure windows always split vertically (hopefully I actually want this)
+    ;; I definitely don't want it with split width threshold 0
+    ;; (setq split-height-threshold nil
+    ;;       split-width-threshold 0)
+
+  ;; never have trailing whitespace again
+  ;; TODO put on idle timer instead of before-save-hook
+  ;; (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+end_src
+** emacs on mobile
+*** modify HOME so files are where expected on mobile
+#+begin_src emacs-lisp
+  ;; *NOTE* must be at bottom or breaks other loading processes somehow
+  ;; if we are in termux for android devices set HOME to sdcard
+  ;; because that's where my org folder will be
+  (when (file-exists-p "/data/data/com.termux/files/usr/bin/termux-info")
+    (message "**NOTE** detected termux... automatically setting HOME for emacs")
+    (setenv "HOME" "/data/data/com.termux/files/home/storage/shared"))
+#+end_src
+*** don't use symlinks with straight because of permission errors
+#+begin_src emacs-lisp
+  (when (file-exists-p "/data/data/com.termux/files/usr/bin/termux-info")
+    (setq straight-use-symlinks nil))
+#+end_src
+** use straight package manager
+#+begin_src emacs-lisp
+  (setq straight-use-package-by-default t)
+  (straight-use-package 'use-package)
+#+end_src
+** highlight our lines by default
+#+begin_src emacs-lisp
+(global-hl-line-mode +1)
+#+end_src
+** make the modeline nicer
+*** the actual modeline
+#+begin_src emacs-lisp
+    ;; (defun shackra/task-clocked-time ()
+    ;;   "Return a string with the clocked time and effort, if any"
+    ;;   (interactive)
+    ;;   (if (and org-mode-line-string (> (length org-mode-line-string) 3))
+    ;;       (let* ((clocked-time (org-clock-get-clocked-time))
+    ;;              (h (floor clocked-time 60))
+    ;;              (m (- clocked-time (* 60 h)))
+    ;;              (work-done-str (org-minutes-to-clocksum-string m))
+    ;;              (heading-length-or-forty (if (< 40 (length org-clock-heading)) 40 (length org-clock-heading)))
+    ;;              (org-clock-heading-substring (substring org-clock-heading 0 heading-length-or-forty))
+    ;;              (maybe-add-ellipses-to-heading (if (< 40 (length org-clock-heading))  (format "%s..." org-clock-heading-substring) org-clock-heading-substring))
+    ;;              ;; TODO only add elllipses if string longer than 40
+    ;;              (clock-heading-summarized maybe-add-ellipses-to-heading )
+    ;;              )
+    ;;         (if org-clock-effort
+    ;;             (let* ((effort-in-minutes
+    ;;                     (org-duration-string-to-minutes org-clock-effort))
+    ;;                    (effort-h (floor effort-in-minutes 60))
+    ;;                    (effort-m (- effort-in-minutes (* effort-h 60)))
+    ;;                    (effort-str (org-minutes-to-clocksum-string effort-m)))
+    ;;               (format " [%s/%s (%s)]  " work-done-str effort-str clock-heading-summarized))
+    ;;           (format " [%s (%s)]   " work-done-str clock-heading-summarized)))
+    ;;     ""))
+
+  (with-eval-after-load 'subr-x
+    (setq-default mode-line-buffer-identification
+                  '(:eval (format-mode-line (propertized-buffer-identification (or (when-let* ((buffer-file-truename buffer-file-truename)
+                                                                                               (prj (cdr-safe (project-current)))
+                                                                                               (prj-parent (file-name-directory (directory-file-name (expand-file-name prj)))))
+                                                                                     (concat (file-relative-name (file-name-directory buffer-file-truename) prj-parent) (file-name-nondirectory buffer-file-truename)))
+                                                                                   "%b"))))))
+
+    (setq-default mode-line-format
+                  (list
+                   " " mode-line-modified
+                   ;; day and time
+                   '(:eval (propertize (format-time-string "  %b %d %R ")
+                                       'face 'font-lock-builtin-face))
+
+                   ;; '(:eval (propertize (substring vc-mode 5)
+                   ;;                     'face 'font-lock-comment-face))
+
+                   ;; line and column
+                   ;; " (" ;; '%02' to set to 2 chars at least; prevents flickering
+                   mode-line-buffer-identification
+                   ;; (propertize "%02l" 'face 'font-lock-keyword-face) ","
+                   ;; (propertize "%02c" 'face 'font-lock-keyword-face)
+                   ;; ") "
+
+                 ;; '(:eval (propertize (shackra/task-clocked-time)
+                 ;;                     'face 'font-lock-builtin-face))
+
+                   ;; '(:eval (propertize (shackra/task-clocked-time)
+                   ;;                     'face 'font-lock-builtin-face))
+                   ;; '(:eval (propertize (substring org-mode-line-string 1)
+                   ;;                     'face 'font-lock-builtin-face))
+
+                   ;; spaces to align right
+                   ;; '(:eval (propertize
+                   ;;          " " 'display
+                   ;;          `((space :align-to (- (+ right right-fringe right-margin)
+                   ;;                                ,(+ 3 (string-width mode-name)))))))
+
+                   ;; the current major mode
+                   (propertize " %m " 'face 'font-lock-string-face)
+                   ;;minor-mode-alist
+                   ;;  (propertize minor-mode-list 'face 'font-lock-string-face)
+                   ))
+#+end_src
+*** some hooks to keep info accurate
+#+begin_src emacs-lisp
+  (add-hook 'org-clock-in-hook
+            '(lambda ()
+               (force-mode-line-update)))
+  (add-hook 'org-clock-cancel-hook
+            '(lambda ()
+               (setq org-mode-line-string nil)
+               (force-mode-line-update)))
+  (add-hook 'org-clock-out-hook
+            '(lambda ()
+               (setq org-mode-line-string nil)
+               (force-mode-line-update)))
+#+end_src
