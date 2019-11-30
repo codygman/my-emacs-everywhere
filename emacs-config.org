@@ -308,3 +308,4 @@
       ("PERSONAL" (load (expand-file-name "personal.el" "~")))
       (_ (error "Please set the EMACSFOR variable to WORK or PERSONAL"))))
 #+end_src
+** ensure personal.el and personal org files are added above
