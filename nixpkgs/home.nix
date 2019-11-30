@@ -19,13 +19,13 @@ in
       enable = true;
       controlPath = "~/.ssh/master-%C";
     };
-    htop = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true};
+    htop = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true;};
     firefox = mkIf stdenv.isLinux {
       # todo install with home-manager
       enable = true;
     };
     jq.enable = true;
-    vim = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true};
+    vim = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true;};
     git = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {
       enable = true;
       userName = "codygman";
