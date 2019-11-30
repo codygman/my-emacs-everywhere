@@ -289,3 +289,11 @@
                (setq org-mode-line-string nil)
                (force-mode-line-update)))
 #+end_src
+* Ensure critical environment specific files exist
+** load bash profile (most for env vars)
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :init (setq exec-path-from-shell-variables '("PATH" "MANPATH" "EMACSFOR"))
+    :config
+    (exec-path-from-shell-initialize))
+#+end_src
