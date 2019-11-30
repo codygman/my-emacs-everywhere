@@ -2502,3 +2502,7 @@ Automatically save your all your files at regular intervals.
   ;;         (typescript-mode . tide-hl-identifier-mode)))
   ;;
 #+end_src
+* Load secret elisp things
+#+begin_src emacs-lisp
+  (load "~/.emacs.d/private/custom.el" t 'noerror)
+#+end_src
