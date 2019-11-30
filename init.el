@@ -28,6 +28,8 @@
 (straight-use-package 'use-package)
 (straight-use-package 'with-simulated-input)
 (use-package with-simulated-input)
+(straight-use-package 'helm)
+(use-package helm)
 
 ;; make my-emacs-everywhere use literate config
 ;;;; make my-emacs-everywhere literate config be workflow driven
