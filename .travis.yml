@@ -8,3 +8,4 @@ cache:
 script:
   - sh install.sh
   - sh test.sh
+  - cat test-results.txt
