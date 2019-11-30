@@ -2,9 +2,15 @@ language: nix
 os:
   - linux
   - osx
+env:
+  - EMACS_CI=emacs-26-3
+  - EMACS_CI=emacs-snapshot
 cache:
   directories:
   - $HOME/.emacs.d/straight
+install:
+  - bash <(curl https://raw.githubusercontent.com/purcell/nix-emacs-ci/master/travis-install)
+
 script:
-  - sh install.sh
+  - emacs --version
   - sh test.sh
