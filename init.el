@@ -21,6 +21,7 @@
 
 (straight-use-package 'org-plus-contrib)
 (straight-use-package '(org :local-repo nil))
+(straight-use-package 'use-package)
 
 (when (file-exists-p "/data/data/com.termux/files/usr/bin/termux-info")
   (setq straight-use-symlinks nil))
