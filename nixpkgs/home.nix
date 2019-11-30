@@ -31,7 +31,7 @@ in
       userName = "codygman";
       userEmail = "codygman.consulting@gmail.com";
     };
-    gpg = {
+    gpg = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {
       enable = true;
     };
   };
