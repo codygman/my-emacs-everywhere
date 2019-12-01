@@ -188,7 +188,7 @@
      (with-simulated-input
 	 '("pan"
 	   (wsi-simulate-idle-time 0.5)
-	   "M-g")
+	   "RET")
        (helm-projectile-switch-project))
      (buffer-name))))
   )
