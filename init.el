@@ -1,7 +1,8 @@
+;; duplicate in my-tests.el TODO remove after making sure tests work in ~/.emacs.d
 (defun my-emacs-everywhere-directory ()
   (if (eq nil (getenv "TRAVIS_OS_NAME"))
       "~/.emacs.d/"
-    "~/build/codygman/my-emacs-everywhere/"))
+    "~/.emacs.d/"))
 (setq straight-profiles '((nil . "~/.emacs.d/straight-versions.el")))
 (setq straight-repository-branch "develop")
 (defvar bootstrap-version)

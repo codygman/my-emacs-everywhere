@@ -20,11 +20,11 @@
 	  (append-to-file (backtrace-to-string (backtrace-get-frames 'backtrace)) nil "test-results.txt"))
       (kill-emacs 2))))
 
-;; duplicate in init.el
+;; duplicate in init.el TODO remove after making sure tests work in ~/.emacs.d
 (defun my-emacs-everywhere-directory ()
   (if (eq nil (getenv "TRAVIS_OS_NAME"))
       "~/.emacs.d/"
-    "~/build/codygman/my-emacs-everywhere/"))
+    "~/.emacs.d/"))
 (ert-deftest version-check ()
   (should (string-equal "27.0.50" emacs-version)))
 
