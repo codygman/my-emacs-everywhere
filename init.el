@@ -19,7 +19,8 @@
 
 (setq straight-use-package-by-default t)
 
-(straight-use-package '(org-plus-contrib :includes (org)))
+(straight-use-package 'org-plus-contrib)
+(straight-use-package '(org :local-repo nil))
 (straight-use-package 'use-package)
 
 (when (file-exists-p "/data/data/com.termux/files/usr/bin/termux-info")
