@@ -7,17 +7,17 @@
   ;; Instead, run the tests interactively, copy the results to a
   ;; text file, and then exit with an appropriate code.
   (setq attempt-stack-overflow-recovery nil
-        attempt-orderly-shutdown-on-fatal-signal nil)
+	attempt-orderly-shutdown-on-fatal-signal nil)
   (unwind-protect
       (progn
-        (ert-run-tests-interactively t)
-        (with-current-buffer "*ert*"
-          (append-to-file (point-min) (point-max) "test-results.txt")
-          (kill-emacs (if (zerop (ert-stats-completed-unexpected ert--results-stats)) 0 1))))
+	(ert-run-tests-interactively t)
+	(with-current-buffer "*ert*"
+	  (append-to-file (point-min) (point-max) "test-results.txt")
+	  (kill-emacs (if (zerop (ert-stats-completed-unexpected ert--results-stats)) 0 1))))
     (unwind-protect
-        (progn
-          (append-to-file "Error running tests\n" nil "test-results.txt")
-          (append-to-file (backtrace-to-string (backtrace-get-frames 'backtrace)) nil "test-results.txt"))
+	(progn
+	  (append-to-file "Error running tests\n" nil "test-results.txt")
+	  (append-to-file (backtrace-to-string (backtrace-get-frames 'backtrace)) nil "test-results.txt"))
       (kill-emacs 2))))
 
 ;; duplicate in init.el
@@ -92,30 +92,30 @@
   (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
   (should (eq 'haskell-mode (derived-mode-p 'haskell-mode))))
 
-  (defun get-substring-from-line ()
-    "Copy the whole line that point is on and move to the beginning of the next line.
+(defun get-substring-from-line ()
+  "Copy the whole line that point is on and move to the beginning of the next line.
     Consecutive calls to this command append each line to the
     kill-ring."
-    (interactive)
-    (let ((beg (line-beginning-position 1))
-	  (end (line-beginning-position 2)))
-      (string-trim (substring-no-properties (buffer-substring beg end)))))
+  (interactive)
+  (let ((beg (line-beginning-position 1))
+	(end (line-beginning-position 2)))
+    (string-trim (substring-no-properties (buffer-substring beg end)))))
 
-  (defun load-simple-hs-file-and-return-ghci-evald-main ()
-    (save-excursion
-      (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
-      (haskell-process-load-file)
-      (switch-to-buffer "*simple-haskell-project*")
-      (sit-for 2)
-      (goto-char (point-max))
-      (evil-append-line 1)
-      (insert "main")
-      (haskell-interactive-mode-return)
-      (sit-for 3)
-      (evil-previous-line)
-      (get-substring-from-line)))
+(defun load-simple-hs-file-and-return-ghci-evald-main ()
+  (save-excursion
+    (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
+    (haskell-process-load-file)
+    (switch-to-buffer "*simple-haskell-project*")
+    (sit-for 2)
+    (goto-char (point-max))
+    (evil-append-line 1)
+    (insert "main")
+    (haskell-interactive-mode-return)
+    (sit-for 3)
+    (evil-previous-line)
+    (get-substring-from-line)))
 
-  (ert-deftest haskell-mode-ghci-loads-file-and-can-execute ()
-    (should (string-equal
-	     "Hello, Haskell!"
-	     (load-simple-hs-file-and-return-ghci-evald-main))))
+(ert-deftest haskell-mode-ghci-loads-file-and-can-execute ()
+  (should (string-equal
+	   "Hello, Haskell!"
+	   (load-simple-hs-file-and-return-ghci-evald-main))))
