@@ -119,11 +119,3 @@
     (should (string-equal
 	     "Hello, Haskell!"
 	     (load-simple-hs-file-and-return-ghci-evald-main))))
-
-  ;; TODO RET works in grep buffers
-  ;; (with-eval-after-load 'evil-maps
-  ;;   (define-key evil-motion-state-map (kbd "SPC") nil)
-  ;;   (define-key evil-motion-state-map (kbd "RET") nil)
-  ;;   (define-key evil-motion-state-map (kbd "TAB") nil))
-  ;; )
-
