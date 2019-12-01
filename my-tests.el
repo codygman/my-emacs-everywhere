@@ -119,3 +119,30 @@
   (should (string-equal
 	   "Hello, Haskell!"
 	   (load-simple-hs-file-and-return-ghci-evald-main))))
+
+(require 'ert)
+(require 'ert-x)
+
+(defun simulate-expand-yasnippet (key code)
+  (save-excursion
+    (with-current-buffer (generate-new-buffer (format "test-%s-yasnippet" key))
+      (org-mode)
+      (erase-buffer)
+      (insert key)
+      (evil-append-line nil)
+      (ert-simulate-command '(yas-expand))
+      (should (eq (key-binding (yas--read-keybinding "<tab>")) 'yas-next-field-or-maybe-expand))
+      (ert-simulate-command '(yas-next-field-or-maybe-expand))
+      (insert code)
+      (ert-simulate-command '(org-ctrl-c-ctrl-c))
+      (buffer-substring-no-properties (point-min) (point-max)))))
+
+(ert-deftest yas-elisp-source-block-gives-expected-output ()
+  (string-equal (simulate-expand-yasnippet "elisp" "(+ 1 1)")
+		"#+begin_src emacs-lisp
+(+ 1 1)
+#+end_src
+
+#+RESULTS:
+: 2
+"))
