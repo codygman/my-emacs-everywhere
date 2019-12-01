@@ -21,6 +21,7 @@
 
 (straight-use-package 'org-plus-contrib)
 (straight-use-package '(org :local-repo nil))
+(straight-use-package 'use-package)
 
 (when (file-exists-p "/data/data/com.termux/files/usr/bin/termux-info")
   (setq straight-use-symlinks nil))
@@ -40,5 +41,4 @@
 ;;;;; TBD
 ;;;;; TBD
 ;; TODO make my-emacs-everywhere use literate test that gets tangled
-(straight-use-package 'use-package)
 (org-babel-load-file (format "%s/emacs-config.org" (my-emacs-everywhere-directory)))

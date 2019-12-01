@@ -7,18 +7,19 @@
   ;; Instead, run the tests interactively, copy the results to a
   ;; text file, and then exit with an appropriate code.
   (setq attempt-stack-overflow-recovery nil
-        attempt-orderly-shutdown-on-fatal-signal nil)
+	attempt-orderly-shutdown-on-fatal-signal nil)
   (unwind-protect
       (progn
-        (ert-run-tests-interactively t)
-        (with-current-buffer "*ert*"
-          (append-to-file (point-min) (point-max) "test-results.txt")
-          (kill-emacs (if (zerop (ert-stats-completed-unexpected ert--results-stats)) 0 1))))
+	(ert-run-tests-interactively t)
+	(with-current-buffer "*ert*"
+	  (append-to-file (point-min) (point-max) "test-results.txt")
+	  (when (not (getenv "DEBUG_TESTS")) (kill-emacs (if (zerop (ert-stats-completed-unexpected ert--results-stats)) 0 1))))
     (unwind-protect
-        (progn
-          (append-to-file "Error running tests\n" nil "test-results.txt")
-          (append-to-file (backtrace-to-string (backtrace-get-frames 'backtrace)) nil "test-results.txt"))
-      (kill-emacs 2))))
+	(progn
+	  (append-to-file "Error running tests\n" nil "test-results.txt")
+	  (append-to-file (backtrace-to-string (backtrace-get-frames 'backtrace)) nil "test-results.txt"))
+      (when (not (getenv "DEBUG_TESTS")) (kill-emacs 2))))))
+
 ;; duplicate in init.el
 (defun my-emacs-everywhere-directory ()
   (if (eq nil (getenv "TRAVIS_OS_NAME"))
@@ -85,63 +86,109 @@
 	     (car (helm :sources
 			`((name . "Simple helm names example")
 			  (candidates . ,(list "jane" "john"))
-			  (action . (lambda (candidate) (helm-marked-candidates))))))))))
+			  (action . (lambda (candidate) (helm-marked-candidates)))))))
+	   )))
 
-;; (ert-deftest haskell-mode-enabled-opening-haskell-file ()
-;;   (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
-;;   (should (eq 'haskell-mode (derived-mode-p 'haskell-mode))))
+(ert-deftest haskell-mode-enabled-opening-haskell-file ()
+  (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
+  (should (eq 'haskell-mode (derived-mode-p 'haskell-mode))))
 
-;;   (defun get-substring-from-line ()
-;;     "Copy the whole line that point is on and move to the beginning of the next line.
-;;     Consecutive calls to this command append each line to the
-;;     kill-ring."
-;;     (interactive)
-;;     (let ((beg (line-beginning-position 1))
-;; 	  (end (line-beginning-position 2)))
-;;       (string-trim (substring-no-properties (buffer-substring beg end)))))
+(defun get-substring-from-line ()
+  "Copy the whole line that point is on and move to the beginning of the next line.
+    Consecutive calls to this command append each line to the
+    kill-ring."
+  (interactive)
+  (let ((beg (line-beginning-position 1))
+	(end (line-beginning-position 2)))
+    (string-trim (substring-no-properties (buffer-substring beg end)))))
 
-;;   (defun load-simple-hs-file-and-return-ghci-evald-main ()
-;;     (save-excursion
-;;       (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
-;;       (message "found file")
-;;       (haskell-process-load-file)
-;;       (message "loaded file")
-;;       (switch-to-buffer "*simple-haskell-project*")
-;;       (message "switched to buffer")
-;;       (sit-for 2)
-;;       (message "sat for 2")
-;;       (message "START ghci repl looks like")
-;;       (message
-;;        (format "%s" (substring-no-properties (buffer-substring (point-min) (point-max)))))
-;;       (message "END ghci repl looks like")
-;;       (goto-char (point-max))
-;;       (message "went to point max")
-;;       (evil-append-line 1)
-;;       (message "insert mode at end of line")
-;;       (insert "main")
-;;       (message "inserted text 'main'")
-;;       (haskell-interactive-mode-return)
-;;       (message "haskell return")
-;;       (sit-for 3)
-;;       (message "sit for 3")
-;;       (message "START ghci repl looks like (after execute)")
-;;       (message
-;;        (format "%s" (substring-no-properties (buffer-substring (point-min) (point-max)))))
-;;       (message "END ghci repl looks like (after execute)")
-;;       (evil-previous-line)
-;;       (message "go to previous line")
-;;       (get-substring-from-line)
-;;       ))
+(defun load-simple-hs-file-and-return-ghci-evald-main ()
+  (save-excursion
+    (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
+    (haskell-process-load-file)
+    (switch-to-buffer "*simple-haskell-project*")
+    (sit-for 2)
+    (goto-char (point-max))
+    (evil-append-line 1)
+    (insert "main")
+    (haskell-interactive-mode-return)
+    (sit-for 3)
+    (evil-previous-line)
+    (get-substring-from-line)))
 
-;;   (ert-deftest haskell-mode-ghci-loads-file-and-can-execute ()
-;;     (should (string-equal
-;; 	     "Hello, Haskell!"
-;; 	     (load-simple-hs-file-and-return-ghci-evald-main))))
+(ert-deftest haskell-mode-ghci-loads-file-and-can-execute ()
+  (should (string-equal
+	   "Hello, Haskell!"
+	   (load-simple-hs-file-and-return-ghci-evald-main))))
 
-  ;; TODO RET works in grep buffers
-  ;; (with-eval-after-load 'evil-maps
-  ;;   (define-key evil-motion-state-map (kbd "SPC") nil)
-  ;;   (define-key evil-motion-state-map (kbd "RET") nil)
-  ;;   (define-key evil-motion-state-map (kbd "TAB") nil))
-  ;; )
+(require 'ert)
+(require 'ert-x)
 
+(defun simulate-expand-yasnippet (key code)
+  (save-excursion
+    (let ((generated-buffer-name (generate-new-buffer (format "test-%s-yasnippet" key))))
+      (with-current-buffer generated-buffer-name
+	(org-mode)
+	(erase-buffer)
+	(insert key)
+	(evil-append-line nil)
+	(ert-simulate-command '(yas-expand))
+	(should (eq (key-binding (yas--read-keybinding "<tab>")) 'yas-next-field-or-maybe-expand))
+	(ert-simulate-command '(yas-next-field-or-maybe-expand))
+	(when code (insert code))
+	`( :expanded-contents ,(buffer-substring-no-properties (point-min) (point-max))
+	  :the-buffer-name ,generated-buffer-name )
+	))))
+
+(defun simulate-execute-src-block-in-buffer (buffer-name)
+  (save-excursion
+    (with-current-buffer buffer-name
+      ;; (ert-simulate-command '(org-babel-next-src-block))
+      (ert-simulate-command '(org-ctrl-c-ctrl-c))
+      (buffer-substring-no-properties (point-min) (point-max)))))
+
+(ert-deftest yas-general-source-block-expands-correctly ()
+  (should (string-equal (plist-get (simulate-expand-yasnippet "src" nil) :expanded-contents)
+		  "#+begin_src
+
+#+end_src")))
+
+(ert-deftest yas-elisp-source-block-gives-expected-output ()
+  (require 'yasnippet)
+  (yas-load-directory "~/.emacs.d/snippets")
+  (should (not (eq nil (yas-lookup-snippet "Elisp Org Source Block" 'org-mode t))))
+  (let ((buffer-name (plist-get
+		      (simulate-expand-yasnippet "elisp" "(+ 1 1)")
+		      :the-buffer-name)))
+    (string-equal (simulate-execute-src-block-in-buffer buffer-name)
+		  "#+begin_src emacs-lisp
+(+ 1 1)
+#+end_src
+
+#+RESULTS:
+: 2
+")))
+
+(defun clone-projects-projectile-test ()
+  (shell-command-to-string "cd /tmp && git clone https://github.com/jgm/pandoc.git")
+  (shell-command-to-string "cd /tmp && git clone --depth 1 git://git-annex.branchable.com/ git-annex")
+  (shell-command-to-string "cd /tmp && git clone --depth 1 https://github.com/haskell/haskell-ide-engine.git")
+  (should (file-directory-p "/tmp/pandoc"))
+  (should (file-directory-p "/tmp/git-annex"))
+  (should (file-directory-p "/tmp/haskell-ide-engine")))
+
+(ert-deftest projectile-switch-projects-to-magit-works ()
+  (clone-projects-projectile-test)
+  ;; find git-annex,haskell-ide-engine, and pandoc projects cloned to /tmp
+  (projectile-discover-projects-in-directory "/tmp")
+  ;; ensure that we can successfully switch to magit for a given project
+  (should (string-equal
+   "magit: pandoc"
+   (save-excursion
+     (with-simulated-input
+	 '("pan"
+	   (wsi-simulate-idle-time 0.5)
+	   "M-g")
+       (helm-projectile-switch-project))
+     (buffer-name))))
+  )

@@ -19,13 +19,14 @@ in
       enable = true;
       controlPath = "~/.ssh/master-%C";
     };
-    htop.enable = true;
+    htop = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true;};
     firefox = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) {
       # todo install with home-manager
       enable = true;
     };
-    jq.enable = true;
-    vim.enable = true;
+
+    jq = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true;};
+    vim = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true;};
     git = {
       enable = true;
       userName = "codygman";
@@ -39,11 +40,11 @@ in
   home = {
     packages = with pkgs; [
       ripgrep
-      gnumake
       fd
       ghc
     ] ++ (if builtins.getEnv "TRAVIS_OS_NAME" == "" then [
       feh
+      gnumake
       dmenu
       haskellPackages.lens
       haskellPackages.pandoc
