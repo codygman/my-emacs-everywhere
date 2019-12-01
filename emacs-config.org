@@ -1990,10 +1990,8 @@
 *** helm-projectile
 #+begin_src emacs-lisp
   (use-package helm-projectile
-    :defer t
     :init
     (setq helm-projectile-fuzzy-match t)
-    :defer t
           :config
     (helm-projectile-on))
 #+end_src

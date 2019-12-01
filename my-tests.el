@@ -86,7 +86,8 @@
 	     (car (helm :sources
 			`((name . "Simple helm names example")
 			  (candidates . ,(list "jane" "john"))
-			  (action . (lambda (candidate) (helm-marked-candidates))))))))))
+			  (action . (lambda (candidate) (helm-marked-candidates)))))))
+	   )))
 
 (ert-deftest haskell-mode-enabled-opening-haskell-file ()
   (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
@@ -166,3 +167,25 @@
 #+RESULTS:
 : 2
 ")))
+
+(defun clone-projects-projectile-test ()
+  (shell-command-to-string "cd /tmp && git clone --depth 1 https://github.com/jgm/pandoc.git")
+  (shell-command-to-string "cd /tmp && git clone --depth 1 git://git-annex.branchable.com/ git-annex")
+  (shell-command-to-string "cd /tmp && git clone --depth 1 https://github.com/haskell/haskell-ide-engine.git")
+  (should (file-directory-p "/tmp/pandoc"))
+  (should (file-directory-p "/tmp/git-annex"))
+  (should (file-directory-p "/tmp/haskell-ide-engine")))
+
+(ert-deftest projectile-switch-projects-to-magit-works ()
+  ;; find git-annex,haskell-ide-engine, and pandoc projects cloned to /tmp
+  (projectile-discover-projects-in-directory "/tmp")
+  ;; ensure that we can successfully switch to magit for a given project
+  (should (string-equal
+   "magit: pandoc"
+   (save-excursion
+     (with-simulated-input
+	 '("pan"
+	   (wsi-simulate-idle-time 0.5)
+	   "M-g")
+       (helm-projectile-switch-project))
+     (buffer-name)))))
