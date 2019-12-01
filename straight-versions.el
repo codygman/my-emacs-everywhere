@@ -20,7 +20,6 @@
  ("emacs-request" . "ef1587a02139c587c80ae4ca61ed71798bfd07dc")
  ("emacs-which-key" . "42a25055163141165aa0269dbca69735e704825c")
  ("emacs-winum" . "c5455e866e8a5f7eab6a7263e2057aff5f1118b9")
- ("emacsmirror-mirror" . "f448eb0b1f84e255baf31a0ca0a929a9d8f1ef8b")
  ("epl" . "78ab7a85c08222cd15582a298a364774e3282ce6")
  ("esxml" . "5548ceba17deae0c3c6d0092672edc4de3c75ce3")
  ("evil" . "874beba2cb243c325eca08fb7badff567f3c9494")
