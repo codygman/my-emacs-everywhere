@@ -178,6 +178,7 @@
   (should (file-directory-p "/tmp/haskell-ide-engine")))
 
 (ert-deftest projectile-switch-projects-to-magit-works ()
+  (clone-projects-projectile-test)
   ;; find git-annex,haskell-ide-engine, and pandoc projects cloned to /tmp
   (projectile-discover-projects-in-directory "/tmp")
   ;; ensure that we can successfully switch to magit for a given project
