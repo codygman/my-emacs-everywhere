@@ -16,3 +16,4 @@ cp -vR nixpkgs ~/.config
 pushd ~/.config/nixpkgs
 nix-build emacs.nix | cachix push codygman4
 popd
+home-manager switch

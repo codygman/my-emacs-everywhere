@@ -7,6 +7,5 @@ cache:
   - $HOME/.emacs.d/straight
 script:
   - bash install.sh
-  - home-manager switch
   - sh test.sh
   - cat test-results.txt
