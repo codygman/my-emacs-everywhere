@@ -7,6 +7,13 @@ cache:
   - $HOME/.emacs.d/straight
 script:
   - bash install.sh
+  - nix-shell '<home-manager>' -A install
+  - cachix use codygman4
+  - mkdir -p ~/.config/
+  - cp -vR nixpkgs ~/.config
+  - cd ~/.config/nixpkgs
+  - nix-build emacs.nix | cachix push codygman4
+  - cd ~/build/codygman/my-emacs-everywhere/
   - home-manager switch
   - sh test.sh
   - cat test-results.txt
