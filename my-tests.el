@@ -155,7 +155,7 @@
 
 (ert-deftest yas-elisp-source-block-gives-expected-output ()
   (require 'yasnippet)
-  (yas-load-directory (format "%s/snippets" (my-emacs-everywhere-directory)))
+  (yas-load-directory "~/.emacs.d/snippets")
   (should (not (eq nil (yas-lookup-snippet "Elisp Org Source Block" 'org-mode t))))
   (let ((buffer-name (plist-get
 		      (simulate-expand-yasnippet "elisp" "(+ 1 1)")
