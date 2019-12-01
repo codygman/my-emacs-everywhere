@@ -50,7 +50,7 @@
  ("ht.el" . "66c5f9131242697fabaede5566d87ecda4c14b1f")
  ("lcr" . "c14f40692292d59156c7632dbdd2867c086aa75f")
  ("ledger-mode" . "1b384d509798691a6afe6434ab2c1d799c75cde0")
- ("let-alist" . "57561d7d9267da48e8b7ab1f3bd45c9d05951289")
+ ("let-alist" . "681570f2abec73ec6494d67f8a904ac9ea15063f")
  ("log4e" . "c69424e407be0d9d0e54b427d8b18b1ac5a607e2")
  ("loop.el" . "e22807f83a0890dc8a904c51ee0742c34efccc6c")
  ("lsp-mode" . "ed5332c403ac9fb550d0dd83cd93410e7464f6bc")
