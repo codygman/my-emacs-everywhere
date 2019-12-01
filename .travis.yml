@@ -9,4 +9,3 @@ script:
   - bash install.sh
   - sh test.sh
   - cat test-results.txt
-  - cat ~/debug.txt
