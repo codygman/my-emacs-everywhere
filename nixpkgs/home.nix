@@ -27,7 +27,7 @@ in
 
     jq = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true;};
     vim = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true;};
-    git = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {
+    git = {
       enable = true;
       userName = "codygman";
       userEmail = "codygman.consulting@gmail.com";
