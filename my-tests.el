@@ -182,14 +182,14 @@
   ;; find git-annex,haskell-ide-engine, and pandoc projects cloned to /tmp
   (projectile-discover-projects-in-directory "/tmp")
   ;; ensure that we can successfully switch to magit for a given project
-  (string-equal
+  (should (string-equal
    "magit: pandoc"
-   (ignore-errors (save-excursion
+   (save-excursion
      (with-simulated-input
-      '("pan"
-	(wsi-simulate-idle-time 0.5)
-	"M-g")
-      (helm-projectile-switch-project))
+	 '("pan"
+	   (wsi-simulate-idle-time 0.5)
+	   "M-g")
+       (helm-projectile-switch-project))
      (buffer-name))))
   (append-to-file "directory listing" nil "/home/travis/debug.txt")
   (append-to-file (shell-command-to-string "ls /tmp/pandoc") nil "/home/travis/debug.txt")
