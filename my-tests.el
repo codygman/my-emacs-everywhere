@@ -125,24 +125,34 @@
 
 (defun simulate-expand-yasnippet (key code)
   (save-excursion
-    (with-current-buffer (generate-new-buffer (format "test-%s-yasnippet" key))
-      (org-mode)
-      (erase-buffer)
-      (insert key)
-      (evil-append-line nil)
-      (ert-simulate-command '(yas-expand))
-      (should (eq (key-binding (yas--read-keybinding "<tab>")) 'yas-next-field-or-maybe-expand))
-      (ert-simulate-command '(yas-next-field-or-maybe-expand))
-      (insert code)
+    (let ((buffer-name (generate-new-buffer (format "test-%s-yasnippet" key))))
+      (with-current-buffer buffer-name
+	(org-mode)
+	(erase-buffer)
+	(insert key)
+	(evil-append-line nil)
+	(ert-simulate-command '(yas-expand))
+	(should (eq (key-binding (yas--read-keybinding "<tab>")) 'yas-next-field-or-maybe-expand))
+	(ert-simulate-command '(yas-next-field-or-maybe-expand))
+	(insert code)
+	;; (buffer-substring-no-properties (point-min) (point-max))
+	(buffer-name)
+	))))
+
+(defun simulate-execute-src-block-in-buffer (buffer-name)
+  (save-excursion
+    (with-current-buffer buffer-name
+      ;; (ert-simulate-command '(org-babel-next-src-block))
       (ert-simulate-command '(org-ctrl-c-ctrl-c))
       (buffer-substring-no-properties (point-min) (point-max)))))
 
 (ert-deftest yas-elisp-source-block-gives-expected-output ()
-  (string-equal (simulate-expand-yasnippet "elisp" "(+ 1 1)")
-		"#+begin_src emacs-lisp
+  (let ((buffer-name (simulate-expand-yasnippet "elisp" "(+ 1 1)"))) 
+    (string-equal (simulate-execute-src-block-in-buffer buffer-name)
+		  "#+begin_src emacs-lisp
 (+ 1 1)
 #+end_src
 
 #+RESULTS:
 : 2
-"))
+")))
