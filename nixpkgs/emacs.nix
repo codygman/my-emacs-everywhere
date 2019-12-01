@@ -5,7 +5,7 @@ stdenv.lib.overrideDerivation (pkgs.emacs.override {
   withXwidgets = if (stdenv.isDarwin || "TRAVIS_OS_NAME" != "") then false else true;
 }) (attrs: rec {
   name = "emacs-${version}${versionModifier}";
-  imagemagick = if (builtins.getEnv "TRAVIS_OS_NAME" == "") then pkgs.imagemagickBig else "";
+  imagemagick = if (builtins.getEnv "TRAVIS_OS_NAME" == "") then pkgs.imagemagickBig else null;
   version = "27.0";
   versionModifier = ".50";
 
