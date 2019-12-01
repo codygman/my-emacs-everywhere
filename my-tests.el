@@ -170,7 +170,7 @@
 ")))
 
 (defun clone-projects-projectile-test ()
-  (shell-command-to-string "cd /tmp && git clone --depth 1 https://github.com/jgm/pandoc.git")
+  (shell-command-to-string "cd /tmp && git clone https://github.com/jgm/pandoc.git")
   (shell-command-to-string "cd /tmp && git clone --depth 1 git://git-annex.branchable.com/ git-annex")
   (shell-command-to-string "cd /tmp && git clone --depth 1 https://github.com/haskell/haskell-ide-engine.git")
   (should (file-directory-p "/tmp/pandoc"))
