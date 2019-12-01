@@ -20,7 +20,7 @@ in
       controlPath = "~/.ssh/master-%C";
     };
     htop = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true;};
-    firefox = mkIf stdenv.isLinux {
+    firefox = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) {
       # todo install with home-manager
       enable = true;
     };
