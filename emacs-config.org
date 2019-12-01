@@ -289,6 +289,20 @@
                (setq org-mode-line-string nil)
                (force-mode-line-update)))
 #+end_src
+** Remember lots of history with save-hist mode
+    #+begin_src emacs-lisp
+      (setq savehist-file (format "%ssavehist" user-emacs-directory))
+      (setq savehist-additional-variables
+	    '(kill-ring
+	      search-ring
+	      regexp-search-ring
+	      last-kbd-macro
+	      kmacro-ring
+	      shell-command-history
+	      Info-history-list
+	      register-alist))
+      (savehist-mode 1)
+    #+end_src
 * Ensure critical environment specific files exist
 ** load bash profile (most for env vars)
 #+begin_src emacs-lisp
