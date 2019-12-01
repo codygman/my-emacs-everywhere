@@ -24,7 +24,7 @@
  ("epl" . "78ab7a85c08222cd15582a298a364774e3282ce6")
  ("esxml" . "5548ceba17deae0c3c6d0092672edc4de3c75ce3")
  ("evil" . "874beba2cb243c325eca08fb7badff567f3c9494")
- ("evil-collection" . "1cc109122e32f550e3f5aae621339ea64b261a09")
+ ("evil-collection" . "9346f69da629675f7e170e8e9fa650fa8d7b8102")
  ("evil-magit" . "4b66a1db8285457147a5436f209391016a819ea1")
  ("exec-path-from-shell" . "3cfedb8791397ed50ee66bc0a7cbee5b9d78245c")
  ("f.el" . "8191672377816a1975414cc1f116fd3b94b30bd0")
