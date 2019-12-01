@@ -153,6 +153,8 @@
 #+end_src")))
 
 (ert-deftest yas-elisp-source-block-gives-expected-output ()
+  (require 'yasnippet)
+  (should (not (eq nil (yas-lookup-snippet "Elisp Org Source Block" 'org-mode t))))
   (let ((buffer-name (plist-get
 		      (simulate-expand-yasnippet "elisp" "(+ 1 1)")
 		      :the-buffer-name)))

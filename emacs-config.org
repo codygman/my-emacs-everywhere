@@ -2214,9 +2214,12 @@ Automatically save your all your files at regular intervals.
   (use-package eacl)
 #+end_src
 ** yasnippet
+
 #+begin_src emacs-lisp
   (use-package yasnippet
     :defer t
+          :init
+          (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
           :config
     (yas-global-mode t)
     (yas-reload-all))
