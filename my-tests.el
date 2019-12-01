@@ -190,7 +190,8 @@
 	   "M-g")
        (helm-projectile-switch-project))
      (buffer-name))))
-  (message (with-buffer "magit-process: pandoc" (buffer-substring-no-properties (point-min) (point-max))))
-  (shell-command-to-string "ls /tmp/pandoc")
-  (shell-command-to-string "cd /tmp/pandoc && git status && git remote -v")
-  )
+  (with-current-buffer "magit-process: pandoc"
+	  (append-to-file (point-min) (point-max) "debug.txt")
+	  (append-to-file "directory listing" nil "debug.txt")
+	  (append-to-file (shell-command-to-string "ls /tmp/pandoc") nil "debug.txt")
+	  (append-to-file (shell-command-to-string "cd /tmp/pandoc && git status && git remote -v") nil "debug.txt"))
