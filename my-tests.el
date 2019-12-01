@@ -178,6 +178,7 @@
   (should (file-directory-p "/tmp/haskell-ide-engine")))
 
 (ert-deftest projectile-switch-projects-to-magit-works ()
+  (clone-projects-projectile-test)
   ;; find git-annex,haskell-ide-engine, and pandoc projects cloned to /tmp
   (projectile-discover-projects-in-directory "/tmp")
   ;; ensure that we can successfully switch to magit for a given project
@@ -190,8 +191,4 @@
 	   "M-g")
        (helm-projectile-switch-project))
      (buffer-name))))
-  (with-current-buffer "magit-process: pandoc"
-	  (append-to-file (point-min) (point-max) "debug.txt")
-	  (append-to-file "directory listing" nil "debug.txt")
-	  (append-to-file (shell-command-to-string "ls /tmp/pandoc") nil "debug.txt")
-	  (append-to-file (shell-command-to-string "cd /tmp/pandoc && git status && git remote -v") nil "debug.txt"))
+  )
