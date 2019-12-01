@@ -303,6 +303,11 @@
 	      register-alist))
       (savehist-mode 1)
     #+end_src
+** word wrapping
+     #+begin_src emacs-lisp
+     (global-visual-line-mode 1)
+     (setq-default fill-column 125)
+     #+end_src
 * Ensure critical environment specific files exist
 ** load bash profile (most for env vars)
 #+begin_src emacs-lisp
