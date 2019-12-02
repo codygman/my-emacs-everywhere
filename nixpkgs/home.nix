@@ -86,7 +86,7 @@ in
     syncthing = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) {
       enable = true;
     };
-    gpg-agent = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {
+    gpg-agent = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == ""  && stdenv.isLinux) {
       enable = true;
       defaultCacheTtl = 600;
       enableSshSupport = true;
