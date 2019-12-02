@@ -1,11 +1,3 @@
-* minimal literate config
-#+begin_src emacs-lisp
- (straight-use-package 'use-package)
- (straight-use-package 'with-simulated-input)
- (use-package with-simulated-input)
- (straight-use-package 'helm)
- (use-package helm)
-#+end_src
 * Core-ish things that need to happen first
 ** init file to write to ~/.emacs.d/init.el before bootstrap
 #+begin_src elisp :tangle ~/.emacs.d/init.el :eval no
