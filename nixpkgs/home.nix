@@ -43,9 +43,7 @@ in
       fd
       ghc
     ] ++ (if builtins.getEnv "TRAVIS_OS_NAME" == "" then [
-      feh
       gnumake
-      dmenu
       haskellPackages.lens
       haskellPackages.pandoc
       haskellPackages.ghcid
@@ -56,6 +54,9 @@ in
       stack
       source-code-pro
       cabal2nix
+    ] else []) ++ (if (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) then [
+      feh
+      dmenu
     ] else []);
   };
 
