@@ -192,3 +192,9 @@
        (helm-projectile-switch-project))
      (buffer-name))))
   )
+
+(ert-deftest evil-collection-installed-and-initialized ()
+  (funcall helpful-switch-buffer-function (helpful--buffer 'defun t))
+  (helpful-update)
+  (key-binding "TAB")
+  (should (equal 'forward-button (key-binding (kbd "<tab>")))))

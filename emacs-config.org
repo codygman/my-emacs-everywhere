@@ -720,7 +720,6 @@
     :after evil
     :init
     (setq evil-collection-outline-bind-tab-p nil)
-    :defer t
           :config
     (evil-collection-init))
 #+end_src
