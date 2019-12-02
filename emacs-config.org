@@ -613,6 +613,10 @@
     )
 #+end_src
 * Package install and configuration
+** with-simulated-input
+#+begin_src emacs-lisp
+  (use-package with-simulated-input :defer t)
+#+end_src
 ** dashboard
 :PROPERTIES:
 :ID:       e6559479-4ac3-4ac0-87d5-ffbf9e826bc0
