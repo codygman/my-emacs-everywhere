@@ -5,6 +5,7 @@ with lib;
 
 let
   emacsHEAD = import ./emacs.nix;
+  all-hies = import (fetchTarball "https://github.com/infinisil/all-hies/tarball/master") {};
 in
 {
 
@@ -51,6 +52,7 @@ in
       haskellPackages.brittany
       haskellPackages.hpack
       haskellPackages.cabal-install
+      (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
       stack
       source-code-pro
       cabal2nix
