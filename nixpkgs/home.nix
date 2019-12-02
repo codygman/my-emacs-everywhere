@@ -26,7 +26,7 @@ in
     };
 
     jq = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true;};
-    vim = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true;};
+    vim = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) {enable = true;};
     git = {
       enable = true;
       userName = "codygman";
