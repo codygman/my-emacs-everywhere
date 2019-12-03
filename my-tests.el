@@ -123,6 +123,9 @@
 	   "Hello, Haskell!"
 	   (load-simple-hs-file-and-return-ghci-evald-main))))
 
+(defun trim-clean-up-ghci-symbols (str)
+  (string-trim (replace-regexp-in-string "[`‘]" "'" str)))
+
 (ert-deftest flycheck-works-as-expected-in-simple-nix-haskell-project ()
   (let ((haskell-process-suggest-pragma nil))
     (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
@@ -132,14 +135,12 @@
     (sit-for 10)
     (flycheck-list-errors)
     (let ((flycheck-buffer-error-string
-	   (progn (switch-to-buffer flycheck-error-list-buffer)
-		  (buffer-substring-no-properties (point-min) (point-max)))))
-      (should (string-equal (replace-regexp-in-string "•" "*" (string-trim flycheck-buffer-error-string)) (replace-regexp-in-string "•" "*" (string-trim " Main.hs     5  18 error           error:
-     * Couldn't match expected type `Int' with actual type `[Char]'
-     * In the second argument of `(+)', namely `\"s\"'
-       In the expression: (1 :: Int) + \"s\"
-       In an equation for `f': f = (1 :: Int) + \"s\" (haskell-dante)
-"))))
+	   (trim-clean-up-ghci-symbols (progn (switch-to-buffer flycheck-error-list-buffer)
+					      (buffer-substring-no-properties (point-min) (point-max))))))
+      (should (string-match-p (regexp-quote "Main.hs     5  18")
+			      flycheck-buffer-error-string))
+      (should (string-match-p (regexp-quote "Couldn't match expected type 'Int' with actual type '\[Char\]'")
+			      flycheck-buffer-error-string))
       (revert-buffer nil t))))
 
 (require 'ert)
