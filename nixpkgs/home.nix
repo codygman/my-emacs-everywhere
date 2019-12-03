@@ -44,7 +44,6 @@ in
       fd
       ghc
       direnv
-      haskellPackages.Cabal
       haskellPackages.cabal-install
     ] ++ (if builtins.getEnv "TRAVIS_OS_NAME" == "" then [
       gnumake
@@ -56,6 +55,7 @@ in
       haskellPackages.hpack
       (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
       stack
+      shellcheck
       source-code-pro
       cabal2nix
     ] else []) ++ (if (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) then [
