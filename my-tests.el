@@ -134,12 +134,12 @@
     (let ((flycheck-buffer-error-string
 	   (progn (switch-to-buffer flycheck-error-list-buffer)
 		  (buffer-substring-no-properties (point-min) (point-max)))))
-      (should (string-equal (string-trim flycheck-buffer-error-string) (string-trim " Main.hs     5  18 error           error:
+      (should (string-equal (replace-regexp-in-string "•" "*" (string-trim flycheck-buffer-error-string)) (replace-regexp-in-string "•" "*" (string-trim " Main.hs     5  18 error           error:
      * Couldn't match expected type `Int' with actual type `[Char]'
      * In the second argument of `(+)', namely `\"s\"'
        In the expression: (1 :: Int) + \"s\"
        In an equation for `f': f = (1 :: Int) + \"s\" (haskell-dante)
-")))
+"))))
       (revert-buffer nil t))))
 
 (require 'ert)
