@@ -138,7 +138,8 @@
        In the expression: (1 :: Int) + \"s\"
        In an equation for `f': f = (1 :: Int) + \"s\" (haskell-dante)
 "))
-      (shell-command-to-string "git stash"))))
+      (shell-command-to-string "git stash")
+      (sit-for 2))))
 
 (require 'ert)
 (require 'ert-x)
