@@ -106,6 +106,7 @@
   (save-excursion
     ;; TODO figure out a better way
     (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
+    (revert-buffer nil t)
     (haskell-process-load-file)
     (switch-to-buffer "*simple-haskell-project*")
     (sit-for 2)
