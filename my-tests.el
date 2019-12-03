@@ -130,7 +130,7 @@
 ")
 
 (ert-deftest flycheck-works-as-expected-in-simple-nix-haskell-project ()
-  (let ((haskell-process-trigger-suggestions nil))
+  (let ((haskell-process-suggest-pragma nil))
     (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
     (sit-for 2)
     (goto-char (point-max))

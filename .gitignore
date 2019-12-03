@@ -10,3 +10,4 @@
 /elpa/
 /eshell/
 /savehist
+testdata/simple-haskell-project/testdata/*fly*
