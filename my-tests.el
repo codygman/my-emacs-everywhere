@@ -124,7 +124,7 @@
 	   (load-simple-hs-file-and-return-ghci-evald-main))))
 
 (defun trim-clean-up-ghci-symbols (str)
-  (string-trim (replace-regexp-in-string "[`‘]" "'" str)))
+  (string-trim (replace-regexp-in-string "[`‘’]" "'" str)))
 
 (ert-deftest flycheck-works-as-expected-in-simple-nix-haskell-project ()
   (let ((haskell-process-suggest-pragma nil))
