@@ -123,14 +123,6 @@
 	   "Hello, Haskell!"
 	   (load-simple-hs-file-and-return-ghci-evald-main))))
 
-(defvar expected-flycheck-buffer-output-for-simple-nix-haskell-project ()
-" Main.hs     6  18 error           error:
-     • Couldn't match expected type ‘Int’ with actual type ‘[Char]’
-     • In the second argument of ‘(+)’, namely ‘\"s\"’
-       In the expression: (1 :: Int) + \"s\"
-       In an equation for ‘f’: f = (1 :: Int) + \"s\" (haskell-dante)
-")
-
 (ert-deftest flycheck-works-as-expected-in-simple-nix-haskell-project ()
   (let ((haskell-process-suggest-pragma nil))
     (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
@@ -141,7 +133,12 @@
     (let ((flycheck-buffer-error-string
 	   (progn (switch-to-buffer flycheck-error-list-buffer)
 		  (buffer-substring-no-properties (point-min) (point-max)))))
-      (should (eq flycheck-buffer-error-string expected-flycheck-buffer-output-for-simple-nix-haskell-project)))))
+      (should (eq flycheck-buffer-error-string " Main.hs     6  18 error           error:
+     • Couldn't match expected type ‘Int’ with actual type ‘[Char]’
+     • In the second argument of ‘(+)’, namely ‘\"s\"’
+       In the expression: (1 :: Int) + \"s\"
+       In an equation for ‘f’: f = (1 :: Int) + \"s\" (haskell-dante)
+")))))
 
 (require 'ert)
 (require 'ert-x)
