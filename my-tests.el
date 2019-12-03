@@ -105,7 +105,6 @@
 (defun load-simple-hs-file-and-return-ghci-evald-main ()
   (save-excursion
     ;; TODO figure out a better way
-    (shell-command-to-string "git stash")
     (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
     (haskell-process-load-file)
     (switch-to-buffer "*simple-haskell-project*")
@@ -138,7 +137,8 @@
      * In the second argument of `(+)', namely `\"s\"'
        In the expression: (1 :: Int) + \"s\"
        In an equation for `f': f = (1 :: Int) + \"s\" (haskell-dante)
-")))))
+"))
+      (shell-command-to-string "git stash"))))
 
 (require 'ert)
 (require 'ert-x)
