@@ -2223,6 +2223,7 @@ Automatically save your all your files at regular intervals.
           :init
           (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
           :config
+(yas-load-directory "~/.emacs.d/snippets")
     (yas-global-mode t)
     (yas-reload-all))
 #+end_src
