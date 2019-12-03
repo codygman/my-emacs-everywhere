@@ -2220,7 +2220,6 @@ Automatically save your all your files at regular intervals.
 
 #+begin_src emacs-lisp
   (use-package yasnippet
-    :defer t
           :init
           (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
           :config
