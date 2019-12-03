@@ -104,6 +104,8 @@
 
 (defun load-simple-hs-file-and-return-ghci-evald-main ()
   (save-excursion
+    ;; TODO figure out a better way
+    (shell-command-to-string "git stash")
     (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
     (haskell-process-load-file)
     (switch-to-buffer "*simple-haskell-project*")
