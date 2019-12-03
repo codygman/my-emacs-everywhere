@@ -130,15 +130,16 @@
 ")
 
 (ert-deftest flycheck-works-as-expected-in-simple-nix-haskell-project ()
-  (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
-  (sit-for 2)
-  (goto-char (point-max))
-  (insert "f = (1 :: Int) + \"s\"")
-  (flycheck-list-errors)
-  (let ((flycheck-buffer-error-string
-	 (progn (switch-to-buffer flycheck-error-list-buffer)
-		(buffer-substring-no-properties (point-min) (point-max)))))
-    (should (eq flycheck-buffer-error-string expected-flycheck-buffer-output-for-simple-nix-haskell-project))))
+  (let ((haskell-process-suggest-overloaded-strings))
+    (find-file (format "%s/testdata/simple-haskell-project/Main.hs" (my-emacs-everywhere-directory)))
+    (sit-for 2)
+    (goto-char (point-max))
+    (insert "f = (1 :: Int) + \"s\"")
+    (flycheck-list-errors)
+    (let ((flycheck-buffer-error-string
+	   (progn (switch-to-buffer flycheck-error-list-buffer)
+		  (buffer-substring-no-properties (point-min) (point-max)))))
+      (should (eq flycheck-buffer-error-string expected-flycheck-buffer-output-for-simple-nix-haskell-project)))))
 
 (require 'ert)
 (require 'ert-x)
