@@ -134,7 +134,7 @@
     (let ((flycheck-buffer-error-string
 	   (progn (switch-to-buffer flycheck-error-list-buffer)
 		  (buffer-substring-no-properties (point-min) (point-max)))))
-      (should (string-equal flycheck-buffer-error-string " Main.hs     6  18 error           error:
+      (should (string-equal flycheck-buffer-error-string " Main.hs     5  18 error           error:
      * Couldn't match expected type `Int' with actual type `[Char]'
      * In the second argument of `(+)', namely `\"s\"'
        In the expression: (1 :: Int) + \"s\"
