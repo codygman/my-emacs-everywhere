@@ -2279,7 +2279,6 @@ Automatically save your all your files at regular intervals.
     (use-package dante
       :after (haskell-mode)
       :commands 'dante-mode
-      :if (string-equal (getenv "EMACSFOR") "PERSONAL")
       :config
       (make-variable-buffer-local 'dante-target)
       (setq dante-methods '(new-build stack bare-cabal bare-ghci))
