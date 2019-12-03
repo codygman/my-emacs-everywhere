@@ -43,6 +43,7 @@ in
       ripgrep
       fd
       ghc
+      direnv
     ] ++ (if builtins.getEnv "TRAVIS_OS_NAME" == "" then [
       gnumake
       haskellPackages.lens
