@@ -44,6 +44,8 @@ in
       fd
       ghc
       direnv
+      haskellPackages.Cabal
+      haskellPackages.cabal-install
     ] ++ (if builtins.getEnv "TRAVIS_OS_NAME" == "" then [
       gnumake
       haskellPackages.lens
@@ -52,7 +54,6 @@ in
       haskellPackages.hlint
       haskellPackages.brittany
       haskellPackages.hpack
-      haskellPackages.cabal-install
       (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
       stack
       source-code-pro
