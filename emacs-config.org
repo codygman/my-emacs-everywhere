@@ -2203,7 +2203,6 @@ Automatically save your all your files at regular intervals.
 ** helpful
 #+begin_src emacs-lisp
   (use-package helpful
-    :defer t
           :config
     (global-set-key (kbd "C-h f") #'helpful-callable)
     (global-set-key (kbd "C-h v") #'helpful-variable)
