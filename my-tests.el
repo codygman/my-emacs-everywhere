@@ -129,6 +129,7 @@
     (sit-for 2)
     (goto-char (point-max))
     (insert "f = (1 :: Int) + \"s\"")
+    (sit-for 10)
     (flycheck-list-errors)
     (let ((flycheck-buffer-error-string
 	   (progn (switch-to-buffer flycheck-error-list-buffer)
