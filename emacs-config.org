@@ -374,7 +374,7 @@
       "<tab>" '(switch-to-prev-buffer :which-key "previous buffer")
       "SPC" '(helm-M-x :which-key "M-x")
       "tf" '(spacemacs/toggle-frame-fullscreen-non-native :which-key "Full Screen")
-      "pf"  '(helm-projectile-find-dwim :which-key "find files")
+      "pf"  '(helm-projectile-find-file-dwim :which-key "find files")
       "jc"  '(avy-goto-char :which-key "Jump To Char")
       "jj"  '(avy-goto-char-timer :which-key "Jump To Char")
       "ji"  '(avy-goto-char-in-line :which-key "Jump To Char In Line")
