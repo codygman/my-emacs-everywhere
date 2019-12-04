@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Shell Org Source Block
+# key: sh
+# --
+#+begin_src sh$1
+$2
+#+end_src$0
