@@ -219,3 +219,6 @@
   (helpful-update)
   (key-binding "TAB")
   (should (equal 'forward-button (key-binding (kbd "<tab>")))))
+
+(ert-deftest projectile-find-file-bound-to-non-void-function ()
+  (should (fboundp (key-binding (kbd "SPC p f")))))
