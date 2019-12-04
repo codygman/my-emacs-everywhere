@@ -742,10 +742,8 @@
 :END:
 #+begin_src emacs-lisp
   (use-package org
-     :straight org-plus-contrib
-    :after 'ob-restclient
+    :straight org-plus-contrib
     :init
-    (error "success error!")
     (setq org-modules '(org-habit org-id org-protocol org-timer)
 	  org-id-link-to-org-use-id 'create-if-interactive)
     ;; org font setup
