@@ -44,6 +44,7 @@ in
       fd
       ghc
       direnv
+      binutils
       haskellPackages.cabal-install
     ] ++ (if builtins.getEnv "TRAVIS_OS_NAME" == "" then [
       gnumake
