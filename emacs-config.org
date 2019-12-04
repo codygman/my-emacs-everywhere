@@ -72,6 +72,7 @@
 #+end_src
 ** changes to vanilla emacs
 #+begin_src emacs-lisp
+    (setq initial-major-mode 'org-mode)
     ;; Package configs
     ;; (require 'package)
     (require 'cl)
