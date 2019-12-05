@@ -2273,6 +2273,7 @@ Automatically save your all your files at regular intervals.
 ** Haskell
 #+begin_src emacs-lisp
   (use-package direnv
+    :if (string-equal (getenv "EMACSFOR") "PERSONAL")
     :config
     (direnv-mode))
   (use-package haskell-mode
@@ -2282,8 +2283,8 @@ Automatically save your all your files at regular intervals.
     (message "personal haskell-mode loading")
     (add-hook 'haskell-mode-hook 'interactive-haskell-mode)
     (add-hook 'haskell-mode-hook 'haskell-indentation-mode)
-    (add-hook 'haskell-mode-hook 'dante-mode)
-    (add-hook 'haskell-mode-hook 'flycheck-mode)
+    (if (string-equal (getenv "EMACSFOR") "PERSONAL")
+        (progn (add-hook 'haskell-mode-hook 'dante-mode) (add-hook 'haskell-mode-hook 'flycheck-mode)))
     (use-package dante
       :after (haskell-mode)
       :commands 'dante-mode
