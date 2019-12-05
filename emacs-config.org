@@ -301,6 +301,15 @@
      (global-visual-line-mode 1)
      (setq-default fill-column 150)
      #+end_src
+** make sure eval'd expressions are totally printed out
+#+begin_src emacs-lisp
+(setq eval-expression-print-maximum-character 9001)
+(setq eval-expression-print-length 9001)
+(setq eval-expression-print-level 9001)
+(setq edebug-print-length 9001)
+#+end_src
+
+#+RESULTS:
 * Ensure critical environment specific files exist
 ** load bash profile (most for env vars)
 #+begin_src emacs-lisp
