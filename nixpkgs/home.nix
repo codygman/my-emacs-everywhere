@@ -47,6 +47,8 @@ in
       binutils
       haskellPackages.cabal-install
     ] ++ (if builtins.getEnv "TRAVIS_OS_NAME" == "" then [
+      bitwarden
+      bitwarden-cli
       gnumake
       haskellPackages.lens
       haskellPackages.pandoc
