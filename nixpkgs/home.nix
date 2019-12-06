@@ -56,6 +56,7 @@ in
       haskellPackages.hlint
       haskellPackages.brittany
       haskellPackages.hpack
+      pwgen
       (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
       stack
       shellcheck
