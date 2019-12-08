@@ -36,6 +36,11 @@ in
     gpg = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {
       enable = true;
     };
+    offlineimap = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == ""  && stdenv.isLinux) {
+      enable = true;
+      # localType = "IMAP";
+      # remoteType = "IMAP";
+    };
   };
 
   home = {
@@ -60,6 +65,7 @@ in
       (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
       stack
       shellcheck
+      signal-desktop
       source-code-pro
       cabal2nix
     ] else []) ++ (if (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) then [
@@ -83,8 +89,32 @@ in
   };
 
   accounts.email.accounts = {
-    "codygman.consulting@gmail.com" = {
+    "cody@codygman.dev" = {
+      offlineimap.enable = true;
       primary = true;
+      address = "cody@codygman.dev";
+      userName = "codygman";
+      realName = "Cody Goodman";
+      passwordCommand = "cat /home/cody/deleteme";
+      # passwordCommand = "gpg --use-agent --quiet --batch -d /home/makefu/.gnupg/mail/syntax-fehler.gpg";
+      msmtp.enable = true;
+
+      imap = {
+        host = "imap.mailfence.com";
+        port = 993;
+        tls.enable = true;
+      };
+
+      smtp = {
+        host = "smtp.mailfence.com";
+        port = 465;
+        tls = {
+          enable = true;
+        };
+        # useStartTls = true;
+      };
+    };
+    "codygman.consulting@gmail.com" = {
       address = "codygman.consulting@gmail.com";
       userName = "codygman.consulting@gmail.com";
       realName = "Cody Goodman";
