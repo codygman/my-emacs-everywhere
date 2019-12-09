@@ -130,6 +130,21 @@ in
       defaultCacheTtl = 600;
       enableSshSupport = true;
     };
+    # location.provider = "geoclue2";
+    redshift = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == ""  && stdenv.isLinux) {
+      enable = true;
+      temperature = {
+        day = 6500;
+        night = 3500;
+      };
+      brightness = {
+        day = "1";
+        night = "0.45";
+      };
+      # Dallas: 32.7763, -96.7969
+      latitude = "33.7763";
+      longitude = "-96.7969";
+    };
   };
 
   
