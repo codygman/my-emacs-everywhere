@@ -310,6 +310,11 @@
 #+end_src
 
 #+RESULTS:
+** add mu4e to load path and load it
+#+begin_src emacs-lisp
+(setq load-path (append load-path '("~/.emacs.d/mu/mu4e")))
+(require 'mu4e)
+#+end_src
 * Ensure critical environment specific files exist
 ** load bash profile (most for env vars)
 #+begin_src emacs-lisp
@@ -741,6 +746,41 @@
 #+begin_src emacs-lisp
   (use-package gnuplot)
 #+end_src
+** email
+*** configure mu4e
+#+begin_src emacs-lisp
+;; if you move this into use-package block make sure it gets loaded
+(setq user-full-name "Cody Goodman"
+      ;; if I want this to be general for work/personal (and I may want to load from personal.el or work.el TBH) I'll need a conditional here
+      user-mail-address "cody@codygman.dev")
+(setq mu4e-get-mail-command "offlineimap"
+      mu4e-update-interval 60
+      mu4e-attachment-dir "~/Downloads")
+(setq sendmail-program "msmtp"
+      send-mail-function 'smtpmail-send-it
+      message-sendmail-f-is-evil t
+      message-sendmail-extra-arguments '("--read-envelope-from")
+      message-send-mail-function 'message-send-mail-with-sendmail)
+(use-package mu4e-alert
+  :after mu4e
+  :init
+  (setq mu4e-alert-interesting-mail-query
+    (concat "flag:unread"))
+(mu4e-alert-set-default-style 'libnotify)
+(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+  (mu4e-alert-enable-mode-line-display)
+  (defun gjstein-refresh-mu4e-alert-mode-line ()
+    (interactive)
+    (mu4e~proc-kill)
+    (mu4e-alert-enable-mode-line-display)
+    )
+  (run-with-timer 0 60 'gjstein-refresh-mu4e-alert-mode-line)
+  )
+#+end_src
+
+#+RESULTS:
+: cody@codygman.dev
+
 ** org
 *** org is installed in [[file:init.el::(straight-use-package%20'org-plus-contrib)%20;%20or%20org-plus-contrib%20if%20desired][init.el]]
 **** so that we can use newest org version to tangle config

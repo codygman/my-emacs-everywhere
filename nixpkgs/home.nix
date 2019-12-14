@@ -8,10 +8,12 @@ let
   all-hies = import (fetchTarball "https://github.com/infinisil/all-hies/tarball/master") {};
 in
 {
-
   programs = {
     # Let Home Manager install and manage itself.
     home-manager.enable = true;
+    # todo figure out if this can work from inside home.nix
+    # home-manager.users.cody.extraGroups = ["adbusers"];
+    msmtp.enable = true;
     emacs = {
       enable = true;
       package = emacsHEAD;
@@ -28,6 +30,9 @@ in
 
     jq = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {enable = true;};
     vim = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) {enable = true;};
+    # mu = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == ""  && stdenv.isLinux) {
+    #   enable = true;
+    # };
     git = {
       enable = true;
       userName = "codygman";
@@ -55,6 +60,7 @@ in
       bitwarden
       bitwarden-cli
       gnumake
+      mu
       haskellPackages.lens
       haskellPackages.pandoc
       haskellPackages.ghcid
