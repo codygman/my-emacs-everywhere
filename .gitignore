@@ -11,3 +11,6 @@
 /eshell/
 /savehist
 testdata/simple-haskell-project/testdata/*fly*
+testdata/simple-haskell-project/.stack-work
+testdata/simple-haskell-project/*_flymake.hs
+tramp
