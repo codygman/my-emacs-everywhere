@@ -15,3 +15,6 @@ testdata/simple-haskell-project/.stack-work
 testdata/simple-haskell-project/*_flymake.hs
 tramp
 graveyard
+url/cookies
+# might want to keep this one?
+bookmarks
