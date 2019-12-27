@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Haskell Org Source Block
+# key: hs
+# --
+#+begin_src haskell$1
+$2
+#+end_src$0
