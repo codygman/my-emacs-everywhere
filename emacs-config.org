@@ -598,14 +598,11 @@
   ;; (load-theme 'doom-one t)
   ;; )
 
+
   (use-package solarized-theme ;; doom-themes
     :defer t
     :if window-system
     :init
-    (defun codygman/solarized-theme-modifications (&rest args)
-      (set-cursor-color "#b58900")
-      )
-    (advice-add 'load-theme :after 'codygman/solarized-theme-modifications)
     ;; variable pitch prettier fonts for org mode, see: https://zzamboni.org/post/beautifying-org-mode-in-emacs/
     (set-face-attribute 'default nil :family "Source Code Pro" :height 160 :width 'normal)
     (set-face-attribute 'fixed-pitch nil :family "Source Code Pro" :height 140 :width 'normal)
@@ -613,7 +610,7 @@
     (set-face-attribute 'org-table nil :inherit 'fixed-pitch) ;; here or org?
     ;; all org blocks should be fixed-width NOTE: For source-blocks ‘org-src-block-faces’ takes precedence.
     (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
-    (load-theme 'solarized-dark t)
+    (load-theme 'leuven t)
     :config
     (defun set-buffer-variable-pitch()
       (interactive)
