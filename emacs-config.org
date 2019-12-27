@@ -626,6 +626,7 @@
            (markdown-mode . set-buffer-variable-pitch)
            )
     )
+  (use-package org-beautify-theme :config (load-theme 'org-beautify t))
 #+end_src
 * Package install and configuration
 ** with-simulated-input
