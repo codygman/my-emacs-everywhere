@@ -1,3 +1,21 @@
+* Workflow
+** Going where you want
+*** =SPC b b= to show recent buffers 
+**** persisted by [[*Remember lots of history with save-hist mode][Remember lots of history with save-hist mode]]
+*** =SPC p p= to switch projects (defaults to open magit in project root)
+** Finding what you want 
+*** =SPC o r= to search org mode
+*** TODO =SPC o q= to =helm-org-ql-org-directory= if I can get it to work 
+**** this should cover things like I do in orgzly to see recently created
+**** I should also get recently clocked
+** Capturing information or Scheduling events
+*** =SPC c c= from most places
+*** =c= in org agenda 
+** Viewing Agenda 
+*** =SPC o d= for today
+*** =SPC o o= for general
+** Modifying Org Files
+** Navigating Org Files
 * Core-ish things that need to happen first
 ** init file to write to ~/.emacs.d/init.el before bootstrap
 #+begin_src elisp :tangle ~/.emacs.d/init.el :eval no
