@@ -1834,6 +1834,8 @@
   (use-package helm
     :init
     (setq helm-M-x-fuzzy-match t
+          ;; prevent helm windows from opening slowly: https://github.com/emacs-helm/helm/issues/1976
+          x-wait-for-event-timeout nil
           helm-mode-fuzzy-match t
           helm-buffers-fuzzy-matching t
           ;; NOTE just leaving at default of 60 so that helm works same even when not fullscreen
