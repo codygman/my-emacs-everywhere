@@ -1881,6 +1881,14 @@
     :init
     (setq org-capture-templates
           '(
+("t" "Todo (no clock in)" entry (file+headline "~/bsab/misc.org" "Misc")
+             "* TODO %?  :refile:
+  :PROPERTIES:
+  :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
+  :CREATED: %U
+  :END:"
+             :prepend t
+             )
             ("t" "Todo" entry (file+headline "~/bsab/misc.org" "Misc")
              "* TODO %?  :refile:
   :PROPERTIES:
