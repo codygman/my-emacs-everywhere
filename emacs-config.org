@@ -542,7 +542,9 @@
 
         (setq org-download-screenshot-method
               (case system-type (gnu/linux "import %s") (darwin "screencapture -i %s")))
-        (setq-default org-download-image-dir "~/org/images/screenshots/")
+        ;; really need to set this depending on where I'm at
+        ;; I could just put .dir-locals.el files in each folder and have screenshots in their own folder there
+        (setq-default org-download-image-dir "~/amicody/images/screenshots/")
         (add-hook 'dired-mode-hook 'org-download-enable))
 
       (general-evil-define-key 'normal org-mode-map
