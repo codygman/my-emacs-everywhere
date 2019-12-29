@@ -14,6 +14,7 @@ in
     # todo figure out if this can work from inside home.nix
     # home-manager.users.cody.extraGroups = ["adbusers"];
     msmtp.enable = true;
+    notmuch.enable = true;
     emacs = {
       enable = true;
       package = emacsHEAD;
@@ -104,6 +105,7 @@ in
       passwordCommand = "cat /home/cody/deleteme";
       # passwordCommand = "gpg --use-agent --quiet --batch -d /home/makefu/.gnupg/mail/syntax-fehler.gpg";
       msmtp.enable = true;
+      notmuch.enable = true;
 
       imap = {
         host = "imap.mailfence.com";
