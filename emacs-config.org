@@ -1710,6 +1710,9 @@
                 "[" 'org-agenda-manipulate-query-add
                 "g\\" 'org-agenda-filter-by-tag-refine
                 "]" 'org-agenda-manipulate-query-subtract))))
+              (setq org-refile-targets
+                    '((org-agenda-files . (:maxlevel . 2)))
+                    org-refile-use-cache t)
 #+end_src
 
 #+results:
