@@ -1879,11 +1879,6 @@
           helm-always-two-windows t)
     (when (file-exists-p "/data/data/com.termux/files/usr/bin/termux-info")
       (setq helm-split-window-default-side 'right))
-    ;; helm pretty frame
-    (setq helm-display-function 'helm-display-buffer-in-own-frame
-          helm-display-buffer-reuse-frame nil
-          helm-use-undecorated-frame-option t)
-    :defer t
           :config
     (use-package helm-flx)
     (use-package helm-fuzzier)
