@@ -1731,10 +1731,8 @@
                 "x" 'org-agenda-clock-cancel
                 "[" 'org-agenda-manipulate-query-add
                 "g\\" 'org-agenda-filter-by-tag-refine
-                  "]" 'org-agenda-manipulate-query-subtract))))
-              (setq org-refile-targets
-                    '((org-agenda-files . (:maxlevel . 2)))
-                    org-refile-use-cache t)
+                "]" 'org-agenda-manipulate-query-subtract)))
+
 #+end_src
 
 #+results:
