@@ -562,6 +562,11 @@
     )
 #+end_src
 * Package install and configuration
+** notmuch
+#+begin_src emacs-lisp
+(use-package notmuch
+  :ensure t)
+#+end_src
 ** exwm
 #+begin_src emacs-lisp
   (use-package exwm
