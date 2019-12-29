@@ -562,6 +562,27 @@
     )
 #+end_src
 * Package install and configuration
+** exwm
+#+begin_src emacs-lisp
+  (use-package exwm
+      :init
+      (require 'exwm-config)
+      :config
+      (setq exwm-input-global-keys
+            `(([?\s-r] . exwm-reset)
+              ([?\s-w] . exwm-workspace-switch)
+              ([?\s-b] . helm-mini)
+              ([?\s-&] . (lambda (command)
+                           (interactive (list (read-shell-command "$ ")))))
+              ,@(mapcar (lambda (i)
+                          `(,(kbd (format "s-%d" i)) .
+                            (lambda ()
+                              (interactive)
+                              (exwm-workspace-switch-create ,i))))
+                        (number-sequence 0 9))))
+      ;; Do not forget to enable EXWM. It will start by itself when things are ready.
+  )
+#+end_src
 ** with-simulated-input
 #+begin_src emacs-lisp
   (use-package with-simulated-input :defer t)
