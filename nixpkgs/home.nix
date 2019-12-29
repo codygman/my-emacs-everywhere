@@ -145,6 +145,7 @@ in
       extraConfig = ''
           allow-emacs-pinentry
           allow-loopback-pinentry
+          pinentry-program ${pkgs.pinentry}/bin/pinentry
       '';
     };
     # location.provider = "geoclue2";
