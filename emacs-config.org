@@ -1056,681 +1056,681 @@
 #+end_src
 *** my org overrides
 #+begin_src emacs-lisp
-    (with-eval-after-load "ob-shell"
+      (with-eval-after-load "ob-shell"
 
-      (defun my-pass-it-on-filter (filePath proc str)
-        "Process each line produced by PROC in STR."
-        (interactive)
-        (when (buffer-live-p (process-buffer proc))
-          (with-current-buffer (process-buffer proc)
-            (insert str)
-            (goto-char (point-min))
-            (while (progn (skip-chars-forward "^\n")
-                          (not (eobp)))
-              (ignore-errors
-                (let ((result (delete-and-extract-region (point-min) (point))))
-                  (delete-char 1)
-                  ;; (message (format "writing result '%s' w/newline to %s" result filePath))
-                  (when (not (file-exists-p filePath))
-                    (write-region "" nil filePath))
-                  (write-region (concat result "\n") nil filePath 'append)
-                  result))))))
+        (defun my-pass-it-on-filter (filePath proc str)
+          "Process each line produced by PROC in STR."
+          (interactive)
+          (when (buffer-live-p (process-buffer proc))
+            (with-current-buffer (process-buffer proc)
+              (insert str)
+              (goto-char (point-min))
+              (while (progn (skip-chars-forward "^\n")
+                            (not (eobp)))
+                (ignore-errors
+                  (let ((result (delete-and-extract-region (point-min) (point))))
+                    (delete-char 1)
+                    ;; (message (format "writing result '%s' w/newline to %s" result filePath))
+                    (when (not (file-exists-p filePath))
+                      (write-region "" nil filePath))
+                    (write-region (concat result "\n") nil filePath 'append)
+                    result))))))
 
-      (defun get-parent-heading-title ()
-        (ignore-errors
-          (save-excursion
-            (org-evil-motion-up-heading)
-            (org-element-property :title (org-element-at-point)))))
+        (defun get-parent-heading-title ()
+          (ignore-errors
+            (save-excursion
+              (org-evil-motion-up-heading)
+              (org-element-property :title (org-element-at-point)))))
 
-      (defun get-grandparent-heading-title ()
-        (ignore-errors
-          (save-excursion
-            (org-evil-motion-up-heading)
-            (org-evil-motion-up-heading)
-            (org-element-property :title (org-element-at-point)))))
+        (defun get-grandparent-heading-title ()
+          (ignore-errors
+            (save-excursion
+              (org-evil-motion-up-heading)
+              (org-evil-motion-up-heading)
+              (org-element-property :title (org-element-at-point)))))
 
-      (defun get-great-grandparent-heading-title ()
-        (ignore-errors
-          (save-excursion
-            (org-evil-motion-up-heading)
-            (org-evil-motion-up-heading)
-            (org-evil-motion-up-heading)
-            (org-element-property :title (org-element-at-point)))))
+        (defun get-great-grandparent-heading-title ()
+          (ignore-errors
+            (save-excursion
+              (org-evil-motion-up-heading)
+              (org-evil-motion-up-heading)
+              (org-evil-motion-up-heading)
+              (org-element-property :title (org-element-at-point)))))
 
-      (defun cleanup-dir-name (dir)
-        (replace-regexp-in-string " " "-" dir))
+        (defun cleanup-dir-name (dir)
+          (replace-regexp-in-string " " "-" dir))
 
-      (defun my-create-non-existent-directory ()
-        (let ((parent-directory (file-name-directory buffer-file-name)))
-          (when (not (file-exists-p parent-directory))
-            (make-directory parent-directory t))))
+        (defun my-create-non-existent-directory ()
+          (let ((parent-directory (file-name-directory buffer-file-name)))
+            (when (not (file-exists-p parent-directory))
+              (make-directory parent-directory t))))
 
-      (defun generate-automatic-log-name ()
-        ;; TODO make this take the parent org element and use its heading text in this log name
-        (let* ((time-with-millis (format-time-string "%H.%M.%S.%3N"))
-               (year-month-day (format-time-string "%Y-%m-%d"))
-               (parent-element-title (get-parent-heading-title))
-               (grandparent-element-title (get-grandparent-heading-title))
-               (great-grandparent-element-title (get-great-grandparent-heading-title))
-               (descriptive-string (if (> 20 (length parent-element-title)) (format "%s_%s" grandparent-element-title parent-element-title) parent-element-title))
-               (descriptive-string-2 (if (> 20 (length descriptive-string)) (format "%s_%s" great-grandparent-element-title descriptive-string) descriptive-string))
-               (descriptive-string-safe (cleanup-dir-name descriptive-string-2))
-               (file-path (format "/Users/codygman/console/%s/%s.%s.%s.log" year-month-day descriptive-string-safe year-month-day time-with-millis))
-               (directory-path (file-name-directory file-path)))
-          ;; create directory if it doesn't exist
-          (when (not (file-exists-p directory-path))
-            (make-directory directory-path t))
-          ;; use log extension since I know those links will open in emacs
-          file-path))
+        (defun generate-automatic-log-name ()
+          ;; TODO make this take the parent org element and use its heading text in this log name
+          (let* ((time-with-millis (format-time-string "%H.%M.%S.%3N"))
+                 (year-month-day (format-time-string "%Y-%m-%d"))
+                 (parent-element-title (get-parent-heading-title))
+                 (grandparent-element-title (get-grandparent-heading-title))
+                 (great-grandparent-element-title (get-great-grandparent-heading-title))
+                 (descriptive-string (if (> 20 (length parent-element-title)) (format "%s_%s" grandparent-element-title parent-element-title) parent-element-title))
+                 (descriptive-string-2 (if (> 20 (length descriptive-string)) (format "%s_%s" great-grandparent-element-title descriptive-string) descriptive-string))
+                 (descriptive-string-safe (cleanup-dir-name descriptive-string-2))
+                 (file-path (format "/Users/codygman/console/%s/%s.%s.%s.log" year-month-day descriptive-string-safe year-month-day time-with-millis))
+                 (directory-path (file-name-directory file-path)))
+            ;; create directory if it doesn't exist
+            (when (not (file-exists-p directory-path))
+              (make-directory directory-path t))
+            ;; use log extension since I know those links will open in emacs
+            file-path))
 
-  (defun org-babel-kill-session ()
-        "Kill session for current code block."
-        (interactive)
-        (unless (org-in-src-block-p)
-          (error "You must be in a src-block to run this command"))
-        (save-window-excursion
-          (org-babel-switch-to-session)
-          (kill-buffer)))
-  )
+    (defun org-babel-kill-session ()
+          "Kill session for current code block."
+          (interactive)
+          (unless (org-in-src-block-p)
+            (error "You must be in a src-block to run this command"))
+          (save-window-excursion
+            (org-babel-switch-to-session)
+            (kill-buffer)))
+    )
 
-      (defun directory-to-write-progress (params)
-        ;; if params has :log then autogenerate based on date, time, and immediate parent heading text
-        (cond
-         ((assq :autolog params)
-          (message "autolog present, generating automatic log path and populating :file")
-          (generate-automatic-log-name))
-         ((cdr (assq :file params))
-          (message "no autolog just returning :file specified")
-          (cdr (assq :file params)))
-         (t
-          (message "no :file or :autolog returning nil")
-          nil)))
-
-      (defun src-block-in-session-p (&optional name)
-        "Return if src-block is in a session of NAME.
-          NAME may be nil for unnamed sessions."
-        (let* ((info (org-babel-get-src-block-info))
-               (lang (nth 0 info))
-               (body (nth 1 info))
-               (params (nth 2 info))
-               (session (cdr (assoc :session params))))
-
+        (defun directory-to-write-progress (params)
+          ;; if params has :log then autogenerate based on date, time, and immediate parent heading text
           (cond
-           ;; unnamed session, both name and session are nil
-           ((and (null session)
-                 (null name))
-            t)
-           ;; Matching name and session
-           ((and
-             (stringp name)
-             (stringp session)
-             (string= name session))
-            t)
-           ;; no match
-           (t nil))))
+           ((assq :autolog params)
+            (message "autolog present, generating automatic log path and populating :file")
+            (generate-automatic-log-name))
+           ((cdr (assq :file params))
+            (message "no autolog just returning :file specified")
+            (cdr (assq :file params)))
+           (t
+            (message "no :file or :autolog returning nil")
+            nil)))
 
-      (defun org-babel-kill-session ()
-        "Kill session for current code block."
-        (interactive)
-        (unless (org-in-src-block-p)
-          (error "You must be in a src-block to run this command"))
-        (save-window-excursion
-          (org-babel-switch-to-session)
-          (kill-buffer)))
+        (defun src-block-in-session-p (&optional name)
+          "Return if src-block is in a session of NAME.
+            NAME may be nil for unnamed sessions."
+          (let* ((info (org-babel-get-src-block-info))
+                 (lang (nth 0 info))
+                 (body (nth 1 info))
+                 (params (nth 2 info))
+                 (session (cdr (assoc :session params))))
 
+            (cond
+             ;; unnamed session, both name and session are nil
+             ((and (null session)
+                   (null name))
+              t)
+             ;; Matching name and session
+             ((and
+               (stringp name)
+               (stringp session)
+               (string= name session))
+              t)
+             ;; no match
+             (t nil))))
 
-      (defun org-babel-restart-session-to-point (&optional arg)
-        "Restart session up to the src-block in the current point.
-          Goes to beginning of buffer and executes each code block with
-          `org-babel-execute-src-block' that has the same language and
-          session as the current block. ARG has same meaning as in
-          `org-babel-execute-src-block'."
-        (interactive "P")
-        (unless (org-in-src-block-p)
-          (error "You must be in a src-block to run this command"))
-        (let* ((current-point (point-marker))
-               (info (org-babel-get-src-block-info))
-               (lang (nth 0 info))
-               (params (nth 2 info))
-               (session (cdr (assoc :session params))))
-          (save-excursion
-            (goto-char (point-min))
-            (while (re-search-forward org-babel-src-block-regexp nil t)
-              ;; goto start of block
-              (goto-char (match-beginning 0))
-              (let* ((this-info (org-babel-get-src-block-info))
-                     (this-lang (nth 0 this-info))
-                     (this-params (nth 2 this-info))
-                     (this-session (cdr (assoc :session this-params))))
-                (when
-                    (and
-                     (< (point) (marker-position current-point))
-                     (string= lang this-lang)
-                     (src-block-in-session-p session))
-                  (org-babel-execute-src-block arg)))
-              ;; move forward so we can find the next block
-              (forward-line)))))
-
-      (defun org-babel-sh-evaluate (session body &optional params stdin cmdline)
-        "Pass BODY to the Shell process in BUFFER.
-          If RESULT-TYPE equals `output' then return a list of the outputs
-          of the statements in BODY, if RESULT-TYPE equals `value' then
-          return the value of the last statement in BODY."
-        (let* ((shebang (cdr (assq :shebang params)))
-               (results
-                (cond
-                 ((or stdin cmdline)	       ; external shell script w/STDIN
-                  ;; (map-put params :file file-to-write-progress) ;; TODO htis should happen in one place
-                  (let ((script-file (org-babel-temp-file "sh-script-"))
-                        (stdin-file (org-babel-temp-file "sh-stdin-"))
-                        (padline (not (string= "no" (cdr (assq :padline params))))))
-                    (with-temp-file script-file
-                      (when shebang (insert shebang "\n"))
-                      (when padline (insert "\n"))
-                      (insert body))
-                    (set-file-modes script-file #o755)
-                    (with-temp-file stdin-file (insert (or stdin "")))
-                    (with-temp-buffer
-                      (call-process-shell-command
-                       (concat (if shebang script-file
-                                 (format "%s %s" shell-file-name script-file))
-                               (and cmdline (concat " " cmdline)))
-                       stdin-file
-                       (current-buffer))
-                      (buffer-string))))
-                 (session			; session evaluation
-                  ;; (map-put params :file file-to-write-progress) ;; TODO htis should happen in one place
-                  (mapconcat
-                   #'org-babel-sh-strip-weird-long-prompt
-                   (mapcar
-                    #'org-trim
-                    (butlast
-                     (org-babel-comint-with-output
-                         (session org-babel-sh-eoe-output t body)
-                       (dolist (line (append (split-string (org-trim body) "\n")
-                                             (list org-babel-sh-eoe-indicator)))
-                         (insert line)
-                         (comint-send-input nil t)
-                         (while (save-excursion
-                                  (goto-char comint-last-input-end)
-                                  (not (re-search-forward
-                                        comint-prompt-regexp nil t)))
-                           (accept-process-output
-                            (get-buffer-process (current-buffer))))))
-                     2))
-                   "\n"))
-                 ;; External shell script, with or without a predefined
-                 ;; shebang.
-                 ((org-string-nw-p shebang)
-                  ;; (map-put params :file file-to-write-progress) ;; TODO htis should happen in one place
-
-                  (let ((script-file (org-babel-temp-file "sh-script-"))
-                        (padline (not (equal "no" (cdr (assq :padline params))))))
-                    (with-temp-file script-file
-                      (insert shebang "\n")
-                      (when padline (insert "\n"))
-                      (insert body))
-                    (set-file-modes script-file #o755)
-                    (org-babel-eval script-file "")))
-                 (t
-                  (when (cdr (assq :file params))
-                    (message "file was found making process")
-                    (make-process :name (format "proc-%s-%s" (file-name-nondirectory (cdr (assq :file params))) (md5 body))
-                                  :buffer (format "buf-%s-%s" (file-name-nondirectory (cdr (assq :file params))) (md5 body))
-                                  :command (list "sh" "-c" (org-trim body))
-                                  :connection-type 'pipe
-                                  :filter (apply-partially 'my-pass-it-on-filter (cdr (assq :file params)))))
-                  (unless (cdr (assq :file params))
-                    (org-babel-eval shell-file-name (org-trim body)))))))
-          (unless (cdr (assq :file params)) ;; don't do this if :file exists
-            (when results
-              (let ((result-params (cdr (assq :result-params params))))
-                (org-babel-result-cond result-params
-                  results
-                  (let ((tmp-file (org-babel-temp-file "sh-")))
-                    (with-temp-file tmp-file (insert results))
-                    (org-babel-import-elisp-from-file tmp-file))))))))
-
-      (defun org-babel-execute:shell (body params)
-        "Execute a block of Shell commands with Babel.
-          This function is called by `org-babel-execute-src-block'."
-        (when (assq :autolog params)
-          (map-put params :file (generate-automatic-log-name)))
-        (let* ((session (org-babel-sh-initiate-session
-                         (cdr (assq :session params))))
-               (stdin (let ((stdin (cdr (assq :stdin params))))
-                        (when stdin (org-babel-sh-var-to-string
-                                     (org-babel-ref-resolve stdin)))))
-               (cmdline (cdr (assq :cmdline params)))
-               (full-body (org-babel-expand-body:generic
-                           body params (org-babel-variable-assignments:shell params))))
-          (org-babel-reassemble-table
-           (org-babel-sh-evaluate session full-body params stdin cmdline)
-           (org-babel-pick-name
-            (cdr (assq :colname-names params)) (cdr (assq :colnames params)))
-           (org-babel-pick-name
-            (cdr (assq :rowname-names params)) (cdr (assq :rownames params))))))
+        (defun org-babel-kill-session ()
+          "Kill session for current code block."
+          (interactive)
+          (unless (org-in-src-block-p)
+            (error "You must be in a src-block to run this command"))
+          (save-window-excursion
+            (org-babel-switch-to-session)
+            (kill-buffer)))
 
 
-    (with-eval-after-load 'org
+        (defun org-babel-restart-session-to-point (&optional arg)
+          "Restart session up to the src-block in the current point.
+            Goes to beginning of buffer and executes each code block with
+            `org-babel-execute-src-block' that has the same language and
+            session as the current block. ARG has same meaning as in
+            `org-babel-execute-src-block'."
+          (interactive "P")
+          (unless (org-in-src-block-p)
+            (error "You must be in a src-block to run this command"))
+          (let* ((current-point (point-marker))
+                 (info (org-babel-get-src-block-info))
+                 (lang (nth 0 info))
+                 (params (nth 2 info))
+                 (session (cdr (assoc :session params))))
+            (save-excursion
+              (goto-char (point-min))
+              (while (re-search-forward org-babel-src-block-regexp nil t)
+                ;; goto start of block
+                (goto-char (match-beginning 0))
+                (let* ((this-info (org-babel-get-src-block-info))
+                       (this-lang (nth 0 this-info))
+                       (this-params (nth 2 this-info))
+                       (this-session (cdr (assoc :session this-params))))
+                  (when
+                      (and
+                       (< (point) (marker-position current-point))
+                       (string= lang this-lang)
+                       (src-block-in-session-p session))
+                    (org-babel-execute-src-block arg)))
+                ;; move forward so we can find the next block
+                (forward-line)))))
 
-      ;; (setq org-clock-persist-file "~/org/org-clock-save.el")
-      (setq org-clock-history-length 25)
-      (setq org-image-actual-width '(500))
-      (setq org-cycle-separator-lines 1)
-      (setq org-reverse-note-order t)
+        (defun org-babel-sh-evaluate (session body &optional params stdin cmdline)
+          "Pass BODY to the Shell process in BUFFER.
+            If RESULT-TYPE equals `output' then return a list of the outputs
+            of the statements in BODY, if RESULT-TYPE equals `value' then
+            return the value of the last statement in BODY."
+          (let* ((shebang (cdr (assq :shebang params)))
+                 (results
+                  (cond
+                   ((or stdin cmdline)	       ; external shell script w/STDIN
+                    ;; (map-put params :file file-to-write-progress) ;; TODO htis should happen in one place
+                    (let ((script-file (org-babel-temp-file "sh-script-"))
+                          (stdin-file (org-babel-temp-file "sh-stdin-"))
+                          (padline (not (string= "no" (cdr (assq :padline params))))))
+                      (with-temp-file script-file
+                        (when shebang (insert shebang "\n"))
+                        (when padline (insert "\n"))
+                        (insert body))
+                      (set-file-modes script-file #o755)
+                      (with-temp-file stdin-file (insert (or stdin "")))
+                      (with-temp-buffer
+                        (call-process-shell-command
+                         (concat (if shebang script-file
+                                   (format "%s %s" shell-file-name script-file))
+                                 (and cmdline (concat " " cmdline)))
+                         stdin-file
+                         (current-buffer))
+                        (buffer-string))))
+                   (session			; session evaluation
+                    ;; (map-put params :file file-to-write-progress) ;; TODO htis should happen in one place
+                    (mapconcat
+                     #'org-babel-sh-strip-weird-long-prompt
+                     (mapcar
+                      #'org-trim
+                      (butlast
+                       (org-babel-comint-with-output
+                           (session org-babel-sh-eoe-output t body)
+                         (dolist (line (append (split-string (org-trim body) "\n")
+                                               (list org-babel-sh-eoe-indicator)))
+                           (insert line)
+                           (comint-send-input nil t)
+                           (while (save-excursion
+                                    (goto-char comint-last-input-end)
+                                    (not (re-search-forward
+                                          comint-prompt-regexp nil t)))
+                             (accept-process-output
+                              (get-buffer-process (current-buffer))))))
+                       2))
+                     "\n"))
+                   ;; External shell script, with or without a predefined
+                   ;; shebang.
+                   ((org-string-nw-p shebang)
+                    ;; (map-put params :file file-to-write-progress) ;; TODO htis should happen in one place
 
-      (setq org-use-fast-tag-selection nil)
-      (setq org-startup-align-all-tables t)
-      (setq org-startup-indented t)
-      ;; org-agenda-files are set in ~/personal.el
-      ;; (setq org-modules (add-to-list 'org-modules 'org-habit))
-      (add-to-list 'org-modules 'org-habit)
-      (add-to-list 'org-modules 'org-tempo)
+                    (let ((script-file (org-babel-temp-file "sh-script-"))
+                          (padline (not (equal "no" (cdr (assq :padline params))))))
+                      (with-temp-file script-file
+                        (insert shebang "\n")
+                        (when padline (insert "\n"))
+                        (insert body))
+                      (set-file-modes script-file #o755)
+                      (org-babel-eval script-file "")))
+                   (t
+                    (when (cdr (assq :file params))
+                      (message "file was found making process")
+                      (make-process :name (format "proc-%s-%s" (file-name-nondirectory (cdr (assq :file params))) (md5 body))
+                                    :buffer (format "buf-%s-%s" (file-name-nondirectory (cdr (assq :file params))) (md5 body))
+                                    :command (list "sh" "-c" (org-trim body))
+                                    :connection-type 'pipe
+                                    :filter (apply-partially 'my-pass-it-on-filter (cdr (assq :file params)))))
+                    (unless (cdr (assq :file params))
+                      (org-babel-eval shell-file-name (org-trim body)))))))
+            (unless (cdr (assq :file params)) ;; don't do this if :file exists
+              (when results
+                (let ((result-params (cdr (assq :result-params params))))
+                  (org-babel-result-cond result-params
+                    results
+                    (let ((tmp-file (org-babel-temp-file "sh-")))
+                      (with-temp-file tmp-file (insert results))
+                      (org-babel-import-elisp-from-file tmp-file))))))))
 
-      (setq org-log-done t)
-      (setq org-habit-graph-column 100)
-      (setq org-html-validation-link nil)
-
-      ;; (setq org-use-fast-todo-selection t)
-      ;; use *all tags* in *all agenda files* instead of just that buffers
-      (setq org-complete-tags-always-offer-all-agenda-tags t)
-      (setq org-todo-keywords
-            '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i)" "WAITING(w@/!)" "SOMEDAY(s)" "DELEGATED(x@!)" "|" "DONE(d)" "CANCELLED(c@/!)")))
-
-      (setq org-archive-location "~/org/archive/%s::datetree/* Finished Tasks")
-
-          ;;;;;; Fix Helm org tag completion
-      ;; From Anders Johansson <https://groups.google.com/d/msg/emacs-helm/tA6cn6TUdRY/G1S3TIdzBwAJ>
-
-      ;; This works great!  He posted it on 3 Mar 2016, on a thread that was
-      ;; started in Oct 2013.  He also posted this message on 2 Apr 2014,
-      ;; maybe an earlier attempt at a solution:
-      ;; <http://article.gmane.org/gmane.emacs.orgmode/84495> I've just
-      ;; tidied it up a bit and adjusted the prompt.
-
-
-      (with-eval-after-load 'helm
-        ;; (add-to-list 'helm-completing-read-handlers-alist '(org-capture . aj/org-completing-read-tags))
-        ;; (add-to-list 'helm-completing-read-handlers-alist '(org-set-tags . aj/org-completing-read-tags)))
-
-        (defun aj/org-completing-read-tags (prompt coll pred req initial hist def inh)
-          (if (not (string= "Tags: " prompt))
-              ;; Not a tags prompt.  Use normal completion by calling
-              ;; `org-icompleting-read' again without this function in
-              ;; `helm-completing-read-handlers-alist'
-              (let ((helm-completing-read-handlers-alist (rassq-delete-all
-                                                          'aj/org-completing-read-tags
-                                                          helm-completing-read-handlers-alist)))
-                (org-icompleting-read prompt coll pred req initial hist def inh))
-            ;; Tags prompt
-            (let* ((initial (and (stringp initial)
-                                 (not (string= initial ""))
-                                 initial))
-                   (curr (when initial
-                           (org-split-string initial ":")))
-                   (table (org-uniquify
-                           (mapcar 'car org-last-tags-completion-table)))
-                   (table (if curr
-                              ;; Remove current tags from list
-                              (cl-delete-if (lambda (x)
-                                              (member x curr))
-                                            table)
-                            table))
-                   (prompt (if initial
-                               (concat "Tags " initial)
-                             prompt)))
-              (concat initial (mapconcat 'identity
-                                         (nreverse (aj/helm-completing-read-multiple
-                                                    prompt table pred nil nil hist def
-                                                    t "Org tags" "*Helm org tags*" ":"))
-                                         ":")))))
-
-        (defun aj/helm-completing-read-multiple (prompt choices
-                                                        &optional predicate require-match initial-input hist def
-                                                        inherit-input-method name buffer sentinel)
-          "Read multiple items with `helm-completing-read-default-1'. Reading stops
-          when the user enters SENTINEL. By default, SENTINEL is
-          \"*done*\". SENTINEL is disambiguated with clashing completions
-          by appending _ to SENTINEL until it becomes unique. So if there
-          are multiple values that look like SENTINEL, the one with the
-          most _ at the end is the actual sentinel value. See
-          documentation for `ido-completing-read' for details on the
-          other parameters."
-          (let ((sentinel (or sentinel "*done*"))
-                this-choice res done-reading)
-            ;; Uniquify the SENTINEL value
-            (while (cl-find sentinel choices)
-              (setq sentinel (concat sentinel "_")))
-            (setq choices (cons sentinel choices))
-            ;; Read choices
-            (while (not done-reading)
-              (setq this-choice (helm-completing-read-default-1 prompt choices
-                                                                predicate require-match initial-input hist def
-                                                                inherit-input-method name buffer nil t))
-              (if (equal this-choice sentinel)
-                  (setq done-reading t)
-                (setq res (cons this-choice res))
-                (setq prompt (concat prompt this-choice ":"))))
-            res))
-
-        (setq org-confirm-babel-evaluate nil)
-        (setq org-babel-default-header-args:sh
-              '((:prologue . "exec 2>&1") (:epilogue . ":"))) ;; TODO is there a way to add default header args here?)
-            (setq org-babel-default-header-args:shell
-                  '((:prologue . "exec 2>&1") (:epilogue . ":")))
-            (setq org-babel-default-header-args '((:session . "none")
-                                                  (:results . "replace")
-                                                  (:exports . "both")
-                                                  (:cache . "no")
-                                                  (:noweb . "no")
-                                                  (:hlines . "no")
-                                                  (:tangle . "no")))
+        (defun org-babel-execute:shell (body params)
+          "Execute a block of Shell commands with Babel.
+            This function is called by `org-babel-execute-src-block'."
+          (when (assq :autolog params)
+            (map-put params :file (generate-automatic-log-name)))
+          (let* ((session (org-babel-sh-initiate-session
+                           (cdr (assq :session params))))
+                 (stdin (let ((stdin (cdr (assq :stdin params))))
+                          (when stdin (org-babel-sh-var-to-string
+                                       (org-babel-ref-resolve stdin)))))
+                 (cmdline (cdr (assq :cmdline params)))
+                 (full-body (org-babel-expand-body:generic
+                             body params (org-babel-variable-assignments:shell params))))
+            (org-babel-reassemble-table
+             (org-babel-sh-evaluate session full-body params stdin cmdline)
+             (org-babel-pick-name
+              (cdr (assq :colname-names params)) (cdr (assq :colnames params)))
+             (org-babel-pick-name
+              (cdr (assq :rowname-names params)) (cdr (assq :rownames params))))))
 
 
-            (setq org-tags-column -50)
-            (add-hook 'org-capture-mode-hook 'evil-insert-state)
-            ;; todo set these back to ~/ after I vet the new vanilla emacs install
+      (with-eval-after-load 'org
+
+        ;; (setq org-clock-persist-file "~/org/org-clock-save.el")
+        (setq org-clock-history-length 25)
+        (setq org-image-actual-width '(500))
+        (setq org-cycle-separator-lines 1)
+        (setq org-reverse-note-order t)
+
+        (setq org-use-fast-tag-selection nil)
+        (setq org-startup-align-all-tables t)
+        (setq org-startup-indented t)
+        ;; org-agenda-files are set in ~/personal.el
+        ;; (setq org-modules (add-to-list 'org-modules 'org-habit))
+        (add-to-list 'org-modules 'org-habit)
+        (add-to-list 'org-modules 'org-tempo)
+
+        (setq org-log-done t)
+        (setq org-habit-graph-column 100)
+        (setq org-html-validation-link nil)
+
+        ;; (setq org-use-fast-todo-selection t)
+        ;; use *all tags* in *all agenda files* instead of just that buffers
+        (setq org-complete-tags-always-offer-all-agenda-tags t)
+        (setq org-todo-keywords
+              '((sequence "TODO(t)" "NEXT(n)" "IN-PROGRESS(i)" "WAITING(w@/!)" "SOMEDAY(s)" "DELEGATED(x@!)" "|" "DONE(d)" "CANCELLED(c@/!)")))
+
+        (setq org-archive-location "~/org/archive/%s::datetree/* Finished Tasks")
+
+            ;;;;;; Fix Helm org tag completion
+        ;; From Anders Johansson <https://groups.google.com/d/msg/emacs-helm/tA6cn6TUdRY/G1S3TIdzBwAJ>
+
+        ;; This works great!  He posted it on 3 Mar 2016, on a thread that was
+        ;; started in Oct 2013.  He also posted this message on 2 Apr 2014,
+        ;; maybe an earlier attempt at a solution:
+        ;; <http://article.gmane.org/gmane.emacs.orgmode/84495> I've just
+        ;; tidied it up a bit and adjusted the prompt.
 
 
-            ;; resume clocks after closing emacs
-            (setq org-clock-persist t)
-            ;; (org-clock-persistence-insinuate)
-            (setq org-log-into-drawer t)
-            ;; updated to use a depth of 3 in combination with showing the full outlinepath
-            (setq org-refile-targets
+        (with-eval-after-load 'helm
+          ;; (add-to-list 'helm-completing-read-handlers-alist '(org-capture . aj/org-completing-read-tags))
+          ;; (add-to-list 'helm-completing-read-handlers-alist '(org-set-tags . aj/org-completing-read-tags)))
+
+          (defun aj/org-completing-read-tags (prompt coll pred req initial hist def inh)
+            (if (not (string= "Tags: " prompt))
+                ;; Not a tags prompt.  Use normal completion by calling
+                ;; `org-icompleting-read' again without this function in
+                ;; `helm-completing-read-handlers-alist'
+                (let ((helm-completing-read-handlers-alist (rassq-delete-all
+                                                            'aj/org-completing-read-tags
+                                                            helm-completing-read-handlers-alist)))
+                  (org-icompleting-read prompt coll pred req initial hist def inh))
+              ;; Tags prompt
+              (let* ((initial (and (stringp initial)
+                                   (not (string= initial ""))
+                                   initial))
+                     (curr (when initial
+                             (org-split-string initial ":")))
+                     (table (org-uniquify
+                             (mapcar 'car org-last-tags-completion-table)))
+                     (table (if curr
+                                ;; Remove current tags from list
+                                (cl-delete-if (lambda (x)
+                                                (member x curr))
+                                              table)
+                              table))
+                     (prompt (if initial
+                                 (concat "Tags " initial)
+                               prompt)))
+                (concat initial (mapconcat 'identity
+                                           (nreverse (aj/helm-completing-read-multiple
+                                                      prompt table pred nil nil hist def
+                                                      t "Org tags" "*Helm org tags*" ":"))
+                                           ":")))))
+
+          (defun aj/helm-completing-read-multiple (prompt choices
+                                                          &optional predicate require-match initial-input hist def
+                                                          inherit-input-method name buffer sentinel)
+            "Read multiple items with `helm-completing-read-default-1'. Reading stops
+            when the user enters SENTINEL. By default, SENTINEL is
+            \"*done*\". SENTINEL is disambiguated with clashing completions
+            by appending _ to SENTINEL until it becomes unique. So if there
+            are multiple values that look like SENTINEL, the one with the
+            most _ at the end is the actual sentinel value. See
+            documentation for `ido-completing-read' for details on the
+            other parameters."
+            (let ((sentinel (or sentinel "*done*"))
+                  this-choice res done-reading)
+              ;; Uniquify the SENTINEL value
+              (while (cl-find sentinel choices)
+                (setq sentinel (concat sentinel "_")))
+              (setq choices (cons sentinel choices))
+              ;; Read choices
+              (while (not done-reading)
+                (setq this-choice (helm-completing-read-default-1 prompt choices
+                                                                  predicate require-match initial-input hist def
+                                                                  inherit-input-method name buffer nil t))
+                (if (equal this-choice sentinel)
+                    (setq done-reading t)
+                  (setq res (cons this-choice res))
+                  (setq prompt (concat prompt this-choice ":"))))
+              res))
+
+          (setq org-confirm-babel-evaluate nil)
+          (setq org-babel-default-header-args:sh
+                '((:prologue . "exec 2>&1") (:epilogue . ":"))) ;; TODO is there a way to add default header args here?)
+              (setq org-babel-default-header-args:shell
+                    '((:prologue . "exec 2>&1") (:epilogue . ":")))
+              (setq org-babel-default-header-args '((:session . "none")
+                                                    (:results . "replace")
+                                                    (:exports . "both")
+                                                    (:cache . "no")
+                                                    (:noweb . "no")
+                                                    (:hlines . "no")
+                                                    (:tangle . "no")))
+
+
+              (setq org-tags-column -50)
+              (add-hook 'org-capture-mode-hook 'evil-insert-state)
+              ;; todo set these back to ~/ after I vet the new vanilla emacs install
+
+
+              ;; resume clocks after closing emacs
+              (setq org-clock-persist t)
+              ;; (org-clock-persistence-insinuate)
+              (setq org-log-into-drawer t)
+              ;; updated to use a depth of 3 in combination with showing the full outlinepath
+              (setq org-refile-targets
                   '((org-agenda-files . (:maxlevel . 2))))
-            (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
-            (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
+              (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+              (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
 
-            ;; refile to archive datetree done.org
-            (defun my/org-read-datetree-date (d) "Parse a time string D and return a date to pass to the datetree functions." (let ((dtmp (nthcdr 3 (parse-time-string d)))) (list (cadr dtmp) (car dtmp) (caddr dtmp))))
+              ;; refile to archive datetree done.org
+              (defun my/org-read-datetree-date (d) "Parse a time string D and return a date to pass to the datetree functions." (let ((dtmp (nthcdr 3 (parse-time-string d)))) (list (cadr dtmp) (car dtmp) (caddr dtmp))))
 
-            (defun my/org-refile-to-archive-datetree (&optional bfn)
-              "Refile an entry to a datetree under an archive."
-              (interactive)
-              (require 'org-datetree)
-              (let* ((bfn (or bfn (find-file-noselect (expand-file-name "~/org/done.org"))))
-                     (datetree-date (my/org-read-datetree-date (org-read-date t nil)))
-                     (tags-to-preserve-on-refile (seq-filter (lambda (tag) (not (string= "refile" tag))) (org-get-tags))))
-                  (message (format "%s" tags-to-preserve-on-refile))
-                  (org-set-tags-to tags-to-preserve-on-refile)
+              (defun my/org-refile-to-archive-datetree (&optional bfn)
+                "Refile an entry to a datetree under an archive."
+                (interactive)
+                (require 'org-datetree)
+                (let* ((bfn (or bfn (find-file-noselect (expand-file-name "~/org/done.org"))))
+                       (datetree-date (my/org-read-datetree-date (org-read-date t nil)))
+                       (tags-to-preserve-on-refile (seq-filter (lambda (tag) (not (string= "refile" tag))) (org-get-tags))))
+                    (message (format "%s" tags-to-preserve-on-refile))
+                    (org-set-tags-to tags-to-preserve-on-refile)
 
-                  (org-refile nil nil (list nil (buffer-file-name bfn) nil
-                                          (with-current-buffer bfn
-                                            (save-excursion
-                                              (org-datetree-find-date-create datetree-date)
-                                              (point))))))
-              (setq this-command 'my/org-refile-to-journal))
+                    (org-refile nil nil (list nil (buffer-file-name bfn) nil
+                                            (with-current-buffer bfn
+                                              (save-excursion
+                                                (org-datetree-find-date-create datetree-date)
+                                                (point))))))
+                (setq this-command 'my/org-refile-to-journal))
 
-            ;; fix helm org tag completionsj
-            (defun air--org-swap-tags (tags)
-              "Replace any tags on the current headline with TAGS.
+              ;; fix helm org tag completionsj
+              (defun air--org-swap-tags (tags)
+                "Replace any tags on the current headline with TAGS.
 
-          The assumption is that TAGS will be a string conforming to Org Mode's
-          tag format specifications, or nil to remove all tags."
-              (let ((old-tags (org-get-tags-string))
-                    (tags (if tags
-                              (concat " " tags)
-                            "")))
-                  (save-excursion
-                  (beginning-of-line)
-                  (re-search-forward
-                   (concat "[ \t]*" (regexp-quote old-tags) "[ \t]*$")
-                   (line-end-position) t)
-                  (replace-match tags)
-                  (org-set-tags tags))))
+            The assumption is that TAGS will be a string conforming to Org Mode's
+            tag format specifications, or nil to remove all tags."
+                (let ((old-tags (org-get-tags-string))
+                      (tags (if tags
+                                (concat " " tags)
+                              "")))
+                    (save-excursion
+                    (beginning-of-line)
+                    (re-search-forward
+                     (concat "[ \t]*" (regexp-quote old-tags) "[ \t]*$")
+                     (line-end-position) t)
+                    (replace-match tags)
+                    (org-set-tags tags))))
 
-            (defun air-org-set-tags (tag)
-              "Add TAG if it is not in the list of tags, remove it otherwise.
+              (defun air-org-set-tags (tag)
+                "Add TAG if it is not in the list of tags, remove it otherwise.
 
-          TAG is chosen interactively from the global tags completion table."
-              (interactive
-               (list (let ((org-last-tags-completion-table
-                            (if (derived-mode-p 'org-mode)
-                                  (org-uniquify
-                                   (delq nil (append (org-get-buffer-tags)
-                                                   (org-global-tags-completion-table))))
-                              (org-global-tags-completion-table))))
-                       (org-icompleting-read
-                          "Tag: " 'org-tags-completion-function nil nil nil
-                          'org-tags-history))))
-              (let* ((cur-list (org-get-tags nil t))
-                     (new-tags (mapconcat 'identity
-                                          (if (member tag cur-list)
-                                              (delete tag cur-list)
-                                            (append cur-list (list tag)))
-                                          ":"))
-                     (new (if (> (length new-tags) 1) (concat " :" new-tags ":")
-                            nil)))
-                  (air--org-swap-tags new)))
+            TAG is chosen interactively from the global tags completion table."
+                (interactive
+                 (list (let ((org-last-tags-completion-table
+                              (if (derived-mode-p 'org-mode)
+                                    (org-uniquify
+                                     (delq nil (append (org-get-buffer-tags)
+                                                     (org-global-tags-completion-table))))
+                                (org-global-tags-completion-table))))
+                         (org-icompleting-read
+                            "Tag: " 'org-tags-completion-function nil nil nil
+                            'org-tags-history))))
+                (let* ((cur-list (org-get-tags nil t))
+                       (new-tags (mapconcat 'identity
+                                            (if (member tag cur-list)
+                                                (delete tag cur-list)
+                                              (append cur-list (list tag)))
+                                            ":"))
+                       (new (if (> (length new-tags) 1) (concat " :" new-tags ":")
+                              nil)))
+                    (air--org-swap-tags new)))
 
-            (setq org-structure-template-alist '(("e" . "src elisp")
-                                                   ("E" . "example")
-                                                   ("h" . "src haskell")
-                                                   ("s" . "src shell :file (generate-automatic-log-name) :results verbatim")
-                                                   ("S" . "src")))
+              (setq org-structure-template-alist '(("e" . "src elisp")
+                                                     ("E" . "example")
+                                                     ("h" . "src haskell")
+                                                     ("s" . "src shell :file (generate-automatic-log-name) :results verbatim")
+                                                     ("S" . "src")))
 
-            ;; setup org EasyTemplates
+              ;; setup org EasyTemplates
 
-            ;; TODO update EasyTemplates
-            ;; (add-to-list 'org-structure-template-alist
-            ;; 	       '("s" . "shell"))
-            ;; (add-to-list 'org-structure-template-alist
-            ;; 	       '("E" "#+BEGIN_SRC elisp\n ?\n#+END_SRC "))
-            ;; (add-to-list 'org-structure-template-alist
-            ;; 	       '("s" "#+BEGIN_SRC shell :results verbatim\n ?\n#+END_SRC "))
-            ;; (add-to-list 'org-structure-template-alist
-            ;; 	       '("S" "#+BEGIN_SRC ?\n\n#+END_SRC "))
-            ;; (add-to-list 'org-structure-template-alist
-            ;; 	       '("m" "#+BEGIN_SRC mongo\n ?\n#+END_SRC "))
-            ;; (add-to-list 'org-structure-template-alist
-            ;; 	       '("j" "#+BEGIN_SRC json\n ?\n#+END_SRC "))
-            ;; (add-to-list 'org-structure-template-alist
-            ;; 	       '("h" "#+BEGIN_SRC haskell\n ?\n#+END_SRC "))
-            ;; ;; org archiving advise to preserve structure
-            (defadvice org-archive-subtree (around fix-hierarchy activate)
-              (let* ((fix-archive-p (and (not current-prefix-arg)
-                                           (not (use-region-p))))
-                     (afile (org-extract-archive-file (org-get-local-archive-location)))
-                     (buffer (or (find-buffer-visiting afile) (find-file-noselect afile))))
-                  ad-do-it
-                  (when fix-archive-p
-                  (with-current-buffer buffer
-                    (goto-char (point-max))
-                    (while (org-up-heading-safe))
-                    (let* ((olpath (org-entry-get (point) "ARCHIVE_OLPATH"))
-                           (path (and olpath (split-string olpath "/")))
-                           (level 1)
-                           tree-text)
-                      (when olpath
-                          (org-mark-subtree)
-                          (setq tree-text (buffer-substring (region-beginning) (region-end)))
-                          (let (this-command) (org-cut-subtree))
-                          (goto-char (point-min))
-                          (save-restriction
-                          (widen)
-                          (-each path
-                            (lambda (heading)
-                              (if (re-search-forward
-                                   (rx-to-string
-                                    `(: bol (repeat ,level "*") (1+ " ") ,heading)) nil t)
-                                  (org-narrow-to-subtree)
-                                  (goto-char (point-max))
-                                  (unless (looking-at "^")
-                                  (insert "\n"))
-                                  (insert (make-string level ?*)
-                                          " "
-                                          heading
-                                          "\n"))
-                              (cl-incf level)))
-                          (widen)
-                          (org-end-of-subtree t t)
-                          (org-paste-subtree level tree-text))))))))
+              ;; TODO update EasyTemplates
+              ;; (add-to-list 'org-structure-template-alist
+              ;; 	       '("s" . "shell"))
+              ;; (add-to-list 'org-structure-template-alist
+              ;; 	       '("E" "#+BEGIN_SRC elisp\n ?\n#+END_SRC "))
+              ;; (add-to-list 'org-structure-template-alist
+              ;; 	       '("s" "#+BEGIN_SRC shell :results verbatim\n ?\n#+END_SRC "))
+              ;; (add-to-list 'org-structure-template-alist
+              ;; 	       '("S" "#+BEGIN_SRC ?\n\n#+END_SRC "))
+              ;; (add-to-list 'org-structure-template-alist
+              ;; 	       '("m" "#+BEGIN_SRC mongo\n ?\n#+END_SRC "))
+              ;; (add-to-list 'org-structure-template-alist
+              ;; 	       '("j" "#+BEGIN_SRC json\n ?\n#+END_SRC "))
+              ;; (add-to-list 'org-structure-template-alist
+              ;; 	       '("h" "#+BEGIN_SRC haskell\n ?\n#+END_SRC "))
+              ;; ;; org archiving advise to preserve structure
+              (defadvice org-archive-subtree (around fix-hierarchy activate)
+                (let* ((fix-archive-p (and (not current-prefix-arg)
+                                             (not (use-region-p))))
+                       (afile (org-extract-archive-file (org-get-local-archive-location)))
+                       (buffer (or (find-buffer-visiting afile) (find-file-noselect afile))))
+                    ad-do-it
+                    (when fix-archive-p
+                    (with-current-buffer buffer
+                      (goto-char (point-max))
+                      (while (org-up-heading-safe))
+                      (let* ((olpath (org-entry-get (point) "ARCHIVE_OLPATH"))
+                             (path (and olpath (split-string olpath "/")))
+                             (level 1)
+                             tree-text)
+                        (when olpath
+                            (org-mark-subtree)
+                            (setq tree-text (buffer-substring (region-beginning) (region-end)))
+                            (let (this-command) (org-cut-subtree))
+                            (goto-char (point-min))
+                            (save-restriction
+                            (widen)
+                            (-each path
+                              (lambda (heading)
+                                (if (re-search-forward
+                                     (rx-to-string
+                                      `(: bol (repeat ,level "*") (1+ " ") ,heading)) nil t)
+                                    (org-narrow-to-subtree)
+                                    (goto-char (point-max))
+                                    (unless (looking-at "^")
+                                    (insert "\n"))
+                                    (insert (make-string level ?*)
+                                            " "
+                                            heading
+                                            "\n"))
+                                (cl-incf level)))
+                            (widen)
+                            (org-end-of-subtree t t)
+                            (org-paste-subtree level tree-text))))))))
 
-            ;; org columns
-            ;; %10Time_Spent{:}
-            ;; (setq org-columns-default-format "%25ITEM %TODO %3PRIORITY %10Time_Estimate{:} %CLOCKSUM %CLOCKSUM_T %TAGS")
-            (setq org-columns-default-format "%75ITEM %10Effort{:} %CLOCKSUM %TODO %TAGS")
+              ;; org columns
+              ;; %10Time_Spent{:}
+              ;; (setq org-columns-default-format "%25ITEM %TODO %3PRIORITY %10Time_Estimate{:} %CLOCKSUM %CLOCKSUM_T %TAGS")
+              (setq org-columns-default-format "%75ITEM %10Effort{:} %CLOCKSUM %TODO %TAGS")
 
-            ;; org reveal settings
-            (setq Org-Reveal-root "/Users/codygman/Downloads/reveal.js-3.6.0/js/reveal.js")
-            (setq Org-Reveal-title-slide nil)
+              ;; org reveal settings
+              (setq Org-Reveal-root "/Users/codygman/Downloads/reveal.js-3.6.0/js/reveal.js")
+              (setq Org-Reveal-title-slide nil)
 
 
 
-            ;; end org stuff)
+              ;; end org stuff)
 
-            (with-eval-after-load 'org-habit
-              (advice-add #'org-agenda-finalize :before #'my/org-agenda-mark-habits))
+              (with-eval-after-load 'org-habit
+                (advice-add #'org-agenda-finalize :before #'my/org-agenda-mark-habits))
 
-            (defun air-org-skip-subtree-if-priority (priority)
-              "Skip an agenda subtree if it has a priority of PRIORITY.
+              (defun air-org-skip-subtree-if-priority (priority)
+                "Skip an agenda subtree if it has a priority of PRIORITY.
 
-              PRIORITY may be one of the characters ?A, ?B, or ?C."
-              (let ((subtree-end (save-excursion (org-end-of-subtree t)))
-                    (pri-value (* 1000 (- org-lowest-priority priority)))
-                    (pri-current (org-get-priority (thing-at-point 'line t))))
-                (if (= pri-value pri-current)
-                    subtree-end
-                  nil)))
+                PRIORITY may be one of the characters ?A, ?B, or ?C."
+                (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+                      (pri-value (* 1000 (- org-lowest-priority priority)))
+                      (pri-current (org-get-priority (thing-at-point 'line t))))
+                  (if (= pri-value pri-current)
+                      subtree-end
+                    nil)))
 
-            (eval-after-load 'org
-              (setq org-hide-leading-stars t))
-            ;; (with-eval-after-load "ob-restclient"
-            ;;   (defun restclient-http-parse-current-and-do (func &rest args) ;
-            ;;     (save-excursion
-            ;;       (goto-char (restclient-current-min))
-            ;;       (when (re-search-forward restclient-method-url-regexp (point-max) t)
-            ;; 	(let ((method (match-string-no-properties 1))
-            ;; 	      (url (match-string-no-properties 2))
-            ;; 	      (vars (restclient-find-vars-before-point))
-            ;; 	      (headers '()))
-            ;; 	  (forward-line)
-            ;; 	  (while (cond
-            ;; 		  ((and (looking-at restclient-header-regexp) (not (looking-at restclient-empty-line-regexp)))
-            ;; 		   (setq headers (cons (restclient-replace-all-in-header vars (restclient-make-header)) headers)))
-            ;; 		  ((looking-at restclient-use-var-regexp)
-            ;; 		   (setq headers (append headers (restclient-parse-headers (restclient-replace-all-in-string vars (match-string 1)))))))
-            ;; 	    (forward-line))
-            ;; 	  (when (looking-at restclient-empty-line-regexp)
-            ;; 	    (forward-line))
-            ;; 	  (let* ((cmax (restclient-current-max))
-            ;; 		 (entity (restclient-parse-body (buffer-substring (min (point) cmax) cmax) vars))
-            ;; 		 (url (restclient-replace-all-in-string vars (string-trim url))))
-            ;; 	    (apply func method url headers entity args))))))
-            ;;   )
+              (eval-after-load 'org
+                (setq org-hide-leading-stars t))
+              ;; (with-eval-after-load "ob-restclient"
+              ;;   (defun restclient-http-parse-current-and-do (func &rest args) ;
+              ;;     (save-excursion
+              ;;       (goto-char (restclient-current-min))
+              ;;       (when (re-search-forward restclient-method-url-regexp (point-max) t)
+              ;; 	(let ((method (match-string-no-properties 1))
+              ;; 	      (url (match-string-no-properties 2))
+              ;; 	      (vars (restclient-find-vars-before-point))
+              ;; 	      (headers '()))
+              ;; 	  (forward-line)
+              ;; 	  (while (cond
+              ;; 		  ((and (looking-at restclient-header-regexp) (not (looking-at restclient-empty-line-regexp)))
+              ;; 		   (setq headers (cons (restclient-replace-all-in-header vars (restclient-make-header)) headers)))
+              ;; 		  ((looking-at restclient-use-var-regexp)
+              ;; 		   (setq headers (append headers (restclient-parse-headers (restclient-replace-all-in-string vars (match-string 1)))))))
+              ;; 	    (forward-line))
+              ;; 	  (when (looking-at restclient-empty-line-regexp)
+              ;; 	    (forward-line))
+              ;; 	  (let* ((cmax (restclient-current-max))
+              ;; 		 (entity (restclient-parse-body (buffer-substring (min (point) cmax) cmax) vars))
+              ;; 		 (url (restclient-replace-all-in-string vars (string-trim url))))
+              ;; 	    (apply func method url headers entity args))))))
+              ;;   )
 
-            ;; put creation date in todos
-            ;; (defun my/log-todo-creation-date (&rest ignore)
-            ;;   ;; TODO make this create inactive timestamps
-            ;;   "Log TODO creation time in the property drawer under the key 'CREATED'."
-            ;;   (when (and (org-get-todo-state)
-            ;;              (not (org-entry-get nil "CREATED")))
-            ;;     (org-entry-put nil "CREATED" (format-time-string (cdr org-time-stamp-formats)))))
+              ;; put creation date in todos
+              ;; (defun my/log-todo-creation-date (&rest ignore)
+              ;;   ;; TODO make this create inactive timestamps
+              ;;   "Log TODO creation time in the property drawer under the key 'CREATED'."
+              ;;   (when (and (org-get-todo-state)
+              ;;              (not (org-entry-get nil "CREATED")))
+              ;;     (org-entry-put nil "CREATED" (format-time-string (cdr org-time-stamp-formats)))))
 
-            ;; (advice-add 'org-insert-todo-heading-respect-content :after #'my/log-todo-creation-date)
-            ;; (advice-add 'org-insert-todo-subheading :after #'my/log-todo-creation-date)
-            ;; (add-hook 'org-evil-heading-
-            ;;          #'(lambda()
-            ;;                (save-excursion
-            ;;                     (org-back-to-heading)
-            ;;                     (my/log-todo-creation-date))))
-            ;; (add-hook 'org-insert-heading-hook ;; not sure if this one works
-            ;;          #'(lambda()
-            ;;                (save-excursion
-            ;;                     (org-back-to-heading)
-            ;;                     (my/log-todo-creation-date))))
+              ;; (advice-add 'org-insert-todo-heading-respect-content :after #'my/log-todo-creation-date)
+              ;; (advice-add 'org-insert-todo-subheading :after #'my/log-todo-creation-date)
+              ;; (add-hook 'org-evil-heading-
+              ;;          #'(lambda()
+              ;;                (save-excursion
+              ;;                     (org-back-to-heading)
+              ;;                     (my/log-todo-creation-date))))
+              ;; (add-hook 'org-insert-heading-hook ;; not sure if this one works
+              ;;          #'(lambda()
+              ;;                (save-excursion
+              ;;                     (org-back-to-heading)
+              ;;                     (my/log-todo-creation-date))))
 
-            ;; (add-hook 'org-capture-before-finalize-hook
-            ;;          #'(lambda()
-            ;;                (save-excursion
-            ;;                     (org-back-to-heading)
-            ;;                     (my/log-todo-creation-date))))
+              ;; (add-hook 'org-capture-before-finalize-hook
+              ;;          #'(lambda()
+              ;;                (save-excursion
+              ;;                     (org-back-to-heading)
+              ;;                     (my/log-todo-creation-date))))
 
-            (defvar my/org-habit-show-graphs-everywhere nil
-              "If non-nil, show habit graphs in all types of agenda buffers.
+              (defvar my/org-habit-show-graphs-everywhere nil
+                "If non-nil, show habit graphs in all types of agenda buffers.
 
-             Normally, habits display consistency graphs only in
-             \"agenda\"-type agenda buffers, not in other types of agenda
-             buffers.  Set this variable to any non-nil variable to show
-             consistency graphs in all Org mode agendas.
-      https://emacs.stackexchange.com/a/17328/16972
-      ")
+               Normally, habits display consistency graphs only in
+               \"agenda\"-type agenda buffers, not in other types of agenda
+               buffers.  Set this variable to any non-nil variable to show
+               consistency graphs in all Org mode agendas.
+        https://emacs.stackexchange.com/a/17328/16972
+        ")
 
-            ;; found these custom org-agenda with general from https://gist.github.com/amirrajan/301e74dc844a4c9ffc3830dc4268f177
-            (eval-after-load 'org-agenda
-              ;; (add-function :before 'org-agenda-refile '(lambda () (org-toggle-tag 'refile)))
+              ;; found these custom org-agenda with general from https://gist.github.com/amirrajan/301e74dc844a4c9ffc3830dc4268f177
+              (eval-after-load 'org-agenda
+                ;; (add-function :before 'org-agenda-refile '(lambda () (org-toggle-tag 'refile)))
 
-              ;; (advice-add 'org-agenda-refile :after '(lambda () (org-toggle-tag 'refile)))
-              ;; (advice-add #'org-read-property-value :before #'des/org-property-store-previous-val)
-              ;; (advice-add #'org-agenda-refile :after '(lambda () (org-toggle-tag 'refile)))
-              (general-evil-define-key 'normal org-agenda-mode-map
-                (kbd "<RET>") 'org-agenda-switch-to
-                (kbd "\t") 'org-agenda-goto
+                ;; (advice-add 'org-agenda-refile :after '(lambda () (org-toggle-tag 'refile)))
+                ;; (advice-add #'org-read-property-value :before #'des/org-property-store-previous-val)
+                ;; (advice-add #'org-agenda-refile :after '(lambda () (org-toggle-tag 'refile)))
+                (general-evil-define-key 'normal org-agenda-mode-map
+                  (kbd "<RET>") 'org-agenda-switch-to
+                  (kbd "\t") 'org-agenda-goto
 
-                "q" 'org-agenda-quit
-                "$" 'org-agenda-archive
-                "r" 'org-agenda-redo
-                "gr" 'org-agenda-refile ;; not allowed in tags type agenda buffers? wutt
-                "S" 'org-save-all-org-buffers
-                "gj" 'org-agenda-goto-date
-                "gJ" 'org-agenda-clock-goto
-                "m" 'org-agenda-bulk-mark
-                "B" 'org-agenda-bulk-action
-                "go" 'org-agenda-open-link
-                "s" 'org-agenda-schedule
-                "d" 'org-agenda-deadline
-                "+" 'org-agenda-priority-up
-                "," 'org-agenda-priority
-                "-" 'org-agenda-priority-down
-                "y" 'org-agenda-todo-yesterday
-                "n" 'org-agenda-add-note
-                "t" 'org-agenda-todo
-                ":" 'org-agenda-set-tags
-                ";" 'org-timer-set-timer
-                "I" 'helm-org-task-file-headings ;; broken... what is it even ;; artifact of https://gist.github.com/amirrajan/301e74dc844a4c9ffc3830dc4268f177
-                "i" 'org-agenda-clock-in
-                "o" 'org-agenda-clock-out
-                "u" 'org-agenda-bulk-unmark
-                "X" 'org-agenda-exit
-                "j"  'org-agenda-next-line
-                "k"  'org-agenda-previous-line
-                "vt" 'org-agenda-toggle-time-grid
-                "va" 'org-agenda-archives-mode
-                "vw" 'org-agenda-week-view
-                "vl" 'org-agenda-log-mode
-                "vd" 'org-agenda-day-view
-                "vc" 'org-agenda-show-clocking-issues
-                "g/" 'org-agenda-filter-by-tag
-                "O" 'delete-other-windows
-                "gh" 'org-agenda-holiday
-                "gv" 'org-agenda-view-mode-dispatch
-                "f" 'org-agenda-later
-                "b" 'org-agenda-earlier
-                "c" 'helm-org-capture-templates
-                "e" 'org-agenda-set-effort
-                "n" nil  ; evil-search-next
-                "{" 'org-agenda-manipulate-query-add-re
-                "}" 'org-agenda-manipulate-query-subtract-re
-                "A" 'org-agenda-toggle-archive-tag
-                "." 'org-agenda-goto-today
-                "0" 'evil-digit-argument-or-evil-beginning-of-line
-                "<" 'org-agenda-filter-by-category
-                ">" 'org-agenda-date-prompt
-                "F" 'org-agenda-follow-mode
-                "H" 'org-agenda-holidays
-                "J" 'org-agenda-next-date-line
-                "K" 'org-agenda-previous-date-line
-                "L" 'org-agenda-recenter
-                "P" 'org-agenda-show-priority
-                "R" 'org-agenda-clockreport-mode
-                "Z" 'org-agenda-sunrise-sunset
-                "T" 'org-agenda-show-tags
-                "x" 'org-agenda-clock-cancel
-                "[" 'org-agenda-manipulate-query-add
-                "g\\" 'org-agenda-filter-by-tag-refine
-                "]" 'org-agenda-manipulate-query-subtract))))
+                  "q" 'org-agenda-quit
+                  "$" 'org-agenda-archive
+                  "r" 'org-agenda-redo
+                  "gr" 'org-agenda-refile ;; not allowed in tags type agenda buffers? wutt
+                  "S" 'org-save-all-org-buffers
+                  "gj" 'org-agenda-goto-date
+                  "gJ" 'org-agenda-clock-goto
+                  "m" 'org-agenda-bulk-mark
+                  "B" 'org-agenda-bulk-action
+                  "go" 'org-agenda-open-link
+                  "s" 'org-agenda-schedule
+                  "d" 'org-agenda-deadline
+                  "+" 'org-agenda-priority-up
+                  "," 'org-agenda-priority
+                  "-" 'org-agenda-priority-down
+                  "y" 'org-agenda-todo-yesterday
+                  "n" 'org-agenda-add-note
+                  "t" 'org-agenda-todo
+                  ":" 'org-agenda-set-tags
+                  ";" 'org-timer-set-timer
+                  "I" 'helm-org-task-file-headings ;; broken... what is it even ;; artifact of https://gist.github.com/amirrajan/301e74dc844a4c9ffc3830dc4268f177
+                  "i" 'org-agenda-clock-in
+                  "o" 'org-agenda-clock-out
+                  "u" 'org-agenda-bulk-unmark
+                  "X" 'org-agenda-exit
+                  "j"  'org-agenda-next-line
+                  "k"  'org-agenda-previous-line
+                  "vt" 'org-agenda-toggle-time-grid
+                  "va" 'org-agenda-archives-mode
+                  "vw" 'org-agenda-week-view
+                  "vl" 'org-agenda-log-mode
+                  "vd" 'org-agenda-day-view
+                  "vc" 'org-agenda-show-clocking-issues
+                  "g/" 'org-agenda-filter-by-tag
+                  "O" 'delete-other-windows
+                  "gh" 'org-agenda-holiday
+                  "gv" 'org-agenda-view-mode-dispatch
+                  "f" 'org-agenda-later
+                  "b" 'org-agenda-earlier
+                  "c" 'helm-org-capture-templates
+                  "e" 'org-agenda-set-effort
+                  "n" nil  ; evil-search-next
+                  "{" 'org-agenda-manipulate-query-add-re
+                  "}" 'org-agenda-manipulate-query-subtract-re
+                  "A" 'org-agenda-toggle-archive-tag
+                  "." 'org-agenda-goto-today
+                  "0" 'evil-digit-argument-or-evil-beginning-of-line
+                  "<" 'org-agenda-filter-by-category
+                  ">" 'org-agenda-date-prompt
+                  "F" 'org-agenda-follow-mode
+                  "H" 'org-agenda-holidays
+                  "J" 'org-agenda-next-date-line
+                  "K" 'org-agenda-previous-date-line
+                  "L" 'org-agenda-recenter
+                  "P" 'org-agenda-show-priority
+                  "R" 'org-agenda-clockreport-mode
+                  "Z" 'org-agenda-sunrise-sunset
+                  "T" 'org-agenda-show-tags
+                  "x" 'org-agenda-clock-cancel
+                  "[" 'org-agenda-manipulate-query-add
+                  "g\\" 'org-agenda-filter-by-tag-refine
+                  "]" 'org-agenda-manipulate-query-subtract))))
               (setq org-refile-targets
                     '((org-agenda-files . (:maxlevel . 2)))
                     org-refile-use-cache t)
