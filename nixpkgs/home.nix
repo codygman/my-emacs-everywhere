@@ -14,6 +14,7 @@ in
     # todo figure out if this can work from inside home.nix
     # home-manager.users.cody.extraGroups = ["adbusers"];
     msmtp.enable = true;
+    mbsync.enable = true;
     notmuch.enable = true;
     emacs = {
       enable = true;
@@ -41,11 +42,6 @@ in
     };
     gpg = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {
       enable = true;
-    };
-    offlineimap = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == ""  && stdenv.isLinux) {
-      enable = true;
-      # localType = "IMAP";
-      # remoteType = "IMAP";
     };
   };
 
@@ -97,12 +93,12 @@ in
 
   accounts.email.accounts = {
     "cody@codygman.dev" = {
-      offlineimap.enable = true;
+      mbsync.enable = true;
       primary = true;
       address = "cody@codygman.dev";
       userName = "codygman";
       realName = "Cody Goodman";
-      passwordCommand = "cat /home/cody/deleteme";
+      passwordCommand = "${pkgs.coreutils}/bin/cat /home/cody/deleteme";
       # passwordCommand = "gpg --use-agent --quiet --batch -d /home/makefu/.gnupg/mail/syntax-fehler.gpg";
       msmtp.enable = true;
       notmuch.enable = true;
@@ -130,6 +126,14 @@ in
   };
 
   services = {
+    mbsync = {
+      enable = true;
+      frequency = "*:0/2"; # update every 1 minute
+      # postExec = "/home/cody/notmuch-tag.sh";
+      # postExec = "${config.xdg.configHome}/mbsync/postExec";
+      # TODO fix this to use xdg stuff above
+      postExec = "/home/cody/.config/mbsync/postExec";
+    };
     syncthing = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) {
       enable = true;
     };
@@ -137,6 +141,10 @@ in
       enable = true;
       defaultCacheTtl = 600;
       enableSshSupport = true;
+      extraConfig = ''
+          allow-emacs-pinentry
+          allow-loopback-pinentry
+      '';
     };
     # location.provider = "geoclue2";
     redshift = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == ""  && stdenv.isLinux) {
