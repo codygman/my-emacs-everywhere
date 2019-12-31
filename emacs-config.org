@@ -679,7 +679,7 @@
 #+end_src
 *** evil magit
 #+begin_src emacs-lisp
-(use-package evil-magit :after (evil magit))
+(use-package evil-magit :after (evil magit) :config (evil-magit-init))
 #+end_src
 *** evil-collection
 #+begin_src emacs-lisp
