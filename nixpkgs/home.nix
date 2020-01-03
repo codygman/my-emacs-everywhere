@@ -77,6 +77,7 @@ in
       # haskellPackages.hlint
       # haskellPackages.brittany
       # haskellPackages.hpack
+      python
       pwgen
       # (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
       # shellcheck
