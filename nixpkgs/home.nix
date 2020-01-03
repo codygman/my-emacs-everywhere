@@ -6,8 +6,24 @@ with lib;
 let
   emacsHEAD = import ./emacs.nix;
   all-hies = import (fetchTarball "https://github.com/infinisil/all-hies/tarball/master") {};
+  unstableTarball = fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz;
 in
 {
+  nixpkgs.config = {
+    allowUnfree = true;
+    allowBroken = true;
+    packageOverrides = pkgs: {
+      unstable = import unstableTarball {
+        config = config.nixpkgs.config;
+      };
+      # this works because I inlined everything
+      haskellPackages = (import unstableTarball {
+        config = config.nixpkgs.config;
+      }).haskell.packages.ghc881;
+      # get an error with this for some reason
+      # haskellPackages = unstable.haskell.packages.ghc881;
+    };
+  };
   programs = {
     # Let Home Manager install and manage itself.
     home-manager.enable = true;
@@ -50,28 +66,27 @@ in
       pinentry
       ripgrep
       fd
-      ghc
-      direnv
-      binutils
-      haskellPackages.cabal-install
+      unstable.haskell.compiler.ghc881
     ] ++ (if builtins.getEnv "TRAVIS_OS_NAME" == "" then [
       bitwarden
       bitwarden-cli
       gnumake
       mu
-      haskellPackages.lens
-      haskellPackages.pandoc
-      haskellPackages.ghcid
-      haskellPackages.hlint
-      haskellPackages.brittany
-      haskellPackages.hpack
+      #haskellPackages.lens
+      # unstable.haskell.packages.ghc881.lens
+      # unstable.haskellPackages.lens
+      # haskellPackages.pandoc
+      # haskellPackages.ghcid
+      # haskellPackages.hlint
+      # haskellPackages.brittany
+      # haskellPackages.hpack
       pwgen
-      (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
+      # (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
       stack
-      shellcheck
+      # shellcheck
       signal-desktop
       source-code-pro
-      cabal2nix
+      unstable.cabal2nix
     ] else []) ++ (if (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) then [
       feh
       dmenu
