@@ -78,6 +78,7 @@ in
       # haskellPackages.brittany
       # haskellPackages.hpack
       python
+      pkgs.python36Packages.virtualenv
       pwgen
       # (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
       # shellcheck
