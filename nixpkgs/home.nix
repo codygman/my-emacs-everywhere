@@ -11,29 +11,15 @@ in
 {
   # copy paste from irc directly
   nixpkgs.overlays = [(self: super: {
-    # unstable = import unstableTarball { config = config.nixpkgs.config; };
-    # TODO move haskellPackages override into overlay to be able to maybe use unstable above instead of duplication/inlining in packageOverrides
+    unstable = import unstableTarball { config = config.nixpkgs.config; };
+    haskellPackages = self.unstable.haskell.packages.ghc881;
   } )];
-# [cody@nixos:/nix]$ home-manager switch
-# error: syntax error, unexpected ';', expecting ')', at /home/cody/.emacs.d/nixpkgs/home.nix:13:111
-# (use '--show-trace' to show detailed location information)
-# error: syntax error, unexpected ';', expecting ')', at /home/cody/.emacs.d/nixpkgs/home.nix:13:111
-# (use '--show-trace' to show detailed location information)
-# /home/cody/.nix-profile/bin/home-manager: line 115: /tmp/home-manager-build.S5BYaiwOF9/news-info.sh: No such file or directory
 
   nixpkgs.config = {
     allowUnfree = true;
     allowBroken = true;
-    packageOverrides = pkgs: {
-      unstable = import unstableTarball {
-        config = config.nixpkgs.config;
-      };
-      # this works because I inlined everything, but I want to move it into overlay above
-      haskellPackages = (import unstableTarball {
-        config = config.nixpkgs.config;
-      }).haskell.packages.ghc881;
-    };
   };
+
   programs = {
     # Let Home Manager install and manage itself.
     home-manager.enable = true;
