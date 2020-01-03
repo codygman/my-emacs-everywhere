@@ -90,7 +90,6 @@ in
       # haskellPackages.hpack
       pwgen
       # (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
-      stack
       # shellcheck
       signal-desktop
       source-code-pro
