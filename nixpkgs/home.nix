@@ -107,6 +107,16 @@ in
       EDITOR = "emacsclient --create-frame --alternate-editor emacs";
     };
     file = {
+      ".bashrc" = {
+        text = ''
+          eval "$(direnv hook bash)"
+        '';
+      };
+      ".zshrc" = {
+        text = ''
+          eval "$(direnv hook zsh)"
+        '';
+      };
       ".direnvrc" = {
         text = ''
         use nix
