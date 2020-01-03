@@ -9,20 +9,14 @@ let
   unstableTarball = fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz;
 in
 {
-  # nixpkgs.overlays = [ (self: super: {unstable = import unstableTarball;})];
   # copy paste from irc directly
-  nixpkgs.overlays = [(self: super: {
-    unstable = import unstableTarball { config = config.nixpkgs.config; };
-  }; )]
-
-    # error from above
-    # [cody@nixos:/nix]$ home-manager switch
-    # error: syntax error, unexpected ';', expecting ')', at /home/cody/.emacs.d/nixpkgs/home.nix:16:4
-    # (use '--show-trace' to show detailed location information)
-    # error: syntax error, unexpected ';', expecting ')', at /home/cody/.emacs.d/nixpkgs/home.nix:16:4
-    # (use '--show-trace' to show detailed location information)
-    # /home/cody/.nix-profile/bin/home-manager: line 115: /tmp/home-manager-build.gYsQ3SqV0B/news-info.sh: No such file or directory
-
+  nixpkgs.overlays = [(self: super: { unstable = import unstableTarball { config = config.nixpkgs.config; }; }; )]
+# [cody@nixos:/nix]$ home-manager switch
+# error: syntax error, unexpected ';', expecting ')', at /home/cody/.emacs.d/nixpkgs/home.nix:13:111
+# (use '--show-trace' to show detailed location information)
+# error: syntax error, unexpected ';', expecting ')', at /home/cody/.emacs.d/nixpkgs/home.nix:13:111
+# (use '--show-trace' to show detailed location information)
+# /home/cody/.nix-profile/bin/home-manager: line 115: /tmp/home-manager-build.S5BYaiwOF9/news-info.sh: No such file or directory
 
   nixpkgs.config = {
     allowUnfree = true;
