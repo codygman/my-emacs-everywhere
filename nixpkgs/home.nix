@@ -90,16 +90,20 @@ in
 
   systemd.user.startServices = if stdenv.isLinux then true else false;
 
-  home.keyboard = mkIf stdenv.isLinux {
-    # TODO test to see if this works on osx too
-    layout = "us";
-    options = [
-      "ctrl:nocaps"
-    ];
-  };
+  home = {
 
-  home.sessionVariables = {
-    EDITOR = "emacsclient --create-frame --alternate-editor emacs";
+    keyboard = mkIf stdenv.isLinux {
+      # TODO test to see if this works on osx too
+      layout = "us";
+      options = [
+        "ctrl:nocaps"
+      ];
+    };
+
+    sessionVariables = {
+      EDITOR = "emacsclient --create-frame --alternate-editor emacs";
+    };
+
   };
 
   accounts.email.accounts = {
