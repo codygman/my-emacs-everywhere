@@ -148,7 +148,7 @@ in
             ];
           }
           EOF
-              ${EDITOR:-vim} default.nix
+              ${EDITOR:-emacs} default.nix
             fi
           }
         '';
