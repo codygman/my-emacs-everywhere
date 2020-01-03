@@ -80,7 +80,7 @@ in
       bitwarden-cli
       gnumake
       mu
-      #haskellPackages.lens
+      haskellPackages.lens
       # unstable.haskell.packages.ghc881.lens
       # unstable.haskellPackages.lens
       # haskellPackages.pandoc
