@@ -10,7 +10,7 @@ let
 in
 {
   # copy paste from irc directly
-  nixpkgs.overlays = [(self: super: { unstable = import unstableTarball { config = config.nixpkgs.config; }; }; )]
+  nixpkgs.overlays = [(self: super: { unstable = import unstableTarball { config = config.nixpkgs.config; }; } )];
 # [cody@nixos:/nix]$ home-manager switch
 # error: syntax error, unexpected ';', expecting ')', at /home/cody/.emacs.d/nixpkgs/home.nix:13:111
 # (use '--show-trace' to show detailed location information)
