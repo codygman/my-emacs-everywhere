@@ -59,6 +59,7 @@ in
 
   home = {
     packages = with pkgs; [
+      direnv
       pinentry
       ripgrep
       fd
@@ -103,7 +104,13 @@ in
     sessionVariables = {
       EDITOR = "emacsclient --create-frame --alternate-editor emacs";
     };
-
+    file = {
+      ".direnvrc" = {
+        text = ''
+        use nix
+      '';
+      };
+    };
   };
 
   accounts.email.accounts = {
