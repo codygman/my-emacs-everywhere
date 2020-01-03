@@ -10,7 +10,10 @@ let
 in
 {
   # copy paste from irc directly
-  nixpkgs.overlays = [(self: super: { unstable = import unstableTarball { config = config.nixpkgs.config; }; } )];
+  nixpkgs.overlays = [(self: super: {
+    # unstable = import unstableTarball { config = config.nixpkgs.config; };
+    # TODO move haskellPackages override into overlay to be able to maybe use unstable above instead of duplication/inlining in packageOverrides
+  } )];
 # [cody@nixos:/nix]$ home-manager switch
 # error: syntax error, unexpected ';', expecting ')', at /home/cody/.emacs.d/nixpkgs/home.nix:13:111
 # (use '--show-trace' to show detailed location information)
@@ -22,7 +25,13 @@ in
     allowUnfree = true;
     allowBroken = true;
     packageOverrides = pkgs: {
-      haskellPackages = unstable.haskell.packages.ghc881;
+      unstable = import unstableTarball {
+        config = config.nixpkgs.config;
+      };
+      # this works because I inlined everything, but I want to move it into overlay above
+      haskellPackages = (import unstableTarball {
+        config = config.nixpkgs.config;
+      }).haskell.packages.ghc881;
     };
   };
   programs = {
