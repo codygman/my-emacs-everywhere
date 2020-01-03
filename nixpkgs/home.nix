@@ -9,7 +9,7 @@ let
   unstableTarball = fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz;
 in
 {
-  nixpkgs.overlays = [ (self: super: {unstable = import unstableTarball;})];
+  # nixpkgs.overlays = [ (self: super: {unstable = import unstableTarball;})];
 
   # nixpkgs.overlays = [
   #   (self: super: {
@@ -21,15 +21,15 @@ in
     allowUnfree = true;
     allowBroken = true;
     packageOverrides = pkgs: {
-      # unstable = import unstableTarball {
-      #   config = config.nixpkgs.config;
-      # };
+      unstable = import unstableTarball {
+        config = config.nixpkgs.config;
+      };
       # this works because I inlined everything
-      # haskellPackages = (import unstableTarball {
-      #   config = config.nixpkgs.config;
-      # }).haskell.packages.ghc881;
+      haskellPackages = (import unstableTarball {
+        config = config.nixpkgs.config;
+      }).haskell.packages.ghc881;
       # # get an error with this for some reason
-      haskellPackages = unstable.haskell.packages.ghc881;
+      # haskellPackages = unstable.haskell.packages.ghc881;
     };
   };
   programs = {
