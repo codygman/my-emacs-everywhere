@@ -10,26 +10,25 @@ let
 in
 {
   # nixpkgs.overlays = [ (self: super: {unstable = import unstableTarball;})];
+  # copy paste from irc directly
+  nixpkgs.overlays = [(self: super: {
+    unstable = import unstableTarball { config = config.nixpkgs.config; };
+  }; )]
 
-  # nixpkgs.overlays = [
-  #   (self: super: {
-  #     unstable = import unstableTarball;
-  #   })
-  # ];
+    # error from above
+    # [cody@nixos:/nix]$ home-manager switch
+    # error: syntax error, unexpected ';', expecting ')', at /home/cody/.emacs.d/nixpkgs/home.nix:16:4
+    # (use '--show-trace' to show detailed location information)
+    # error: syntax error, unexpected ';', expecting ')', at /home/cody/.emacs.d/nixpkgs/home.nix:16:4
+    # (use '--show-trace' to show detailed location information)
+    # /home/cody/.nix-profile/bin/home-manager: line 115: /tmp/home-manager-build.gYsQ3SqV0B/news-info.sh: No such file or directory
+
 
   nixpkgs.config = {
     allowUnfree = true;
     allowBroken = true;
     packageOverrides = pkgs: {
-      unstable = import unstableTarball {
-        config = config.nixpkgs.config;
-      };
-      # this works because I inlined everything
-      haskellPackages = (import unstableTarball {
-        config = config.nixpkgs.config;
-      }).haskell.packages.ghc881;
-      # # get an error with this for some reason
-      # haskellPackages = unstable.haskell.packages.ghc881;
+      haskellPackages = unstable.haskell.packages.ghc881;
     };
   };
   programs = {
