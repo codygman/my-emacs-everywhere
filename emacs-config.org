@@ -1,3 +1,53 @@
+* exwm
+#+begin_src emacs-lisp
+  (use-package exwm
+    :init
+    (require 'exwm-config)
+    :config
+(defun my-exwm-workspace-switch-to-buffer (orig-func buffer-or-name &rest args)
+  (when buffer-or-name
+    (if (get-buffer buffer-or-name)
+        (progn
+          ;; hide buffers on other workspaces
+          (unless exwm-workspace-show-all-buffers
+            (dolist (pair exwm--id-buffer-alist)
+              (with-current-buffer (cdr pair)
+                (unless (or (eq exwm--frame exwm-workspace--current)
+                            (= ?\s (aref (buffer-name) 0)))
+                  (let ((buffer-list-update-hook
+                          (remq #'exwm-input--on-buffer-list-update
+                                buffer-list-update-hook)))
+                    (rename-buffer (concat " " (buffer-name))))))))
+
+          ;; floating frame
+          (if (or exwm--floating-frame
+                  (with-current-buffer buffer-or-name exwm--floating-frame))
+              (exwm-workspace-switch-to-buffer buffer-or-name)
+              (apply orig-func buffer-or-name args)))
+        (apply orig-func buffer-or-name args))))
+
+        (advice-add 'switch-to-buffer :around 'my-exwm-workspace-switch-to-buffer)
+   (add-to-list 'exwm-input-prefix-keys ?\C-\s)
+   (define-key exwm-mode-map [?\s-b] #'helm-mini)
+    (setq exwm-input-global-keys
+          `(([?\s-r] . exwm-reset)
+            ([?\s-w] . exwm-workspace-switch)
+            ([?\s-b] . helm-mini)
+            ([?\s-g] . helm-mini)
+            ([?\s-&] . (lambda (command)
+                         (interactive (list (read-shell-command "$ ")))))
+            ,@(mapcar (lambda (i)
+                        `(,(kbd (format "s-%d" i)) .
+                          (lambda ()
+                            (interactive)
+                            (exwm-workspace-switch-create ,i))))
+                      (number-sequence 0 9))))
+    ;; Do not forget to enable EXWM. It will start by itself when things are ready.)
+    (exwm-enable))
+#+end_src
+
+#+RESULTS:
+: t
 * Workflow
 ** Going where you want
 *** =SPC b b= to show recent buffers 
