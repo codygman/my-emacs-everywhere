@@ -1891,6 +1891,13 @@
              :clock-in t
              :clock-resume t
              )
+              ("r" "resources" entry (file+headline "~/bsab/resources.org" "Resources")
+               "* TODO %?  :refile:
+    :PROPERTIES:
+    :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
+    :CREATED: %U
+    :END:"
+               )
             ))
     :after (helm org))
 #+end_src
