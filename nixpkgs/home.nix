@@ -13,6 +13,8 @@ in
   nixpkgs.overlays = [(self: super: {
     unstable = import unstableTarball { config = config.nixpkgs.config; };
     haskellPackages = self.unstable.haskell.packages.ghc881;
+    emacs = emacsHEAD;
+    emacsWithPackages = (pkgs.emacsPackagesNgGen emacsHEAD).emacsWithPackages;
   } )];
 
   nixpkgs.config = {
