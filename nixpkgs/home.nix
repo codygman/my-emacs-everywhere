@@ -6,14 +6,28 @@ with lib;
 let
   emacsHEAD = import ./emacs.nix;
   all-hies = import (fetchTarball "https://github.com/infinisil/all-hies/tarball/master") {};
+  unstableTarball = fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/nixos-unstable.tar.gz;
 in
 {
+  # copy paste from irc directly
+  nixpkgs.overlays = [(self: super: {
+    unstable = import unstableTarball { config = config.nixpkgs.config; };
+    haskellPackages = self.unstable.haskell.packages.ghc881;
+  } )];
+
+  nixpkgs.config = {
+    allowUnfree = true;
+    allowBroken = true;
+  };
+
   programs = {
     # Let Home Manager install and manage itself.
     home-manager.enable = true;
     # todo figure out if this can work from inside home.nix
     # home-manager.users.cody.extraGroups = ["adbusers"];
     msmtp.enable = true;
+    mbsync.enable = true;
+    notmuch.enable = true;
     emacs = {
       enable = true;
       package = emacsHEAD;
@@ -41,39 +55,36 @@ in
     gpg = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "") {
       enable = true;
     };
-    offlineimap = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == ""  && stdenv.isLinux) {
-      enable = true;
-      # localType = "IMAP";
-      # remoteType = "IMAP";
-    };
   };
 
   home = {
     packages = with pkgs; [
+      direnv
+      pinentry
       ripgrep
       fd
-      ghc
-      direnv
-      binutils
-      haskellPackages.cabal-install
+      unstable.haskell.compiler.ghc881
     ] ++ (if builtins.getEnv "TRAVIS_OS_NAME" == "" then [
       bitwarden
       bitwarden-cli
       gnumake
       mu
       haskellPackages.lens
-      haskellPackages.pandoc
-      haskellPackages.ghcid
-      haskellPackages.hlint
-      haskellPackages.brittany
-      haskellPackages.hpack
+      # unstable.haskell.packages.ghc881.lens
+      # unstable.haskellPackages.lens
+      # haskellPackages.pandoc
+      # haskellPackages.ghcid
+      # haskellPackages.hlint
+      # haskellPackages.brittany
+      # haskellPackages.hpack
+      python
+      pkgs.python36Packages.virtualenv
       pwgen
-      (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
-      stack
-      shellcheck
+      # (all-hies.selection { selector = p: { inherit (p) ghc865; }; })
+      # shellcheck
       signal-desktop
       source-code-pro
-      cabal2nix
+      unstable.cabal2nix
     ] else []) ++ (if (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) then [
       feh
       dmenu
@@ -82,28 +93,91 @@ in
 
   systemd.user.startServices = if stdenv.isLinux then true else false;
 
-  home.keyboard = mkIf stdenv.isLinux {
-    # TODO test to see if this works on osx too
-    layout = "us";
-    options = [
-      "ctrl:nocaps"
-    ];
-  };
+  home = {
 
-  home.sessionVariables = {
-    EDITOR = "emacsclient --create-frame --alternate-editor emacs";
+    keyboard = mkIf stdenv.isLinux {
+      # TODO test to see if this works on osx too
+      layout = "us";
+      options = [
+        "ctrl:nocaps"
+      ];
+    };
+
+    sessionVariables = {
+      EDITOR = "emacsclient --create-frame --alternate-editor emacs";
+    };
+    file = {
+      ".bashrc" = {
+        text = ''
+          eval "$(direnv hook bash)"
+          nixify() {
+            if [ ! -e ./.envrc ]; then
+              echo "use nix" > .envrc
+              direnv allow
+            fi
+            if [ ! -e default.nix ]; then
+              cat > default.nix <<'EOF'
+          with import <nixpkgs> {};
+          stdenv.mkDerivation {
+            name = "env";
+            buildInputs = [
+              bashInteractive
+            ];
+          }
+          EOF
+              ${EDITOR:-vim} default.nix
+            fi
+          }
+        '';
+      };
+      ".zshrc" = {
+        text = ''
+          eval "$(direnv hook zsh)"
+          nixify() {
+            if [ ! -e ./.envrc ]; then
+              echo "use nix" > .envrc
+              direnv allow
+            fi
+            if [ ! -e default.nix ]; then
+              cat > default.nix <<'EOF'
+          with import <nixpkgs> {};
+          stdenv.mkDerivation {
+            name = "env";
+            buildInputs = [
+              bashInteractive
+            ];
+          }
+          EOF
+              ${EDITOR:-emacs} default.nix
+            fi
+          }
+        '';
+      };
+      ".direnvrc" = {
+        text = ''
+        use nix
+        layout_haskell() {
+          PATH_add ~/.cabal/bin
+          [ -d .cabal-sandbox ] || cabal sandbox init
+          PATH_add .cabal-sandbox/bin
+          export GHC_PACKAGE_PATH=$(cabal exec -- sh -c "echo \$GHC_PACKAGE_PATH")
+        }
+      '';
+      };
+    };
   };
 
   accounts.email.accounts = {
     "cody@codygman.dev" = {
-      offlineimap.enable = true;
+      mbsync.enable = true;
       primary = true;
       address = "cody@codygman.dev";
       userName = "codygman";
       realName = "Cody Goodman";
-      passwordCommand = "cat /home/cody/deleteme";
+      passwordCommand = "${pkgs.coreutils}/bin/cat /home/cody/deleteme";
       # passwordCommand = "gpg --use-agent --quiet --batch -d /home/makefu/.gnupg/mail/syntax-fehler.gpg";
       msmtp.enable = true;
+      notmuch.enable = true;
 
       imap = {
         host = "imap.mailfence.com";
@@ -128,6 +202,14 @@ in
   };
 
   services = {
+    mbsync = {
+      enable = true;
+      frequency = "*:0/2"; # update every 1 minute
+      # postExec = "/home/cody/notmuch-tag.sh";
+      # postExec = "${config.xdg.configHome}/mbsync/postExec";
+      # TODO fix this to use xdg stuff above
+      postExec = "/home/cody/.config/mbsync/postExec";
+    };
     syncthing = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == "" && stdenv.isLinux) {
       enable = true;
     };
@@ -135,6 +217,11 @@ in
       enable = true;
       defaultCacheTtl = 600;
       enableSshSupport = true;
+      extraConfig = ''
+          allow-emacs-pinentry
+          allow-loopback-pinentry
+          pinentry-program ${pkgs.pinentry}/bin/pinentry
+      '';
     };
     # location.provider = "geoclue2";
     redshift = mkIf (builtins.getEnv "TRAVIS_OS_NAME" == ""  && stdenv.isLinux) {

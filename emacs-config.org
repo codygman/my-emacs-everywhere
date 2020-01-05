@@ -359,6 +359,10 @@
     ;;   :keymaps 'override
     ;;   "u"   '(evil-scroll-up :which-key "evil scroll up"))
 
+(general-define-key
+ :states 'motion
+ :keymaps 'override
+ "zb" 'evil-scroll-line-to-bottom)
 
     (my-leader-def
       :states '(normal visual emacs motion)
@@ -477,8 +481,10 @@
       ;; org refiling (takes top-level because i'll use it lots I think)
       "r"  '(org-refile :which-key "refile an org task")
       )
+
     (general-define-key
      "M-x" 'helm-M-x)
+
     ;; TODO are these the right modes???
     (general-evil-define-key '(normal visual) emacs-lisp-mode-map
       :prefix ","
@@ -575,30 +581,16 @@
 :ID:       d8dd34aa-e42b-4269-a087-83348b380b26
 :END:
 #+begin_src emacs-lisp
-  ;; (use-package doom-themes
-  ;; :if (not window-system)
-  ;; :config
-  ;; (setq frame-background-mode 'dark)
-  ;; (load-theme 'doom-one t)
-  ;; )
-
-  (use-package solarized-theme ;; doom-themes
-    :defer t
-    :if window-system
-    :init
-    (defun codygman/solarized-theme-modifications (&rest args)
-      (set-cursor-color "#b58900")
-      )
-    (advice-add 'load-theme :after 'codygman/solarized-theme-modifications)
-    ;; variable pitch prettier fonts for org mode, see: https://zzamboni.org/post/beautifying-org-mode-in-emacs/
-    (set-face-attribute 'default nil :family "Source Code Pro" :height 160 :width 'normal)
-    (set-face-attribute 'fixed-pitch nil :family "Source Code Pro" :height 140 :width 'normal)
-    (set-face-attribute 'variable-pitch nil :family "Source Sans Pro" :height 160 :weight 'medium)
-    (set-face-attribute 'org-table nil :inherit 'fixed-pitch) ;; here or org?
-    ;; all org blocks should be fixed-width NOTE: For source-blocks ‘org-src-block-faces’ takes precedence.
-    (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
-    (load-theme 'solarized-dark t)
+  (use-package doom-themes
     :config
+    (set-face-attribute 'default nil :family "Source Code Pro" :height 140 :width 'normal)
+    (set-face-attribute 'fixed-pitch nil :family "Source Code Pro" :height 140 :width 'normal)
+    (set-face-attribute 'variable-pitch nil :family "Source Sans Pro" :height 140 :weight 'medium)
+    (setq frame-background-mode 'dark)
+    ;; maybe move this, but good for now
+    (setq org-agenda-scheduled-leaders '("" "")) ;; SCHEDULED text is redundant when there is a time right beside scheduled items
+    (load-theme 'doom-one t)
+
     (defun set-buffer-variable-pitch()
       (interactive)
       (variable-pitch-mode t)
@@ -607,11 +599,38 @@
     :hook ((eww-mode . set-buffer-variable-pitch) ;; not sure this one works
            (org-mode . set-buffer-variable-pitch)
            (Info-mode . set-buffer-variable-pitch)
-           (markdown-mode . set-buffer-variable-pitch)
-           )
-    )
+           (markdown-mode . set-buffer-variable-pitch)))
+
 #+end_src
 * Package install and configuration
+** notmuch
+#+begin_src emacs-lisp
+(use-package notmuch
+  :ensure t)
+(use-package ol-notmuch
+  :straight (:type built-in))
+#+end_src
+** exwm
+#+begin_src emacs-lisp
+  (use-package exwm
+      :init
+      (require 'exwm-config)
+      :config
+      (setq exwm-input-global-keys
+            `(([?\s-r] . exwm-reset)
+              ([?\s-w] . exwm-workspace-switch)
+              ([?\s-b] . helm-mini)
+              ([?\s-&] . (lambda (command)
+                           (interactive (list (read-shell-command "$ ")))))
+              ,@(mapcar (lambda (i)
+                          `(,(kbd (format "s-%d" i)) .
+                            (lambda ()
+                              (interactive)
+                              (exwm-workspace-switch-create ,i))))
+                        (number-sequence 0 9))))
+      ;; Do not forget to enable EXWM. It will start by itself when things are ready.
+  )
+#+end_src
 ** with-simulated-input
 #+begin_src emacs-lisp
   (use-package with-simulated-input :defer t)
@@ -715,7 +734,7 @@
 #+end_src
 *** evil magit
 #+begin_src emacs-lisp
-(use-package evil-magit :after (evil magit))
+(use-package evil-magit :after (evil magit) :config (evil-magit-init))
 #+end_src
 *** evil-collection
 #+begin_src emacs-lisp
@@ -730,41 +749,6 @@
 #+begin_src emacs-lisp
   (use-package gnuplot)
 #+end_src
-** email
-*** configure mu4e
-#+begin_src emacs-lisp
-;; if you move this into use-package block make sure it gets loaded
-(setq user-full-name "Cody Goodman"
-      ;; if I want this to be general for work/personal (and I may want to load from personal.el or work.el TBH) I'll need a conditional here
-      user-mail-address "cody@codygman.dev")
-(setq mu4e-get-mail-command "offlineimap"
-      mu4e-update-interval 60
-      mu4e-attachment-dir "~/Downloads")
-(setq sendmail-program "msmtp"
-      send-mail-function 'smtpmail-send-it
-      message-sendmail-f-is-evil t
-      message-sendmail-extra-arguments '("--read-envelope-from")
-      message-send-mail-function 'message-send-mail-with-sendmail)
-(use-package mu4e-alert
-  :after mu4e
-  :init
-  (setq mu4e-alert-interesting-mail-query
-    (concat "flag:unread"))
-(mu4e-alert-set-default-style 'libnotify)
-(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
-  (mu4e-alert-enable-mode-line-display)
-  (defun gjstein-refresh-mu4e-alert-mode-line ()
-    (interactive)
-    (mu4e~proc-kill)
-    (mu4e-alert-enable-mode-line-display)
-    )
-  (run-with-timer 0 60 'gjstein-refresh-mu4e-alert-mode-line)
-  )
-#+end_src
-
-#+RESULTS:
-: cody@codygman.dev
-
 ** org
 *** org is installed in [[file:init.el::(straight-use-package%20'org-plus-contrib)%20;%20or%20org-plus-contrib%20if%20desired][init.el]]
 **** so that we can use newest org version to tangle config
@@ -1468,7 +1452,8 @@
             (setq org-log-into-drawer t)
             ;; updated to use a depth of 3 in combination with showing the full outlinepath
             (setq org-refile-targets
-                  '((org-agenda-files . (:maxlevel . 2))))
+                '((org-agenda-files . (:maxlevel . 2))))
+                  org-refile-use-cache t)
             (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
             (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
 
@@ -1759,7 +1744,8 @@
                 "x" 'org-agenda-clock-cancel
                 "[" 'org-agenda-manipulate-query-add
                 "g\\" 'org-agenda-filter-by-tag-refine
-                "]" 'org-agenda-manipulate-query-subtract))))
+                "]" 'org-agenda-manipulate-query-subtract)))
+
 #+end_src
 
 #+results:
@@ -1895,6 +1881,7 @@
           helm-locate-fuzzy-match t
           helm-semantic-fuzzy-match t
           helm-imenu-fuzzy-match t
+          completion-styles '(flex)
           helm-completion-in-region-fuzzy-match t
           helm-candidate-number-list 80
           helm-split-window-in-side-p t
@@ -1906,11 +1893,6 @@
           helm-always-two-windows t)
     (when (file-exists-p "/data/data/com.termux/files/usr/bin/termux-info")
       (setq helm-split-window-default-side 'right))
-    ;; helm pretty frame
-    (setq helm-display-function 'helm-display-buffer-in-own-frame
-          helm-display-buffer-reuse-frame nil
-          helm-use-undecorated-frame-option t)
-    :defer t
           :config
     (use-package helm-flx)
     (use-package helm-fuzzier)
@@ -1931,7 +1913,7 @@
     :init
     (setq org-capture-templates
           '(
-("t" "Todo (no clock in)" entry (file+headline "~/bsab/misc.org" "Misc")
+            ("t" "Todo (no clock in)" entry (file+headline "~/bsab/misc.org" "Misc")
              "* TODO %?  :refile:
   :PROPERTIES:
   :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
@@ -1958,6 +1940,13 @@
              :prepend t
              :clock-in t
              :clock-resume t
+             )
+            ("r" "Resources" entry (file+headline "~/bsab/resources.org" "Misc Resources")
+             "* %?  :refile:
+  :PROPERTIES:
+  :CREATED: %U
+  :END:"
+             :prepend t
              )
             ))
     :after (helm org))
