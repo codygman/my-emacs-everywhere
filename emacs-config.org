@@ -1859,47 +1859,47 @@
 *** helm-org
 **** code
 #+begin_src emacs-lisp
-    (use-package helm-org
-      :init
-      (setq org-capture-templates
-            '(
-              ("t" "Todo (no clock in)" entry (file+headline "~/bsab/misc.org" "Misc")
-               "* TODO %?  :refile:
-    :PROPERTIES:
-    :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
-    :CREATED: %U
-    :END:"
-               :prepend t
-               )
-              ("t" "Todo" entry (file+headline "~/bsab/misc.org" "Misc")
-               "* TODO %?  :refile:
-    :PROPERTIES:
-    :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
-    :CREATED: %U
-    :END:"
-               :prepend t
-               :clock-in t
-               :clock-resume t
-               )
-              ("T" "Todo (today)" entry (file+headline "~/bsab/misc.org" "Misc")
-               "* TODO %<%Y-%m-%d> %?  :refile:
-    :PROPERTIES:
-    :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
-    :CREATED: %U
-    :END:"
-               :prepend t
-               :clock-in t
-               :clock-resume t
-               )
-              ("r" "resources" entry (file+headline "~/bsab/resources.org" "Resources")
-               "* TODO %?  :refile:
-    :PROPERTIES:
-    :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
-    :CREATED: %U
-    :END:"
-               )
-              ))
-      :after (helm org))
+  (use-package helm-org
+    :init
+    (setq org-capture-templates
+          '(
+            ("t" "Todo (no clock in)" entry (file+headline "~/bsab/misc.org" "Misc")
+             "* TODO %?  :refile:
+  :PROPERTIES:
+  :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
+  :CREATED: %U
+  :END:"
+             :prepend t
+             )
+            ("t" "Todo" entry (file+headline "~/bsab/misc.org" "Misc")
+             "* TODO %?  :refile:
+  :PROPERTIES:
+  :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
+  :CREATED: %U
+  :END:"
+             :prepend t
+             :clock-in t
+             :clock-resume t
+             )
+            ("T" "Todo (today)" entry (file+headline "~/bsab/misc.org" "Misc")
+             "* TODO %<%Y-%m-%d> %?  :refile:
+  :PROPERTIES:
+  :WILD_NOTIFIER_NOTIFY_BEFORE: 15 5 3 1
+  :CREATED: %U
+  :END:"
+             :prepend t
+             :clock-in t
+             :clock-resume t
+             )
+            ("r" "Resources" entry (file+headline "~/bsab/resources.org" "Misc Resources")
+             "* %?  :refile:
+  :PROPERTIES:
+  :CREATED: %U
+  :END:"
+             :prepend t
+             )
+            ))
+    :after (helm org))
 #+end_src
 **** why?
 ***** helm-org-capture-templates
