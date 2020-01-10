@@ -1943,6 +1943,19 @@
              :clock-in t
              :clock-resume t
              )
+            ("p" "Project" entry (file+headline "~/bsab/projects.org" "Projects")
+             "* TODO %? [/]
+  :PROPERTIES:
+  :CREATED: %U
+  :END:
+  ,** TODO plan project
+  ,** TODO project retrospective [/]
+  ,*** TODO what went well?
+  ,*** TODO what could have went better?
+  ,*** TODO how will you improve next time?"
+             :prepend t
+             ;; :clock-in t ;; TODO add a planning part and clock into that
+             )
             ("r" "Resources" entry (file+headline "~/bsab/resources.org" "Misc Resources")
              "* %?  :refile:
   :PROPERTIES:
