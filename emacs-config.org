@@ -801,6 +801,8 @@
                               (outline-flag-region start (point-at-eol) t)
                             (user-error msg))))))))))
           (add-hook 'org-cycle-hook 'org-cycle-hide-drawers)
+          (add-hook 'org-mode-hook (lambda ()
+                                     (local-set-key (kbd "C-c s") 'org-show-subtree)))
 
           ;; end org font setup
           (setq org-startup-with-inline-images t)
