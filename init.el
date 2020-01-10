@@ -42,25 +42,5 @@
 ;;;;; TBD
 ;; TODO make my-emacs-everywhere use literate test that gets tangled
 (org-babel-load-file (format "%s/emacs-config.org" (my-emacs-everywhere-directory)))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("f8067b7d0dbffb29a79e0843797efabdf5e1cf326639874d8b407e9b034136a4" "97965ccdac20cae22c5658c282544892959dc541af3e9ef8857dbf22eb70e82b" "9129c2759b8ba8e8396fe92535449de3e7ba61fd34569a488dd64e80f5041c9f" default))
- '(notmuch-saved-searches
-   '((:name "unread" :query "tag:unread" :key "u")
-     (:name "flagged" :query "tag:flagged" :key "f")
-     (:name "sent" :query "tag:sent" :key "t")
-     (:name "drafts" :query "tag:draft" :key "d")
-     (:name "all mail" :query "*" :key "a")
-     (:name "inbox" :query "tag:inbox"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(notmuch-message-summary-face ((((class color) (min-colors 89)) (:inherit highlight))))
- '(org-special-keyword ((t (:weight thin :foreground "#586e75"))))
- '(org-tag ((t (:weight thin :foreground "#586e75")))))
+
+
