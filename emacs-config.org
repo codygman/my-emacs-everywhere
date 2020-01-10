@@ -586,6 +586,8 @@
     (set-face-attribute 'default nil :family "Source Code Pro" :height 140 :width 'normal)
     (set-face-attribute 'fixed-pitch nil :family "Source Code Pro" :height 140 :width 'normal)
     (set-face-attribute 'variable-pitch nil :family "Source Sans Pro" :height 140 :weight 'medium)
+    (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-block nil :inherit 'fixed-pitch)
     (setq frame-background-mode 'dark)
     ;; maybe move this, but good for now
     (setq org-agenda-scheduled-leaders '("" "")) ;; SCHEDULED text is redundant when there is a time right beside scheduled items
