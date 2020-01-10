@@ -292,11 +292,6 @@
 #+end_src
 
 #+RESULTS:
-** add mu4e to load path and load it
-#+begin_src emacs-lisp
-(setq load-path (append load-path '("~/.emacs.d/mu/mu4e")))
-(require 'mu4e)
-#+end_src
 * Ensure critical environment specific files exist
 ** load bash profile (most for env vars)
 #+begin_src emacs-lisp
