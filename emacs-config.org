@@ -767,13 +767,7 @@
 	  org-id-link-to-org-use-id 'create-if-interactive)
     ;; org font setup
     (custom-set-faces
-     ;; custom-set-faces was added by Custom.
-     ;; If you edit it by hand, you could mess it up, so be careful.
-     ;; Your init file should contain only one such instance.
-     ;; If there is more than one, they won't work right.
-     ;; '(org-level-1 ((t (:inherit variable-pitch :foreground "violet" :height 1.3))))
-     '(org-tag ((t (:weight thin :foreground "#586e75"))))
-     '(org-special-keyword ((t (:weight thin :foreground "#586e75"))))
+     '(org-drawer ((t (:weight thin :foreground "#586e75"))))
      )
 
     ;; end org font setup
