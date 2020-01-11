@@ -1910,6 +1910,9 @@
 #+end_src
 *** helm-org
 **** code
+:PROPERTIES:
+:ID:       94c0a9ff-ea2d-4938-8504-f05e67eed3f6
+:END:
 #+begin_src emacs-lisp
   (use-package helm-org
     :init
