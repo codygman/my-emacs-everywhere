@@ -600,6 +600,8 @@
            (org-mode . set-buffer-variable-pitch)
            (Info-mode . set-buffer-variable-pitch)
            (markdown-mode . set-buffer-variable-pitch)))
+(use-package doom-modeline
+    :hook (after-init . doom-modeline-mode))
 
 #+end_src
 * Package install and configuration
