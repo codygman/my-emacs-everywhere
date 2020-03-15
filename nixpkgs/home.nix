@@ -26,9 +26,6 @@ in
 
   programs = {
     home-manager.enable = true;
-    home.file.".emacs.d/init.el".text = ''
-     (load "default.el")
-    '';
     emacs = {
       enable = true;
       package = emacsHEAD;
@@ -43,6 +40,9 @@ in
   home = {
     packages = with pkgs; [ doom-emacs ];
     file = {
+    ".emacs.d/init.el".text = ''
+     (load "default.el")
+    '';
       ".bashrc" = {
         text = ''
           eval "$(direnv hook bash)"
