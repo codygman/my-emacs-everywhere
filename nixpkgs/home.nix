@@ -26,6 +26,9 @@ in
 
   programs = {
     home-manager.enable = true;
+    home.file.".emacs.d/init.el".text = ''
+     (load "default.el")
+    '';
     emacs = {
       enable = true;
       package = emacsHEAD;
