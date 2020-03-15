@@ -186,9 +186,9 @@
 ;; (+ 1 1)
 ;; #+end_src
 
-#+RESULTS:
-: 2
-")))
+;; #+RESULTS:
+;; : 2
+;; ")))
 
 (defun clone-projects-projectile-test ()
   (shell-command-to-string "cd /tmp && git clone https://github.com/jgm/pandoc.git")
