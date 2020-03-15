@@ -18,7 +18,11 @@ pushd ~/.config/nixpkgs
 nix-build emacs.nix | cachix -v push codygman5
 popd
 
+# remove zshrc and bashrc so home-manager can overwrite them
+rm -v ~/.bashrc
+rm -v ~/.zshrc
 
 # install home-manager
+echo "installing home manager"
 nix-shell '<home-manager>' -A install
 home-manager switch
