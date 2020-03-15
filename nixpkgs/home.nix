@@ -5,6 +5,12 @@ with lib;
 
 let
   emacsHEAD = import ./emacs.nix;
+  doom-emacs = pkgs.callPackage (builtins.fetchTarball {
+    url = https://github.com/vlaci/nix-doom-emacs/archive/master.tar.gz;
+  }) {
+    doomPrivateDir = ./doom.d;  # Directory containing your config.el init.el
+    # and packages.el files
+  };
 in
 {
   # copy paste from irc directly
@@ -32,7 +38,7 @@ in
   };
 
   home = {
-    packages = with pkgs; [];
+    packages = with pkgs; [ doom-emacs ];
     file = {
       ".bashrc" = {
         text = ''
