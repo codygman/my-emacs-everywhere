@@ -8,7 +8,7 @@ if [ $TRAVIS_OS_NAME = 'osx' ]; then
     echo "trusted-users = root $USER" | sudo tee -a /etc/nix/nix.conf && sudo pkill nix-daemon
 fi
 
-cachix use codygman4
+cachix use codygman5
 
 nix-shell '<home-manager>' -A install
 
@@ -16,6 +16,6 @@ mkdir -p ~/.config/
 cp -vR nixpkgs ~/.config
 
 pushd ~/.config/nixpkgs
-nix-build emacs.nix | cachix push codygman4
+nix-build emacs.nix | cachix push codygman5
 popd
 home-manager switch
