@@ -15,7 +15,7 @@ cachix use codygman5
 mkdir -p ~/.config/
 cp -vR nixpkgs ~/.config
 pushd ~/.config/nixpkgs
-nix-build emacs.nix | cachix push codygman5
+nix-build emacs.nix | cachix -v push codygman5
 popd
 
 # install home-manager
