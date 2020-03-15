@@ -3,7 +3,7 @@ os:
   - linux
 cache:
   directories:
-  - $HOME/.emacs.d/straight
+    - $HOME/.emacs.d/straight
 script:
   - bash install.sh
   - sh test.sh
