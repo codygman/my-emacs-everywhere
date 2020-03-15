@@ -18,6 +18,7 @@ pushd ~/.config/nixpkgs
 nix-build emacs.nix | cachix -v push codygman5
 popd
 
+
 # install home-manager
 nix-shell '<home-manager>' -A install
 home-manager switch
