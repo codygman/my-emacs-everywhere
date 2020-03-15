@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: Nix Org Source Block
-# key: nix
-# --
-#+begin_src nix$1
-$2
-#+end_src$0

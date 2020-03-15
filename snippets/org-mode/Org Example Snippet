@@ -1,6 +1,0 @@
-# key: ex
-# name: Org Example Snippet
-# --
-#+begin_example
-$1
-#+end_example$0
