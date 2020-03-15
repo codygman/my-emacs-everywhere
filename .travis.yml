@@ -1,11 +1,5 @@
 language: nix
 os:
   - linux
-  - osx
-cache:
-  directories:
-  - $HOME/.emacs.d/straight
 script:
   - bash install.sh
-  - sh test.sh
-  - cat test-results.txt
