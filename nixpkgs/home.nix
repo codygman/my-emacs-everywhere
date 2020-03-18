@@ -4,6 +4,7 @@ with import <nixpkgs> {};
 with lib;
 
 let
+  emacs = import ./emacs.nix;
   doom-emacs = pkgs.callPackage (builtins.fetchTarball {
     url = https://github.com/vlaci/nix-doom-emacs/archive/master.tar.gz;
   }) {
@@ -11,6 +12,7 @@ let
   };
 in
 {
+
   programs = {
     home-manager.enable = true;
     git = {
