@@ -18,6 +18,7 @@ in
       userName = "codygman";
       userEmail = "codygman.consulting@gmail.com";
     };
+    vscode.enable = true;
   };
 
   home = {
