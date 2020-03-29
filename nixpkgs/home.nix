@@ -4,12 +4,8 @@ with import <nixpkgs> {};
 with lib;
 
 let
-  emacs = import ./emacs.nix;
-  doom-emacs = pkgs.callPackage (builtins.fetchTarball {
-    url = https://github.com/vlaci/nix-doom-emacs/archive/master.tar.gz;
-  }) {
-    doomPrivateDir = ./doom.d;
-  };
+  pkgs = import <nixpkgs> { overlays = [ (import emacs-overlay) ]; };
+  doom-emacs = ./import doomemacs.nix;
 in
 {
 
