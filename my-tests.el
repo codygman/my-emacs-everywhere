@@ -28,9 +28,6 @@
 (ert-deftest version-check ()
   (should (string-equal "28.0.50" emacs-version)))
 
-(ert-deftest straight-el-installed ()
-  (should (fboundp 'straight-use-package)))
-
 (ert-deftest evil-installed ()
   (should (fboundp 'evil-version)))
 
