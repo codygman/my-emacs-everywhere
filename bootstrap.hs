@@ -42,8 +42,9 @@ main = do
       "localhost" -> do
         echo "android detected, using copying instead of symlinks"
         cp doomDirNixpkgs nixpkgConfigPath
-        mv (nixpkgConfigPath </> decodeString "home.nix")
-           (nixpkgConfigPath </> decodeString "nix-on-droid.nix")
+        testdir nixpkgConfigPath >>= \there -> do
+          mv (nixpkgConfigPath </> decodeString "home.nix")
+             (nixpkgConfigPath </> decodeString "nix-on-droid.nix")
         echo "renamed home.nix to nix-on-droid.nix"
       "nixos" -> symlink doomDirNixpkgs nixpkgConfigPath
       unknown -> error $ "unkown system, not sure what to do: " <> show unknown
