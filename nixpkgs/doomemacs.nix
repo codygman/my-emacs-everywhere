@@ -11,6 +11,7 @@ in
     extraConfig = ''
 (setq-default evil-escape-key-sequence "jf")
 (setq display-line-numbers-type nil)
+(setq doom-font (font-spec :family "Source Code Pro" :size 17))
     '';
   }
 
