@@ -4,6 +4,7 @@ let
   nix-doom-emacs = builtins.fetchTarball "https://github.com/vlaci/nix-doom-emacs/archive/master.tar.gz";
 in
   with pkgs; callPackage nix-doom-emacs {
+    extraPackages = epkgs: [pkgs.emacs-all-the-icons-fonts];
     bundledPackages = false;
     emacsPackages = emacsPackagesFor emacsGit;
     doomPrivateDir = ./doom.d;
