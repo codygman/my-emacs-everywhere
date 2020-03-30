@@ -20,7 +20,7 @@ in
   };
 
   home = {
-    packages = with pkgs; [ doomemacs fd ripgrep ];
+    packages = with pkgs; [ doomemacs fd ripgrep source-code-pro ];
     file = {
     ".emacs.d/init.el".text = ''
      (load "default.el")
