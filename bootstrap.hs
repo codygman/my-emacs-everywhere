@@ -5,6 +5,7 @@
 -- NOTE: nixpkgs is pinned to nixpkgs-1909 2020-03-28
 -- it's 1909 mostly so that I don't have to build ghc on android
 -- which kept failing for some reason with previous pin
+import qualified Data.Text                     as T
 import           Turtle
 import           Data.Time
 import           Control.Monad
