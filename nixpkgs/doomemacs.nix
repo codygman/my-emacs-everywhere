@@ -10,6 +10,7 @@ in
     doomPrivateDir = ./doom.d;
     extraConfig = ''
 (setq-default evil-escape-key-sequence "jf")
+(setq display-line-numbers-type nil)
     '';
   }
 
