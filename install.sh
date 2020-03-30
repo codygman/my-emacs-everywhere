@@ -12,6 +12,7 @@ echo "configure machine to use cachix"
 cachix use codygman5
 
 # remove zshrc and bashrc so home-manager can overwrite them
+# TODO add this into bootstrap.hs and only do this on travis?
 rm -v ~/.bashrc
 rm -v ~/.zshrc
 
