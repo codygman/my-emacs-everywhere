@@ -51,7 +51,9 @@ main = do
             else pure ()
         echo "renamed home.nix to nix-on-droid.nix"
       "nixos" -> symlink doomDirNixpkgs nixpkgConfigPath
-      unknown -> error $ "unkown system, not sure what to do: " <> show unknown
+      unknown -> if T.isPrefixOf "travis-job" unknown
+        then symlink doomDirNixpkgs nixpkgConfigPath
+        else error $ "unkown system, not sure what to do: " <> show unknown
   dirsExist <- sequenceA [testdir doomDirNixpkgs, testdir nixpkgConfigPath]
   if all (== True) dirsExist then pure () else exit (ExitFailure 1)
   view $ proc
