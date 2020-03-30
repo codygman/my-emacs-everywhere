@@ -26,7 +26,7 @@
       "~/.emacs.d/"
     "~/build/codygman/my-emacs-everywhere/"))
 (ert-deftest version-check ()
-  (should (string-equal "27.0.50" emacs-version)))
+  (should (string-equal "28.0.50" emacs-version)))
 
 (ert-deftest straight-el-installed ()
   (should (fboundp 'straight-use-package)))
