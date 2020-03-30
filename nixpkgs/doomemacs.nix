@@ -8,5 +8,8 @@ in
     bundledPackages = false;
     emacsPackages = emacsPackagesFor emacsGit;
     doomPrivateDir = ./doom.d;
+    extraConfig = ''
+(setq-default evil-escape-key-sequence "jf")
+    '';
   }
 
