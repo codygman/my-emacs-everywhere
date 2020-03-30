@@ -8,3 +8,4 @@ in
     emacsPackages = emacsPackagesFor emacsGit;
     doomPrivateDir = ./doom.d;
   }
+

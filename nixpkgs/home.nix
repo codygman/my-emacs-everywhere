@@ -5,7 +5,7 @@ with lib;
 
 let
   pkgs = import <nixpkgs> { overlays = [ (import emacs-overlay) ]; };
-  doom-emacs = ./import doomemacs.nix;
+  doomemacs = import ./doomemacs.nix;
 in
 {
 
@@ -16,11 +16,10 @@ in
       userName = "codygman";
       userEmail = "codygman.consulting@gmail.com";
     };
-    vscode.enable = true;
   };
 
   home = {
-    packages = with pkgs; [ doom-emacs ];
+    packages = with pkgs; [ doomemacs ];
     file = {
     ".emacs.d/init.el".text = ''
      (load "default.el")
