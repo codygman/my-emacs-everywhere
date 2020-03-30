@@ -36,15 +36,19 @@ main = do
           echoTxt $ format ("moving '" % fp % "' to '" % fp % "'")
                            nixpkgConfigPath
                            backupPath
-          mv nixpkgConfigPath backupPath
+
+          testdir nixpkgConfigPath >>= \there -> do
+            if there then mv nixpkgConfigPath backupPath else pure ()
     -- symlink file (or copy on android, then rename home.nix to nix-on-droid.nix)
     hostname >>= \hn -> case hn of
       "localhost" -> do
         echo "android detected, using copying instead of symlinks"
         cp doomDirNixpkgs nixpkgConfigPath
         testdir nixpkgConfigPath >>= \there -> do
-          mv (nixpkgConfigPath </> decodeString "home.nix")
-             (nixpkgConfigPath </> decodeString "nix-on-droid.nix")
+          if there
+            then mv (nixpkgConfigPath </> decodeString "home.nix")
+                    (nixpkgConfigPath </> decodeString "nix-on-droid.nix")
+            else pure ()
         echo "renamed home.nix to nix-on-droid.nix"
       "nixos" -> symlink doomDirNixpkgs nixpkgConfigPath
       unknown -> error $ "unkown system, not sure what to do: " <> show unknown
