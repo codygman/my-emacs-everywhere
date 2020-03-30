@@ -1,11 +1,11 @@
 let
-  emacs-overlay = builtins.fetchTarball "https://github.com/nix-community/emacs-overlay/archive/52b9fd468cd45f85c43f9b623ed2854971d8e1ad.tar.gz";
-  pkgs = import <nixpkgs> { overlays = [ (import emacs-overlay) ]; };
+  myemacs = import ./emacs.nix;
+  pkgs = import <nixpkgs> { };
   nix-doom-emacs = builtins.fetchTarball "https://github.com/vlaci/nix-doom-emacs/archive/master.tar.gz";
 in
   with pkgs; callPackage nix-doom-emacs {
     bundledPackages = false;
-    emacsPackages = emacsPackagesFor emacsGit;
+    emacsPackages = emacsPackagesFor myemacs;
     doomPrivateDir = ./doom.d;
   }
 
