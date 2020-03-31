@@ -17,6 +17,47 @@ main = do
   let doomDirNixpkgs   = doomDir </> decodeString "nixpkgs"
   let nixpkgConfigPath = userHome </> decodeString ".config/nixpkgs"
   let bootstrapBackups = userHome </> decodeString ".bootstrap-backups"
+  maybeBackupNixpkgConfig nixpkgConfigPath bootstrapBackups
+    -- symlink file (or copy on android, then rename home.nix to nix-on-droid.nix)
+  host <- hostname
+  case host of
+    "localhost" -> do
+      echo "android detected, using copying instead of symlinks"
+      cp doomDirNixpkgs nixpkgConfigPath
+      testdir nixpkgConfigPath >>= \there -> do
+        if there
+          then mv (nixpkgConfigPath </> decodeString "home.nix")
+                  (nixpkgConfigPath </> decodeString "nix-on-droid.nix")
+          else pure ()
+      echo "renamed home.nix to nix-on-droid.nix"
+    "nixos" -> symlink doomDirNixpkgs nixpkgConfigPath
+    unknown -> if T.isPrefixOf "travis-job" unknown
+      then symlink doomDirNixpkgs nixpkgConfigPath
+      else error $ "unkown system, not sure what to do: " <> show unknown
+  dirsExist <- sequenceA [testdir doomDirNixpkgs, testdir nixpkgConfigPath]
+  if all (== True) dirsExist then pure () else exit (ExitFailure 1)
+  view $ proc
+    "nix-channel"
+    [ "--add"
+    , "https://github.com/rycee/home-manager/archive/master.tar.gz"
+    , "home-manager"
+    ]
+    empty
+  case host of
+    "localhost" -> do
+      echo "cannot install nix-on-droid automatically (yet)"
+      which "nix-on-droid" >>= \hm -> case hm of
+        Just _  -> view $ shell "nix-on-droid switch" empty
+        Nothing -> error "install nix-on-droid manually"
+    "nixos" -> do
+      which "home-manager" >>= \hm -> case hm of
+        Just _  -> view $ shell "home-manager switch" empty
+        Nothing -> do
+          -- WIP get rid of leading "Shell: " part of text values
+          proc "nix-channel" ["--update"] empty
+          view $ shell "nix-shell '<home-manager>' -A install" empty
+
+maybeBackupNixpkgConfig nixpkgConfigPath bootstrapBackups = do
   testdir nixpkgConfigPath >>= \there -> do
     echoTxt $ format ("NOTE: moving current config to " % fp) bootstrapBackups
     -- create backup directory
@@ -40,36 +81,6 @@ main = do
 
           testdir nixpkgConfigPath >>= \there -> do
             if there then mv nixpkgConfigPath backupPath else pure ()
-    -- symlink file (or copy on android, then rename home.nix to nix-on-droid.nix)
-    hostname >>= \hn -> case hn of
-      "localhost" -> do
-        echo "android detected, using copying instead of symlinks"
-        cp doomDirNixpkgs nixpkgConfigPath
-        testdir nixpkgConfigPath >>= \there -> do
-          if there
-            then mv (nixpkgConfigPath </> decodeString "home.nix")
-                    (nixpkgConfigPath </> decodeString "nix-on-droid.nix")
-            else pure ()
-        echo "renamed home.nix to nix-on-droid.nix"
-      "nixos" -> symlink doomDirNixpkgs nixpkgConfigPath
-      unknown -> if T.isPrefixOf "travis-job" unknown
-        then symlink doomDirNixpkgs nixpkgConfigPath
-        else error $ "unkown system, not sure what to do: " <> show unknown
-  dirsExist <- sequenceA [testdir doomDirNixpkgs, testdir nixpkgConfigPath]
-  if all (== True) dirsExist then pure () else exit (ExitFailure 1)
-  view $ proc
-    "nix-channel"
-    [ "--add"
-    , "https://github.com/rycee/home-manager/archive/master.tar.gz"
-    , "home-manager"
-    ]
-    empty
-  which "home-manager" >>= \hm -> case hm of
-    Just _  -> view $ shell "home-manager switch" empty
-    Nothing -> do
-      -- WIP get rid of leading "Shell: " part of text values
-      proc "nix-channel" ["--update"] empty
-      view $ shell "nix-shell '<home-manager>' -A install" empty
 
 echoTxt :: Text -> IO ()
 echoTxt = echo . unsafeTextToLine
