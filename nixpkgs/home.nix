@@ -30,6 +30,12 @@ in
       userName = "codygman";
       userEmail = lib.mkDefault "codygman.consulting@gmail.com";
     };
+    bash = {
+      enable = true;
+      shellAliases = {
+        new-haskell-project = "nix-shell -p cookiecutter git --run 'cookiecutter gh:utdemir/hs-nix-template'";
+      };
+    };
   };
 
   home = {
