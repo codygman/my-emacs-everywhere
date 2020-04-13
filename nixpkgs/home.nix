@@ -28,7 +28,7 @@ in
     git = {
       enable = true;
       userName = "codygman";
-      userEmail = "codygman.consulting@gmail.com";
+      userEmail = lib.mkDefault "codygman.consulting@gmail.com";
     };
   };
 
