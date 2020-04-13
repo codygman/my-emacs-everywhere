@@ -23,13 +23,12 @@ main = do
   case host of
     "localhost" -> do
       echo "android detected, using copying instead of symlinks"
-      cp doomDirNixpkgs nixpkgConfigPath
+      cptree doomDirNixpkgs nixpkgConfigPath
       testdir nixpkgConfigPath >>= \there -> do
         if there
-          then mv (nixpkgConfigPath </> decodeString "home.nix")
+          then mv (nixpkgConfigPath </> decodeString "nix-on-droid.nix")
                   (nixpkgConfigPath </> decodeString "nix-on-droid.nix")
           else pure ()
-      echo "renamed home.nix to nix-on-droid.nix"
     "nixos" -> symlink doomDirNixpkgs nixpkgConfigPath
     unknown -> if T.isPrefixOf "travis-job" unknown
       then symlink doomDirNixpkgs nixpkgConfigPath
