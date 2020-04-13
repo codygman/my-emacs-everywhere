@@ -30,6 +30,11 @@ in
       userName = "codygman";
       userEmail = lib.mkDefault "codygman.consulting@gmail.com";
     };
+    direnv = {
+      enable = true;
+      enableZshIntegration = true;
+      enableBashIntegration = true;
+    };
     bash = {
       enable = true;
       shellAliases = {
@@ -45,6 +50,10 @@ in
      (load "default.el")
     '';
       };
+  };
+
+  services = {
+    lorri.enable = true;
   };
 
 }
