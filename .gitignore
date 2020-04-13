@@ -18,3 +18,4 @@ graveyard
 url/cookies
 # might want to keep this one?
 bookmarks
+*.elc
