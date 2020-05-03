@@ -19,3 +19,4 @@ url/cookies
 # might want to keep this one?
 bookmarks
 *.elc
+/doom.d/config.el
