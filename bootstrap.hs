@@ -27,8 +27,38 @@ initialSetup doomDirNixpkgs nixpkgConfigPath = do
     which "home-manager" >>= \hm -> case hm of
       Just _ -> pure ()
       Nothing -> installHomeManager
+    doomSetup
   
-homeManager opts = inproc "home-manager" opts empty
+
+doomInstalled :: IO Bool
+doomInstalled = pure False
+
+configDoomExists :: IO Bool
+configDoomExists = do
+  userHome <- home
+  echo "A ~/.config/doom folder exists, assuming it's the right one"
+  testdir (userHome </> ".config" </> "doom")
+
+emacsDExists = do
+  userHome <- home
+  echo "An emacs.d folder exists, assuming it's the right one"
+  testdir (userHome </> ".emacs.d")
+
+cloneDoomEmacsD = do
+   userHome <- home
+   testdir (userHome </> ".emacs.d") >>= \there -> if there then empty else
+     git ["clone","-b","develop", "git://github.com/hlissner/doom-emacs", format fp (userHome </> ".emacs.d")]
+
+copyConfigDoom = pure ()
+
+doomSetup = do
+  doomInstalled >>= \di -> when (not di) $ do
+    echo "doom setup"
+    view $ cloneDoomEmacsD
+  configDoomExists >>= \cde -> when (not cde) $ copyConfigDoom
+  emacsDExists >>= \ede -> when (not ede) $ do
+    echo "Please run doom setup command manually:"
+    echo "~/.emacs.d/bin/doom install"
 
 installHomeManager = do
   view $ proc
@@ -40,6 +70,12 @@ installHomeManager = do
     empty
   view $ proc "nix-channel" ["--update"] empty
   view $ shell "nix-shell '<home-manager>' -A install" empty
+
+homeManager opts = inproc "home-manager" opts empty
+
+git opts = inproc "git" opts empty
+
+doom opts = home >>= \uh -> inproc (format fp (uh </> ".emacs.d" </> "bin" </> "doom")) opts empty
 
 echoTxt :: Text -> IO ()
 echoTxt = echo . unsafeTextToLine
