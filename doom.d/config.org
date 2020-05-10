@@ -69,6 +69,11 @@ Example: Stop configuring org for hours on end and clock in to "Go get dinner" :
 <<default-capture-properties>>
 " :prepend t :clock-in t :clock-resume t)
 #+end_src
+*** Drag and drop support of images in org mode
+:PROPERTIES:
+:ID:       2f6b5dea-987b-4153-8dbd-07954c5d4777
+:END:
+Uses org-download and requires [[file:init.el::(org +dragndrop) ; organize your plain life in plain text][enabling drag and drop support in doom]]
 *** Notes in existing projects
 Just now I needed to capture the note:
 
@@ -229,6 +234,18 @@ doom seem to not be in the property drawer by default, so let's fix that:
 #+end_src
 ** Resources
 *** https://github.com/alhassy/emacs.d/blob/master/README.org
+** Org-roam (experimental)
+*** Org-mode version of [[https://roamresearch.com/][Roam: A note-taking tool for networked thought.]]
+this only seems to work from [[file:packages.el::package! org-roam]] so disabling by not tangling for now
+#+begin_src emacs-lisp :tangle no
+(package! org-roam)
+#+end_src
+
+Want to put it in here by default, hopefully this works since above didn't:
+
+#+begin_src emacs-lisp :tangle yes
+(after! org-roam (setq org-roam-directory "~/ztd/org-roam"))
+#+end_src
 * Configuration
 :PROPERTIES:
 :ID:       bc892078-e21e-4f4e-885c-44c0ade78420
@@ -246,7 +263,6 @@ doom seem to not be in the property drawer by default, so let's fix that:
 (setq user-mail-address "cody@codygman.dev")
 #+END_SRC
 ** Spell checking
-foooobbbbbb
 *** load my personal dictionary
 #+begin_src emacs-lisp :tangle yes
 (setq ispell-personal-dictionary "~/gtd/files/ispell/personal/ispell_english")
@@ -314,6 +330,14 @@ Here I setup my config for the =doom-emacs= [[doom:core/][core]]
   (setq org-todo-keywords
         '((sequence "TODO(t)" "STRT(s)" "IN-PROGRESS(i)" "NEXT(n)" "WAIT(w@/!)" "|" "DONE(d!)" "KILL(k@)")))
 #+end_src
+*** org-attach
+Org attach is required to make [[id:2f6b5dea-987b-4153-8dbd-07954c5d4777][Drag and drop support of images in org mode]] work
+#+begin_src emacs-lisp
+(after! org-attach
+  ;; (setq org-attach-id-dir "~/gtd/.attach")
+  (setq org-attach-id-dir "/home/demo/gtd/.attach")
+  )
+#+end_src
 *** org agenda
 **** Use Org Super Agenda
 #+begin_src emacs-lisp :tangle no :eval no
@@ -376,5 +400,6 @@ It just takes up valuable space and doesn't have a use
 *** dired
 **** make sorting easy (see https://gitlab.com/xuhdev/dired-quick-sort)
 #+begin_src emacs-lisp :tangle no :eval no
+;; this is breaking things
 (after! dired (dired-quick-sort-setup)) ;; don't think this works
 #+end_src

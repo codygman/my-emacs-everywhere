@@ -37,17 +37,21 @@ in
     bash = {
       enable = true;
       shellAliases = {
-        new-haskell-project = "nix-shell -p cookiecutter git --run 'cookiecutter gh:utdemir/hs-nix-template'";
+        new-haskell-project = "nix-shell -p cookiecutter git --run 'cookiecutter gh:codygman/hs-nix-template'";
       };
     };
   };
 
   home = {
-    packages = with pkgs; [ emacs fd ripgrep source-code-pro ];
+    packages = with pkgs; [ emacs fd ripgrep source-code-pro sqlite gnumake nox gcc coreutils cmake graphviz niv ];
   };
 
   services = {
     lorri.enable = true;
+    # syncthing = {
+    #   enable = true;
+    #   openDefaultPorts = true;
+    # };
   };
 
 }
