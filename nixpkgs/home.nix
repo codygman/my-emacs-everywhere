@@ -40,6 +40,9 @@ in
         new-haskell-project = "nix-shell -p cookiecutter git --run 'cookiecutter gh:codygman/hs-nix-template'";
       };
     };
+    ssh = {
+      enable = true;
+    };
   };
 
   home = {
