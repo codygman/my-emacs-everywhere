@@ -27,7 +27,7 @@ in
     git = {
       enable = true;
       userName = "codygman";
-      userEmail = lib.mkDefault "codygman.consulting@gmail.com";
+      userEmail = lib.mkDefault "cody@codygman.dev";
     };
     direnv = {
       enable = true;
